@@ -2,7 +2,7 @@
 #include <iostream>
 #include <unistd.h>
 
-#include "cli.h"
+#include "cli.hpp"
 
 void compile(std::ostream &w)
 {
