@@ -3,3 +3,17 @@
 
 # ide
 .vscode/
+
+# flex files
+src/*.yy.cpp
+
+# bison files
+src/*.tab.hpp
+src/*.tab.cpp
+src/*.output
+
+# object files
+src/*.o
+
+# compiled code
+bin/
