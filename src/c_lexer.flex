@@ -18,97 +18,101 @@ IS			(u|U|l|L)*
 
 %%
 
+"auto"		    	{ yylval.string = new std::string(yytext); return AUTO; }
+"break"		    	{ yylval.string = new std::string(yytext); return BREAK; }
+"case"			    { yylval.string = new std::string(yytext); return CASE; }
+"char"		    	{ yylval.string = new std::string(yytext); return CHAR; }
+"const"		    	{ yylval.string = new std::string(yytext); return CONST; }
+"continue"	    	{ yylval.string = new std::string(yytext); return CONTINUE; }
+"default"	    	{ yylval.string = new std::string(yytext); return DEFAULT; }
+"do"		       	{ yylval.string = new std::string(yytext); return DO; }
+"double"	    	{ yylval.string = new std::string(yytext); return DOUBLE; }
+"else"		    	{ yylval.string = new std::string(yytext); return ELSE; }
+"enum"		    	{ yylval.string = new std::string(yytext); return ENUM; }
+"extern"	    	{ yylval.string = new std::string(yytext); return EXTERN; }
+"float"		    	{ yylval.string = new std::string(yytext); return FLOAT; }
+"for"		    	{ yylval.string = new std::string(yytext); return FOR; }
+"goto"		    	{ yylval.string = new std::string(yytext); return GOTO; }
+"if"		    	{ yylval.string = new std::string(yytext); return IF; }
+"int"		    	{ yylval.string = new std::string(yytext); return INT;  }
+"long"		    	{ yylval.string = new std::string(yytext); return LONG; }
+"register"	    	{ yylval.string = new std::string(yytext); return REGISTER; }
+"return"	    	{ yylval.string = new std::string(yytext); return RETURN; }
+"short"			    { yylval.string = new std::string(yytext); return SHORT; }
+"signed"	    	{ yylval.string = new std::string(yytext); return SIGNED; }
+"sizeof"	    	{ yylval.string = new std::string(yytext); return SIZEOF; }
+"static"	    	{ yylval.string = new std::string(yytext); return STATIC; }
+"struct"		    { yylval.string = new std::string(yytext); return STRUCT; }
+"switch"	    	{ yylval.string = new std::string(yytext); return SWITCH; }
+"typedef"		    { yylval.string = new std::string(yytext); return TYPEDEF; }
+"union"			    { yylval.string = new std::string(yytext); return UNION; }
+"unsigned"		    { yylval.string = new std::string(yytext); return UNSIGNED; }
+"void"			    { yylval.string = new std::string(yytext); return VOID; }
+"volatile"		    { yylval.string = new std::string(yytext); return VOLATILE; }
+"while"			    { yylval.string = new std::string(yytext); return WHILE; }
 
+0[xX]{H}+{IS}?		{ yylval.string = new std::string(yytext); return CONSTANT; }
+0{D}+{IS}?		    { yylval.string = new std::string(yytext); return CONSTANT; }
+{D}+{IS}?		    { yylval.string = new std::string(yytext); return CONSTANT; }
+L?'(\\.|[^\\'])+'	{ yylval.string = new std::string(yytext); return CONSTANT; }
 
+{D}+[{E}{FS}]?		{ yylval.string = new std::string(yytext); return CONSTANT; }
+{D}*"."{D}+({E})?{FS}?	{ yylval.string = new std::string(yytext); return CONSTANT; }
+{D}+"."{D}*({E})?{FS}?	{ yylval.string = new std::string(yytext); return CONSTANT; }
 
-"auto"			{  return(AUTO); }
-"break"			{  return(BREAK); }
-"case"			{  return(CASE); }
-"char"			{  return(CHAR); }
-"const"			{  return(CONST); }
-"continue"		{  return(CONTINUE); }
-"default"		{  return(DEFAULT); }
-"do"			{  return(DO); }
-"double"		{  return(DOUBLE); }
-"else"			{  return(ELSE); }
-"enum"			{  return(ENUM); }
-"extern"		{  return(EXTERN); }
-"float"			{  return(FLOAT); }
-"for"			{  return(FOR); }
-"goto"			{  return(GOTO); }
-"if"			{  return(IF); }
-"int"			{  fprintf(stderr, "int keyword: %s\n", yytext); yylval.string = new std::string(yytext); return INT;  }
-"long"			{  return(LONG); }
-"register"		{  return(REGISTER); }
-"return"		{  return(RETURN); }
-"short"			{  return(SHORT); }
-"signed"		{  return(SIGNED); }
-"sizeof"		{  return(SIZEOF); }
-"static"		{  return(STATIC); }
-"struct"		{  return(STRUCT); }
-"switch"		{  return(SWITCH); }
-"typedef"		{  return(TYPEDEF); }
-"union"			{  return(UNION); }
-"unsigned"		{  return(UNSIGNED); }
-"void"			{  return(VOID); }
-"volatile"		{  return(VOLATILE); }
-"while"			{  return(WHILE); }
+L?\"(\\.|[^\\"])*\"	{ return(STRING_LITERAL); }
 
-{D}+[{E}{FS}]?		{ fprintf(stderr, "constant: %s\n", yytext); yylval.string = new std::string(yytext); return CONSTANT; }
+"..."		    	{ yylval.string = new std::string(yytext); return(ELLIPSIS); }
+">>="		    	{ yylval.string = new std::string(yytext); return(RIGHT_ASSIGN); }
+"<<="		    	{ yylval.string = new std::string(yytext); return(LEFT_ASSIGN); }
+"+="	    		{ yylval.string = new std::string(yytext); return(ADD_ASSIGN); }
+"-="		    	{ yylval.string = new std::string(yytext); return(SUB_ASSIGN); }
+"*="		    	{ yylval.string = new std::string(yytext); return(MUL_ASSIGN); }
+"/="	    		{ yylval.string = new std::string(yytext); return(DIV_ASSIGN); }
+"%="		    	{ yylval.string = new std::string(yytext); return(MOD_ASSIGN); }
+"&="	    		{ yylval.string = new std::string(yytext); return(AND_ASSIGN); }
+"^="		    	{ yylval.string = new std::string(yytext); return(XOR_ASSIGN); }
+"|="		    	{ yylval.string = new std::string(yytext); return(OR_ASSIGN); }
+">>"		    	{ yylval.string = new std::string(yytext); return(RIGHT_OP); }
+"<<"		    	{ yylval.string = new std::string(yytext); return(LEFT_OP); }
+"++"		    	{ yylval.string = new std::string(yytext); return(INC_OP); }
+"--"		    	{ yylval.string = new std::string(yytext); return(DEC_OP); }
+"->"		    	{ yylval.string = new std::string(yytext); return(PTR_OP); }
+"&&"		    	{ yylval.string = new std::string(yytext); return(AND_OP); }
+"||"	     		{ yylval.string = new std::string(yytext); return(OR_OP); }
+"<="	    		{ yylval.string = new std::string(yytext); return(LE_OP); }
+">="	    		{ yylval.string = new std::string(yytext); return(GE_OP); }
+"=="	    		{ yylval.string = new std::string(yytext); return(EQ_OP); }
+"!="	    		{ yylval.string = new std::string(yytext); return(NE_OP); }
+";"		        	{  return(';'); }
+("{"|"<%")	    	{  return('{'); }
+("}"|"%>")	    	{  return('}'); }
+","		    	    {  return(','); }
+":"		    	    {  return(':'); }
+"="		           	{  return('='); }
+"("		        	{  return('('); }
+")"		        	{  return(')'); }
+("["|"<:")	    	{  return('['); }
+("]"|":>")	    	{  return(']'); }
+"."			        {  return('.'); }
+"&"		        	{  return('&'); }
+"!"			        {  return('!'); }
+"~"			        {  return('~'); }
+"-"			        {  return('-'); }
+"+"		        	{  return('+'); }
+"*"		        	{  return('*'); }
+"/"		        	{  return('/'); }
+"%"		        	{  return('%'); }
+"<"		        	{  return('<'); }
+">"	        		{  return('>'); }
+"^"		        	{  return('^'); }
+"|"	        		{  return('|'); }
+"?"		        	{  return('?'); }
 
-L?\"(\\.|[^\\"])*\"	{  return(STRING_LITERAL); }
+{L}+                { yylval.string = new std::string(yytext); return IDENTIFIER; }
 
-"..."			{  return(ELLIPSIS); }
-">>="			{  return(RIGHT_ASSIGN); }
-"<<="			{  return(LEFT_ASSIGN); }
-"+="			{  return(ADD_ASSIGN); }
-"-="			{  return(SUB_ASSIGN); }
-"*="			{  return(MUL_ASSIGN); }
-"/="			{  return(DIV_ASSIGN); }
-"%="			{  return(MOD_ASSIGN); }
-"&="			{  return(AND_ASSIGN); }
-"^="			{  return(XOR_ASSIGN); }
-"|="			{  return(OR_ASSIGN); }
-">>"			{  return(RIGHT_OP); }
-"<<"			{  return(LEFT_OP); }
-"++"			{  return(INC_OP); }
-"--"			{  return(DEC_OP); }
-"->"			{  return(PTR_OP); }
-"&&"			{  return(AND_OP); }
-"||"			{  return(OR_OP); }
-"<="			{  return(LE_OP); }
-">="			{  return(GE_OP); }
-"=="			{  return(EQ_OP); }
-"!="			{  return(NE_OP); }
-";"			{  return(';'); }
-("{"|"<%")		{  return('{'); }
-("}"|"%>")		{  return('}'); }
-","			{  return(','); }
-":"			{  return(':'); }
-"="			{  return('='); }
-"("			{  return('('); }
-")"			{  return(')'); }
-("["|"<:")		{  return('['); }
-("]"|":>")		{  return(']'); }
-"."			{  return('.'); }
-"&"			{  return('&'); }
-"!"			{  return('!'); }
-"~"			{  return('~'); }
-"-"			{  return('-'); }
-"+"			{  return('+'); }
-"*"			{  return('*'); }
-"/"			{  return('/'); }
-"%"			{  return('%'); }
-"<"			{  return('<'); }
-">"			{  return('>'); }
-"^"			{  return('^'); }
-"|"			{  return('|'); }
-"?"			{  return('?'); }
-
-{L}+            { fprintf(stderr, "variable: %s\n", yytext); yylval.string = new std::string(yytext); return IDENTIFIER; }
-
-[ \t\v\n\f]		{  }
-.			{ fprintf(stderr, "Invalid token: %s\n", yytext); exit(1); }
+[ \t\v\n\f]		    {}
+.			        { fprintf(stderr, "Invalid token: %s\n", yytext); exit(1); }
 
 %%
 
