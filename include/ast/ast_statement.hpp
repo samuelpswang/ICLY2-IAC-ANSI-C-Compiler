@@ -8,6 +8,25 @@
 
 #include "ast_node.hpp"
 
+class Return: public Node {
+public:
+    Return(const Node* expr) {
+        this->type = "return";
+        this->name = "";
+        this->val = "";
+        this->exprs = { expr };
+        this->stats = {};
+    }
+    void print(std::ostream& os, const std::string& indent) const {
+        os << indent << "return ";
+        this->exprs[0]->print(os, "");
+        os << ";";
+    }
+    void compile(std::ostream& os, const std::string& dest) const {
+        os << "return: not implemented" << std::endl;
+    }
+};
+
 class Statement: public Node {
 public:
     Statement(const Node* stat) {
