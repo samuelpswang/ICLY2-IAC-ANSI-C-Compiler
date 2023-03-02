@@ -44,7 +44,7 @@ public:
         os << indent << "}" << std::endl;
     }
     void compile(std::ostream& os, const std::string& dest) const {
-        os << "ifelse: not implemented" << std::endl;
+        os << "if: not implemented" << std::endl;
     }
 };
 
