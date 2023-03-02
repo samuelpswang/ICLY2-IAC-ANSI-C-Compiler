@@ -28,14 +28,14 @@ public:
 
 class StatementList: public Node {
 public:
-    StatementList(const Statement* stat) {
+    StatementList(const Node* stat) {
         this->type = "";
         this->name = "";
         this->val = "";
         this->exprs = {};
         this->stats = { stat };
     }
-    StatementList(const StatementList* list, const Statement* stat) {
+    StatementList(const Node* list, const Node* stat) {
         this->type = "";
         this->name = "";
         this->val = "";

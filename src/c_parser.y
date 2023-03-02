@@ -25,27 +25,34 @@ void yyerror(const char*);
 
 %token CASE DEFAULT IF ELSE SWITCH WHILE DO FOR GOTO CONTINUE BREAK RETURN
 
-%type <node> expression statement const
-%type <string> CONSTANT IDENTIFIER
+%type <node> expression statement_list statement const function
+%type <string> CONSTANT IDENTIFIER INT
 
 %start root
 
 %%
 
-root : statement { 
-        g_root = new Statement($1);
+root : function { 
+        g_root =$1;
     }
     ;
 
+function
+    : INT IDENTIFIER '(' ')' '{' statement_list '}' { $$ = new Function(*$1, *$2, $6); }
+    ;
+
+statement_list
+    : statement { $$ = new StatementList($1); }
+    | statement_list statement { $$ = new StatementList($1, $2); }
+    ;
+
 statement 
-    : expression '=' const ';' {
-        $$ = new AssignOp($1, $3);
-    }
+    : expression '=' const ';' { $$ = new Statement(new AssignOp($1, $3));}
     ;
 
 expression 
     : INT IDENTIFIER {
-        $$ = new IntExpr(*$2)
+        $$ = new IntExpr(*$2);
     }
     ;
 

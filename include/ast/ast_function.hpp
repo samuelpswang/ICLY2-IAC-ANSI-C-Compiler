@@ -10,7 +10,7 @@
 
 class Function: public Node {
 public:
-    Function(const std::string& type, const std::string& name, Node* stat) { // without arguments
+    Function(const std::string& type, const std::string& name, const Node* stat) { // without arguments
         this->type = type;
         this->name = name;
         this->val = "";
