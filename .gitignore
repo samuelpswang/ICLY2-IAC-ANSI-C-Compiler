@@ -17,3 +17,6 @@ src/*.o
 
 # compiled code
 bin/
+
+# output
+*.out.*
