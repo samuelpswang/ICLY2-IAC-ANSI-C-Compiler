@@ -28,4 +28,6 @@ public:
     }
 };
 
+// add arithmetic and logical operators here
+
 #endif
