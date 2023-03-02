@@ -11,7 +11,7 @@
 class IfElse: public Node {
 public:
     IfElse(const Node* expression, const Node* truebranch, const Node* falsebranch) {
-        this->type = "if";
+        this->type = "ifelse";
         this->name = "";
         this->val = "";
         this->exprs = { expression };
