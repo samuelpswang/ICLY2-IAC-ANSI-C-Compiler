@@ -64,7 +64,7 @@ L?'(\\.|[^\\'])+'	{ yylval.string = new std::string(yytext); yyprint(yytext, "co
 {D}*"."{D}+({E})?{FS}?	{ yylval.string = new std::string(yytext); yyprint(yytext, "constant"); return CONSTANT; }
 {D}+"."{D}*({E})?{FS}?	{ yylval.string = new std::string(yytext); yyprint(yytext, "constant"); return CONSTANT; }
 
-L?\"(\\.|[^\\"])*\"	{ return(STRING_LITERAL); }
+L?\"(\\.|[^\\"])*\"	{ yylval.string = new std::string(yytext); yyprint(yytext, "string literal"); return(STRING_LITERAL); }
 
 "..."		    	{ yylval.string = new std::string(yytext); yyprint(yytext, "operator"); return ELLIPSIS; }
 ">>="		    	{ yylval.string = new std::string(yytext); yyprint(yytext, "operator"); return RIGHT_ASSIGN; }
@@ -113,10 +113,10 @@ L?\"(\\.|[^\\"])*\"	{ return(STRING_LITERAL); }
 "|"	        		{ yyprint(yytext, "symbol"); return '|'; }
 "?"		        	{ yyprint(yytext, "symbol"); return '?'; }
 
-{L}+                { yylval.string = new std::string(yytext); yyprint(yytext, "keyword"); return IDENTIFIER; }
+{L}+                { yylval.string = new std::string(yytext); yyprint(yytext, "identifier"); return IDENTIFIER; }
 
 [ \t\v\n\f]		    {}
-.			        { fprintf(stderr, "Invalid token: %s\n", yytext); exit(1); }
+.			        { yyprint(yytext, "invalid token"); exit(1); }
 
 %%
 
