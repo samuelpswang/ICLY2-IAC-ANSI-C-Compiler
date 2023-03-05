@@ -1,16 +1,18 @@
-%{
+%code requires{
 #include "ast.hpp"
 #include <cassert>
+#include "ast_list.hpp"
 
 extern const Node* g_root;
 
 int yylex(void);
 void yyerror(const char*);
-%}
+}
 
 %union {
     const Node* node;
 	std::string* string;
+    ListPtr list;
 }
 
 %token IDENTIFIER CONSTANT STRING_LITERAL SIZEOF
@@ -25,41 +27,205 @@ void yyerror(const char*);
 
 %token CASE DEFAULT IF ELSE SWITCH WHILE DO FOR GOTO CONTINUE BREAK RETURN
 
-%type <node> expression statement_list statement const function
-%type <string> CONSTANT IDENTIFIER INT
+%type <node> expression statement_list statement function declaration init_declarator constant_expression NUMBER primary_expression
+%type <node> unary_expression postfix_expression multiplicative_expression additive_expression shift_expression relational_expression
+%type <node> equality_expression and_expression exclusive_or_expression inclusive_or_expression logical_and_expression logical_or_expression
+%type <node> conditional_expression assignment_expression selection_statement iteration_statement
+%type <string> CONSTANT IDENTIFIER INT type_specifier direct_declarator INC_OP DEC_OP declarator VOID DOUBLE LEFT_OP RIGHT_OP
+%type <string> LE_OP GE_OP IF ELSE WHILE DO unary_operator
+%type <list> function_list
 
 %start root
 
 %%
 
-root : function { 
-        g_root =$1;
+root : function_list { 
+        g_root = new Root(*$1);
     }
     ;
 
+
+type_specifier
+    : INT { $$ = new std::string("int"); }
+    | VOID { $$ =  new std::string("void"); }
+    | DOUBLE { $$ = new std::string ("double");}
+
+
+primary_expression
+	: IDENTIFIER { $$ = new Expr("",*$1);}
+	| NUMBER
+	| '(' expression ')' {$$ = $2;}
+	;
+
+
+postfix_expression
+	: primary_expression { $$ = $1; }
+    | postfix_expression INC_OP { $$ = new PostfixUnaryIncDecOp(*$2,$1); }
+    | postfix_expression DEC_OP { $$ = new PostfixUnaryIncDecOp(*$2,$1); }
+
+unary_expression
+	: postfix_expression { $$ = $1;}
+	| INC_OP unary_expression { $$ = new PrefixUnaryIncDecOp(*$1,$2); }
+	| DEC_OP unary_expression { $$ = new PrefixUnaryIncDecOp(*$1,$2); }
+	| unary_operator unary_expression { if(*$1 == "-"){
+                                                    $$ = new NegOp($2);
+                                                } }
+	;
+
+unary_operator
+	: '&' { $$ = new std::string("&"); }
+	| '*' { $$ = new std::string("*"); }
+	| '+' { $$ = new std::string("+"); }
+	| '-' { $$ = new std::string("-"); }
+	| '~' { $$ = new std::string("~"); }
+	| '!' { $$ = new std::string("!"); }
+	;
+
+
+
+multiplicative_expression
+	: unary_expression { $$ = $1 ;}
+	| multiplicative_expression '*' primary_expression  { $$ = new MultOp($1,$3); }
+	| multiplicative_expression '/' primary_expression  { $$ = new DivOp($1,$3); }
+	| multiplicative_expression '%' primary_expression  { $$ = new ModOp($1,$3); }
+	;
+
+additive_expression
+	: multiplicative_expression { $$ = $1;}
+	| additive_expression '+' multiplicative_expression { $$ = new AddOp($1,$3); }
+	| additive_expression '-' multiplicative_expression { $$ = new SubOp($1,$3); }
+	;
+
+shift_expression
+	: additive_expression { $$ = $1 ;}
+	| shift_expression LEFT_OP additive_expression { $$ = new LeftShift($1,$3) ;}
+	| shift_expression RIGHT_OP additive_expression { $$ = new RightShift($1,$3) ;}
+	;
+
+relational_expression
+	: shift_expression { $$ = $1; }
+	| relational_expression '<' shift_expression { $$ = new LessThanOp($1,$3);}
+	| relational_expression '>' shift_expression { $$ = new MoreThanOp($1,$3);}
+	| relational_expression LE_OP shift_expression { $$ = new LessEqual($1,$3); }
+	| relational_expression GE_OP shift_expression { $$ = new MoreEqual($1,$3); }
+	;
+
+equality_expression
+	: relational_expression { $$ = $1 ;}
+	| equality_expression EQ_OP relational_expression { $$ = new EqualTo($1,$3); }
+	| equality_expression NE_OP relational_expression { $$ = new NotEqualTo($1,$3); }
+	;
+
+and_expression
+	: equality_expression { $$ = $1 ;}
+	| and_expression '&' equality_expression { $$ = new BitwiseAnd($1,$3); }
+	;
+
+exclusive_or_expression
+	: and_expression { $$ = $1 ;}
+	| exclusive_or_expression '^' and_expression { $$ = new BitwiseXor($1,$3); }
+	;
+
+inclusive_or_expression
+	: exclusive_or_expression { $$ = $1 ;}
+	| inclusive_or_expression '|' exclusive_or_expression { $$ = new BitwiseOr($1,$3); }
+	;
+
+logical_and_expression
+	: inclusive_or_expression { $$ = $1 ; }
+	| logical_and_expression AND_OP inclusive_or_expression { $$ = new LogicalAnd($1,$3); }
+	;
+
+logical_or_expression
+	: logical_and_expression { $$ = $1 ;}
+	| logical_or_expression OR_OP logical_and_expression { $$ = new LogicalOr($1,$3); }
+	;
+
+conditional_expression
+	: logical_or_expression { $$ = $1 ;}
+	;
+
+assignment_expression
+	: conditional_expression { $$ = $1 ;}
+	| unary_expression assignment_operator assignment_expression  { $$ = new AssignOp($1,$3);}
+	;
+
+expression
+	: assignment_expression { $$ = $1 ;}
+	| expression ',' assignment_expression
+	;
+
+constant_expression
+	: conditional_expression { $$ = $1 ;}
+	;
+
+assignment_operator
+	: '='
+	| MUL_ASSIGN
+	| DIV_ASSIGN
+	| MOD_ASSIGN
+	| ADD_ASSIGN
+	| SUB_ASSIGN
+	| LEFT_ASSIGN
+	| RIGHT_ASSIGN
+	| AND_ASSIGN
+	| XOR_ASSIGN
+	| OR_ASSIGN
+	;
+
+declarator
+	: direct_declarator { $$ = $1 ;}
+	;
+
+direct_declarator
+	: IDENTIFIER { $$ = $1 ;}
+	| '(' declarator ')' {$$ = $2;}
+	| direct_declarator '(' ')' { $$ = $1 ;}
+	;
+
 function
-    : INT IDENTIFIER '(' ')' '{' statement_list '}' { $$ = new Function(*$1, *$2, $6); }
+    : type_specifier declarator '{' statement_list '}' { $$ = new Function(*$1, *$2, $4); }
     ;
+
+function_list
+    : function { $$ = makeList($1); }
+    | function_list function { $$ = appendList($1,$2); }
 
 statement_list
     : statement { $$ = new StatementList($1); }
     | statement_list statement { $$ = new StatementList($1, $2); }
     ;
 
-statement 
-    : expression '=' const ';' { $$ = new Statement(new AssignOp($1, $3));}
+statement
+	: declaration ';' { $$ = new Statement("declaration",$1) ;}
+    | init_declarator ';' { $$ = new Statement("init_declarator",$1) ;}
+    | expression ';' { $$ = new Statement("expression",$1) ;}
+    | selection_statement { $$ = new Statement("",$1); }
+    | iteration_statement { $$ = new Statement("",$1); }
+	;
+
+
+
+declaration
+    : type_specifier declarator  { $$ = new Expr(*$1,*$2); }
     ;
 
-expression 
-    : INT IDENTIFIER {
-        $$ = new IntExpr(*$2);
-    }
-    ;
+init_declarator
+    : type_specifier direct_declarator assignment_operator constant_expression { $$ = new AssignOp(new Expr(*$1,*$2),$4); }
 
-const 
-    : CONSTANT {  
-        $$ = new Int(*$1); 
-    }
+
+selection_statement
+	: IF '(' conditional_expression ')' '{' statement_list '}' { $$ = new If($3,$6); }
+	| IF '(' conditional_expression ')' '{'statement_list '}' ELSE '{'statement'}' { $$ = new IfElse($3,$6,$10); }
+	;
+
+iteration_statement
+	: WHILE '(' conditional_expression ')' '{'statement_list '}' { $$ = new While($3,$6); }
+	| DO '{'statement_list '}' WHILE '(' conditional_expression ')' { $$ = new While($7,$3); }
+	;
+
+NUMBER 
+    : CONSTANT {  $$ = new Int(*$1); }
     ;
 
 %%
