@@ -14,6 +14,7 @@
 #include "ast/ast_operator.hpp"
 #include "ast/ast_statement.hpp"
 #include "ast/ast_value.hpp"
+#include "ast/ast_root.hpp"
 
 extern const Node* parse_ast();
 
