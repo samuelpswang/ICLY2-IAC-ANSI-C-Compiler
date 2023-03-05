@@ -29,16 +29,23 @@ public:
 
 class Statement: public Node {
 public:
-    Statement(const Node* stat) {
-        this->type = "";
+    Statement(const std::string& type,const Node* stat) {
+        this->type = type;
         this->name = "";
         this->val = "";
         this->exprs = {};
         this->stats = { stat };
     }
     void print(std::ostream& os, const std::string& indent) const {
-        this->stats[0]->print(os, indent);
-        os << ";" << std::endl;
+        if((this->type) == "expression" || (this->type) == "declaration" || (this->type) == "init_declarator"){
+            this->stats[0]->print(os, indent);
+            os << ";" << std::endl;
+        }
+
+        else{
+            this->stats[0]->print(os, indent);
+            os<<std::endl;
+        }
     }
     void compile(std::ostream& os, const std::string& indent) const {
         os << "statement: not implemented" << std::endl;

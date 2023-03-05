@@ -39,9 +39,9 @@ public:
         this->stats = { truebranch, falsebranch };
     }
     void print(std::ostream& os, const std::string& indent) const {
-        os << indent << "if (";
+        os << indent << "if ";
         this->exprs[0]->print(os, "");
-        os << ") {" << std::endl;
+        os << " {" << std::endl;
         this->stats[0]->print(os, indent+"\t");
         os << indent << "} else {" << std::endl;
         this->stats[1]->print(os, indent+"\t");
@@ -62,11 +62,11 @@ public:
         this->stats = { branch };
     }
     void print(std::ostream& os, const std::string& indent) const {
-        os << indent << "while (";
+        os << indent << "while ";
         this->exprs[0]->print(os, "");
-        os << ") {" << std::endl;
+        os << " {" << std::endl;
         this->stats[0]->print(os, indent+"\t");
-        os << "}" << std::endl;
+        os<<indent<< "}" << std::endl;
     }
     void compile(std::ostream& os, const std::string& dest) const {
         os << "while: not implemented" << std::endl;

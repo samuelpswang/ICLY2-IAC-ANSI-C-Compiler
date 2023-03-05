@@ -8,17 +8,23 @@
 
 #include "ast_node.hpp"
 
-class IntExpr: public Node {
+class Expr: public Node {
 public:
-    IntExpr(const std::string& name) {
-        this->type = "int";
+    Expr(const std::string& type,const std::string& name) {
+        this->type = type;
         this->name = name;
         this->val = "";
         this->exprs = {};
         this->stats = {};
     }
     void print(std::ostream& os, const std::string& indent) const {
-        os << indent << this->type << " " << this->name;
+        if(this->type != ""){
+            os << indent << this->type << " " << this->name;
+        }
+
+        else{
+            os << indent << this->type << this->name;
+        }
     }
     void compile(std::ostream& os, const std::string& dest) const {
         os << "add " << this->name << " zero zero" << std::endl;
