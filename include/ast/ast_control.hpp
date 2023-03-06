@@ -25,7 +25,12 @@ public:
         os << indent << "}" << std::endl;
     }
     void compile(std::ostream& os, const std::string& dest) const {
-        os << "if: not implemented" << std::endl;
+        std::string cond_reg = make_name("if_cond");
+        std::string endi_lbl = make_name("if_endif");
+        this->exprs[0]->compile(os, cond_reg);
+        os << "beq " << cond_reg << " zero " << endi_lbl << std::endl;
+        this->stats[0]->compile(os, dest);
+        os << ":" << endi_lbl << std::endl;
     }
 };
 
@@ -48,7 +53,16 @@ public:
         os << indent << "}" << std::endl;
     }
     void compile(std::ostream& os, const std::string& dest) const {
-        os << "ifelse: not implemented" << std::endl;
+        std::string cond_reg = make_name("ifelse_cond");
+        std::string else_lbl = make_name("ifelse_else");
+        std::string endi_lbl = make_name("ifelse_endif");
+        this->exprs[0]->compile(os, cond_reg);
+        os << "beq " << cond_reg << " zero " << else_lbl << std::endl;
+        this->stats[0]->compile(os, dest);
+        os << "beq zero zero " << endi_lbl << std::endl;
+        os << ":" << else_lbl << std::endl;
+        this->stats[1]->compile(os, dest);
+        os << ":" << endi_lbl << std::endl;
     }
 };
 
@@ -69,7 +83,15 @@ public:
         os<<indent<< "}" << std::endl;
     }
     void compile(std::ostream& os, const std::string& dest) const {
-        os << "while: not implemented" << std::endl;
+        std::string cond_reg = make_name("while_cond");
+        std::string strt_lbl = make_name("while_start");
+        std::string endl_lbl = make_name("while_end");
+        os << ":" << strt_lbl << std::endl;
+        this->exprs[0]->compile(os, cond_reg);
+        os << "beq " << cond_reg << " zero " << endl_lbl << std::endl;
+        this->stats[0]->compile(os, dest);
+        os << "beq zero zero " << strt_lbl << std::endl;
+        os << ":" << endl_lbl << std::endl;
     }
 };
 

@@ -6,6 +6,11 @@
 #include <vector>
 #include <map>
 
+static int unique_num = -1;
+static const std::string& make_name(const std::string& base) {
+    return "_" + base + std::to_string(unique_num);
+}
+
 class Node {
 public:
     virtual ~Node() {}

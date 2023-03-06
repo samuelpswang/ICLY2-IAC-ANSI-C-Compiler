@@ -24,15 +24,15 @@ public:
         this->stats[0]->print(os, "");
     }
     void compile(std::ostream& os, const std::string& dest) const {
-        os << "assignop: not implemented" << std::endl;
+        this->exprs[0]->compile(os, dest);
+        this->stats[0]->compile(os, dest);
     }
 };
 
 
 class PostfixUnaryIncDecOp : public Node {
-
 public:
-    PostfixUnaryIncDecOp(const std::string& incdecop, const Node* unary_expression){
+    PostfixUnaryIncDecOp(const std::string& incdecop, const Node* unary_expression) {
         this->type = "";
         this->name = incdecop;
         this->val = "";
@@ -47,16 +47,14 @@ public:
     }
 
     void compile(std::ostream& os, const std::string& dest) const {
-        os << "postfixunaryincop: not implemented" << std::endl;
+        throw std::runtime_error("ImplementationError: PostfixUnaryIncDecOp");
     }
-
 };
 
 
 class PrefixUnaryIncDecOp : public Node {
-
 public:
-    PrefixUnaryIncDecOp(const std::string& incdecop, const Node* unary_expression){
+    PrefixUnaryIncDecOp(const std::string& incdecop, const Node* unary_expression) {
         this->type = "";
         this->name = incdecop;
         this->val = "";
@@ -72,14 +70,12 @@ public:
     }
 
     void compile(std::ostream& os, const std::string& dest) const {
-        os << "prefixunaryincop: not implemented" << std::endl;
+        throw std::runtime_error("ImplementationError: PostfixUnaryIncDecOp");
     }
-
 };
 
 
 class MultOp : public Node{
-
 public:
     MultOp(const Node* left, const Node* right){
         this->type = "";
@@ -98,13 +94,11 @@ public:
     }
 
     void compile(std::ostream& os, const std::string& dest) const{
-        os<<"multop: Not implemented"<<std::endl;
+        // TODO:
     }
-
 };
 
 class DivOp : public Node{
-
 public:
     DivOp(const Node* left, const Node* right){
         this->type = "";
@@ -123,13 +117,12 @@ public:
     }
 
     void compile(std::ostream& os, const std::string& dest) const{
-        os<<"multop: Not implemented"<<std::endl;
+        // TODO:
     }
 
 };
 
-class ModOp : public Node{
-
+class ModOp : public Node {
 public:
     ModOp(const Node* left, const Node* right){
         this->type = "";
@@ -153,9 +146,7 @@ public:
 
 };
 
-
 class AddOp : public Node{
-
 public:
     AddOp(const Node* left, const Node* right){
         this->type = "";
@@ -174,13 +165,11 @@ public:
     }
 
     void compile(std::ostream& os, const std::string& dest) const{
-        os<<"addop: Not implemented"<<std::endl;
+        std::string left_reg;
     }
-
 };
 
 class SubOp : public Node{
-
 public:
     SubOp(const Node* left, const Node* right){
         this->type = "";
@@ -189,7 +178,6 @@ public:
         this->exprs = { left, right };
         this->stats = {};
     }
-    
     void print(std::ostream& os, const std::string& indent) const{
         os<<indent<<"(";
         this->exprs[0]->print(os,"");
@@ -197,11 +185,9 @@ public:
         this->exprs[1]->print(os,"");
         os<<")";
     }
-
     void compile(std::ostream& os, const std::string& dest) const{
         os<<"subop: Not implemented"<<std::endl;
     }
-
 };
 
 class LeftShift : public Node{
@@ -561,7 +547,7 @@ public:
     }
 
     void compile(std::ostream& os, const std::string& dst)const{
-        os<<"negop: not implemented"<<std::endl;
+        os<<"negpointerop: not implemented"<<std::endl;
     }
 };
 

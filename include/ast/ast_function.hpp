@@ -23,7 +23,7 @@ public:
         os << indent << "}" << std::endl;
     }
     void compile(std::ostream& os, const std::string& dest) const {
-        os << "funtion: not implemented" << std::endl;
+        this->stats[0]->compile(os, dest);
     }
 };
 

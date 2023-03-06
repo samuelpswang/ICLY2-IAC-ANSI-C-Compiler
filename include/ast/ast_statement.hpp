@@ -23,7 +23,7 @@ public:
         os << ";";
     }
     void compile(std::ostream& os, const std::string& dest) const {
-        os << "return: not implemented" << std::endl;
+        this->exprs[0]->compile(os, dest);
     }
 };
 
@@ -47,8 +47,8 @@ public:
             os<<std::endl;
         }
     }
-    void compile(std::ostream& os, const std::string& indent) const {
-        os << "statement: not implemented" << std::endl;
+    void compile(std::ostream& os, const std::string& dest) const {
+        this->stats[0]->compile(os, dest);
     }
 };
 
@@ -77,7 +77,12 @@ public:
         }
     }
     void compile(std::ostream& os, const std::string& dest) const {
-        os << "statementlist: not implemented";
+        if (this->stats.size() == 1) {
+            this->stats[0]->compile(os, dest);
+        } else {
+            this->stats[0]->compile(os, dest);
+            this->stats[1]->compile(os, dest);
+        }
     }
 };
 
