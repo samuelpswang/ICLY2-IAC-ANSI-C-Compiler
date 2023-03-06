@@ -30,9 +30,9 @@ void yyerror(const char*);
 %type <node> expression statement_list statement function declaration init_declarator constant_expression NUMBER primary_expression
 %type <node> unary_expression postfix_expression multiplicative_expression additive_expression shift_expression relational_expression
 %type <node> equality_expression and_expression exclusive_or_expression inclusive_or_expression logical_and_expression logical_or_expression
-%type <node> conditional_expression assignment_expression selection_statement iteration_statement
+%type <node> conditional_expression assignment_expression selection_statement iteration_statement jump_statement
 %type <string> CONSTANT IDENTIFIER INT type_specifier direct_declarator INC_OP DEC_OP declarator VOID DOUBLE LEFT_OP RIGHT_OP
-%type <string> LE_OP GE_OP IF ELSE WHILE DO unary_operator
+%type <string> LE_OP GE_OP IF ELSE WHILE DO unary_operator RETURN
 %type <list> function_list
 
 %start root
@@ -62,14 +62,20 @@ postfix_expression
 	: primary_expression { $$ = $1; }
     | postfix_expression INC_OP { $$ = new PostfixUnaryIncDecOp(*$2,$1); }
     | postfix_expression DEC_OP { $$ = new PostfixUnaryIncDecOp(*$2,$1); }
+    | postfix_expression '(' ')'
 
 unary_expression
 	: postfix_expression { $$ = $1;}
 	| INC_OP unary_expression { $$ = new PrefixUnaryIncDecOp(*$1,$2); }
 	| DEC_OP unary_expression { $$ = new PrefixUnaryIncDecOp(*$1,$2); }
 	| unary_operator unary_expression { if(*$1 == "-"){
-                                                    $$ = new NegOp($2);
-                                                } }
+                                            $$ = new NegOp($2);
+                                        } 
+
+                                        
+                                    
+                                    
+                                    }
 	;
 
 unary_operator
@@ -202,6 +208,8 @@ statement
     | expression ';' { $$ = new Statement("expression",$1) ;}
     | selection_statement { $$ = new Statement("",$1); }
     | iteration_statement { $$ = new Statement("",$1); }
+    | jump_statement { $$ = new Statement("",$1); }
+    | function  { $$ = new Statement("",$1); }
 	;
 
 
@@ -222,6 +230,10 @@ selection_statement
 iteration_statement
 	: WHILE '(' conditional_expression ')' '{'statement_list '}' { $$ = new While($3,$6); }
 	| DO '{'statement_list '}' WHILE '(' conditional_expression ')' { $$ = new While($7,$3); }
+	;
+
+jump_statement
+	: RETURN expression ';' { $$ = new Return($2); }
 	;
 
 NUMBER 

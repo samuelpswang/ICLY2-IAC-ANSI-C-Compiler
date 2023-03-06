@@ -1,5 +1,6 @@
 int ref(){
     int a = 5;
+    return a;
 }
 
 
@@ -16,6 +17,7 @@ int main(){
     int i = a&&b;
     int j = a||b;
     a = b;
+    a = ref();
 
     if(a <b ){
         a = 5;

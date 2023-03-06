@@ -561,7 +561,7 @@ public:
     }
 
     void compile(std::ostream& os, const std::string& dst)const{
-        os<<"negpointerop: not implemented"<<std::endl;
+        os<<"negop: not implemented"<<std::endl;
     }
 };
 
