@@ -9,10 +9,10 @@ jobs:
   build:
     name: Auto-build Test
     runs-on: ubuntu-latest
-  steps:
-    - name: Checkout repo
-      uses: actions/checkout@v2
-    - name: Build bin/prettyprint
-      run: make clean && make bin/prettyprint
-    - name: Build bin/compiler
-      run: make clean && make bin/compiler
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v2
+      - name: Build bin/prettyprint
+        run: make clean && make bin/prettyprint
+      - name: Build bin/compiler
+        run: make clean && make bin/compiler
