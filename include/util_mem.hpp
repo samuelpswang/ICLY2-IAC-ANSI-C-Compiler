@@ -27,6 +27,10 @@ private:
     bool have(regtype);
     // returns the next available address of a specific type
     int next(regtype);
+    
+    // Operator
+    // overload <<
+    friend std::ostream& operator<<(std::ostream& os, const MemoryContext& mc);
 
 public:
     // Basics
