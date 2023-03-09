@@ -20,7 +20,7 @@ private:
     // current function
     std::string curr_func;
     // unique number for creating names
-    long unique_num;
+    unsigned curr_unique_num;
 
     // Utility Functions
     // returns if have register of specific type
@@ -30,7 +30,7 @@ private:
     
     // Operator
     // overload <<
-    friend std::ostream& operator<<(std::ostream& os, const MemoryContext& mc);
+    friend std::ostream& operator<<(std::ostream&, const MemoryContext&);
 
 public:
     // Basics
@@ -39,27 +39,27 @@ public:
 
     // Accessors
     // returns symbol table name when added function to symtable and curr_offset
-    std::string& add_func(const std::string& func_name);
+    const std::string& add_func(const std::string&);
     // returns symbol table name when switched to function space
-    bool use_func(const std::string& func_name);
+    bool use_func(const std::string&);
     // returns true when added symbol to symbol table, variables are stored as is
-    std::string& add_symbol(const std::string& symbol_name, bool variable);
+    const std::string& add_symbol(const std::string&, bool);
     // returns true when successfully marked symbol as needed to store to mem
-    bool use_symbol(const std::string& symbol_name);
+    bool use_symbol(const std::string&);
     // returns the address offset of a symbol
-    int get_symbol(const std::string& symbol_name);
+    int get_symbol(const std::string&);
 
     // Assembly Generation
     // return initialized register after writing asm to set reg to 0 and linked to symtable
-    std::string& asm_give_reg(std::ostream& os, const std::string& name, regtype);
+    const std::string& asm_give_reg(std::ostream&, const std::string&, regtype);
     // return loaded register after writing asm to load symbol into regfile and linked to symtable
-    std::string& asm_load_symbol(std::ostream& os, const std::string& name, regtype); 
+    const std::string& asm_load_symbol(std::ostream&, const std::string&, regtype); 
     // return true after writing asm to store symbol to memory
-    bool asm_store_symbol(std::ostream& os, const std::string& name);
+    bool asm_store_symbol(std::ostream&, const std::string&);
     // return true after storing all symbols marked as dirty to memory
-    bool asm_clean_up(std::ostream& os);
+    bool asm_clean_up(std::ostream&);
     // return true after storing all registers to memory
-    bool asm_spill_all(std::ostream& os, regtype);
+    bool asm_spill_all(std::ostream&, regtype);
 };
 
 #endif
