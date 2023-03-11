@@ -3,6 +3,7 @@
 #include <unistd.h>
 
 #include "cli.hpp"
+#include "ast.hpp"
 
 void compile(std::ostream &w)
 {
@@ -38,7 +39,8 @@ int main(int argc, char** argv) {
     output.open(outputPath, std::ios::trunc);
 
     std::cout << "[compiler.cpp] Parsing from: " << sourcePath << std::endl;
-    compile(output);
+    const Node* ast = parse_ast();
+    ast->compile(output, "rst","    ");
     std::cout << "[compiler.cpp] Compiled to: " << outputPath << std::endl;
 
     output.close();

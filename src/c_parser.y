@@ -10,9 +10,8 @@ void yyerror(const char*);
 }
 
 %union {
-    const Node* node;
+    Node* node;
 	std::string* string;
-    ListPtr list;
 }
 
 %token IDENTIFIER CONSTANT STRING_LITERAL SIZEOF
@@ -30,17 +29,16 @@ void yyerror(const char*);
 %type <node> expression statement_list statement function declaration init_declarator constant_expression NUMBER primary_expression
 %type <node> unary_expression postfix_expression multiplicative_expression additive_expression shift_expression relational_expression
 %type <node> equality_expression and_expression exclusive_or_expression inclusive_or_expression logical_and_expression logical_or_expression
-%type <node> conditional_expression assignment_expression selection_statement iteration_statement jump_statement
+%type <node> conditional_expression assignment_expression selection_statement iteration_statement jump_statement function_list
 %type <string> CONSTANT IDENTIFIER INT type_specifier direct_declarator INC_OP DEC_OP declarator VOID DOUBLE LEFT_OP RIGHT_OP
 %type <string> LE_OP GE_OP IF ELSE WHILE DO unary_operator RETURN
-%type <list> function_list
 
 %start root
 
 %%
 
 root : function_list { 
-        g_root = new Root(*$1);
+        g_root = $1;
     }
     ;
 
@@ -52,8 +50,8 @@ type_specifier
 
 
 primary_expression
-	: IDENTIFIER { $$ = new Expr("",*$1);}
-	| NUMBER
+	: IDENTIFIER { $$ = new Identifier(*$1);}
+	| CONSTANT {$$ = new Number(*$1);}
 	| '(' expression ')' {$$ = $2;}
 	;
 
@@ -184,7 +182,7 @@ declarator
 	;
 
 direct_declarator
-	: IDENTIFIER { $$ = $1 ;}
+	: IDENTIFIER { $$ = $1;}
 	| '(' declarator ')' {$$ = $2;}
 	| direct_declarator '(' ')' { $$ = $1 ;}
 	;
@@ -194,8 +192,8 @@ function
     ;
 
 function_list
-    : function { $$ = makeList($1); }
-    | function_list function { $$ = appendList($1,$2); }
+    : function { $$ = new FunctionList($1); }
+    | function_list function { $1->appendList($2); }
 
 statement_list
     : statement { $$ = new StatementList($1); }
@@ -215,11 +213,11 @@ statement
 
 
 declaration
-    : type_specifier declarator  { $$ = new Expr(*$1,*$2); }
+    : type_specifier declarator  { $$ = new Declaration(*$1,*$2); }
     ;
 
 init_declarator
-    : type_specifier direct_declarator assignment_operator constant_expression { $$ = new AssignOp(new Expr(*$1,*$2),$4); }
+    : type_specifier direct_declarator '=' constant_expression { $$ = new InitDeclaration(*$1,*$2,$4);}
 
 
 selection_statement
@@ -236,9 +234,6 @@ jump_statement
 	: RETURN expression ';' { $$ = new Return($2); }
 	;
 
-NUMBER 
-    : CONSTANT {  $$ = new Int(*$1); }
-    ;
 
 %%
 
