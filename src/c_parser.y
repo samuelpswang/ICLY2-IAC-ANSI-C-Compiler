@@ -26,7 +26,7 @@ void yyerror(const char*);
 
 %token CASE DEFAULT IF ELSE SWITCH WHILE DO FOR GOTO CONTINUE BREAK RETURN
 
-%type <node> expression statement_list statement function declaration init_declarator constant_expression NUMBER primary_expression
+%type <node> expression statement_list statement function declaration init_declarator constant_expression primary_expression
 %type <node> unary_expression postfix_expression multiplicative_expression additive_expression shift_expression relational_expression
 %type <node> equality_expression and_expression exclusive_or_expression inclusive_or_expression logical_and_expression logical_or_expression
 %type <node> conditional_expression assignment_expression selection_statement iteration_statement jump_statement function_list
