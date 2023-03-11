@@ -1,14 +1,15 @@
 #include "ast_node.hpp"
 
 
+//Use this to point at function declarations & globals later on 
 class Root: public Node{
 
 public:
-    Root(std::vector<const Node*> expr_list){
+    Root(std::vector<Node*> expr_list){
         this->type="";
         this->name="";
         this->val="";
-        this->exprs= expr_list;
+        this->exprs = expr_list;
         this->stats = {};
     }
 

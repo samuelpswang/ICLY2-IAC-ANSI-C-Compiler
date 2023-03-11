@@ -10,7 +10,7 @@
 
 class Return: public Node {
 public:
-    Return(const Node* expr) {
+    Return(Node* expr) {
         this->type = "return";
         this->name = "";
         this->val = "";
@@ -22,14 +22,14 @@ public:
         this->exprs[0]->print(os, "");
         os << ";";
     }
-    void compile(std::ostream& os, const std::string& dest) const {
-        this->exprs[0]->compile(os, dest);
+    void compile(std::ostream& os, const std::string& dest, const std::string& indent) const {
+        this->exprs[0]->compile(os, dest, indent);
     }
 };
 
 class Statement: public Node {
 public:
-    Statement(const std::string& type,const Node* stat) {
+    Statement(const std::string& type,Node* stat) {
         this->type = type;
         this->name = "";
         this->val = "";
@@ -47,21 +47,21 @@ public:
             os<<std::endl;
         }
     }
-    void compile(std::ostream& os, const std::string& dest) const {
-        this->stats[0]->compile(os, dest);
+    void compile(std::ostream& os, const std::string& dest, const std::string& indent) const {
+        this->stats[0]->compile(os, dest,indent);
     }
 };
 
 class StatementList: public Node {
 public:
-    StatementList(const Node* stat) {
+    StatementList(Node* stat) {
         this->type = "";
         this->name = "";
         this->val = "";
         this->exprs = {};
         this->stats = { stat };
     }
-    StatementList(const Node* list, const Node* stat) {
+    StatementList(Node* list, Node* stat) {
         this->type = "";
         this->name = "";
         this->val = "";
@@ -76,12 +76,12 @@ public:
             this->stats[1]->print(os, indent);
         }
     }
-    void compile(std::ostream& os, const std::string& dest) const {
+    void compile(std::ostream& os, const std::string& dest, const std::string& indent) const {
         if (this->stats.size() == 1) {
-            this->stats[0]->compile(os, dest);
+            this->stats[0]->compile(os, dest, indent);
         } else {
-            this->stats[0]->compile(os, dest);
-            this->stats[1]->compile(os, dest);
+            this->stats[0]->compile(os, dest,indent);
+            this->stats[1]->compile(os, dest,indent);
         }
     }
 };

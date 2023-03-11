@@ -10,7 +10,7 @@
 
 class Function: public Node {
 public:
-    Function(const std::string& type, const std::string& name, const Node* stat) { // without arguments
+    Function(const std::string& type, const std::string& name, Node* stat) { // without arguments
         this->type = type;
         this->name = name;
         this->val = "";
@@ -22,8 +22,31 @@ public:
         this->stats[0]->print(os, indent+"\t");
         os << indent << "}" << std::endl;
     }
-    void compile(std::ostream& os, const std::string& dest) const {
-        this->stats[0]->compile(os, dest);
+    void compile(std::ostream& os, const std::string& dest, const std::string& indent) const {
+        os<<this->name<<":"<<std::endl;
+        this->stats[0]->compile(os, dest,indent);
+    }
+};
+
+
+
+class FunctionList: public Node {
+public:
+    FunctionList(Node* expr) { // without arguments
+        this->appendList(expr);
+    }
+    void print(std::ostream& os, const std::string& indent) const {
+        for(int i = 0; i< this->exprs.size(); i++){
+            this->exprs[i]->print(os,"");
+        }
+    }
+    void compile(std::ostream& os, const std::string& dest, const std::string& indent) const {
+        os << ".text" << std::endl;
+        os << ".globl f" << std::endl;
+        os << std::endl;
+        for(int i = 0; i< this->exprs.size(); i++){
+            this->exprs[i]->compile(os,dest,indent);
+        }
     }
 };
 

@@ -5,23 +5,33 @@
 #include <string>
 #include <vector>
 #include <map>
+#include <tuple>
 
-static int unique_num = -1;
-static const std::string& make_name(const std::string& base) {
-    return "_" + base + std::to_string(unique_num);
+static int reg_unique_num = 0;
+static int label_unique_num = 0;
+static std::string make_name(const std::string& base) {
+    return base + std::to_string(reg_unique_num++);
+}
+
+static std::string make_label(const std::string& base){
+    return base+std::to_string(label_unique_num++);
 }
 
 class Node {
 public:
     virtual ~Node() {}
     virtual void print(std::ostream& os, const std::string& indent) const = 0;
-    virtual void compile(std::ostream& os, const std::string& dest) const = 0;
+    virtual void compile(std::ostream& os, const std::string& dest, const std::string& indent) const = 0;
+    void appendList(Node* expr){
+        exprs.push_back(expr);
+    }
+
 protected:
     std::string type; // type of node
     std::string name; // name, e.g. "int var = 3" -> var
     std::string val; // value, e.g. "int var = 3" -> 3
-    std::vector<const Node*> exprs; // expression list, whatever is in ()
-    std::vector<const Node*> stats; // statements list, whatever is in {}
+    std::vector<Node*> exprs; // expression list, whatever is in ()
+    std::vector<Node*> stats; // statements list, whatever is in {} 
 };
 
 #endif

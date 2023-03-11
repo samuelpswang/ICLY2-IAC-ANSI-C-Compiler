@@ -10,7 +10,7 @@
 
 class AssignOp: public Node {
 public:
-    AssignOp(const Node* expr, const Node* statement) {
+    AssignOp(Node* expr, Node* statement) {
         this->type = "";
         this->name = "";
         this->val = "";
@@ -23,16 +23,20 @@ public:
         os << " = ";
         this->stats[0]->print(os, "");
     }
-    void compile(std::ostream& os, const std::string& dest) const {
-        this->exprs[0]->compile(os, dest);
-        this->stats[0]->compile(os, dest);
+    void compile(std::ostream& os, const std::string& dest, const std::string& indent) const {
+        std::string valueReg = make_name("rs");
+        this->stats[0]->compile(os,valueReg,indent);
+        os<<indent<<"add ";
+        this->exprs[0]->print(os,"");
+        os<<", "<<valueReg<<", zero"<<std::endl;
+
     }
 };
 
 
 class PostfixUnaryIncDecOp : public Node {
 public:
-    PostfixUnaryIncDecOp(const std::string& incdecop, const Node* unary_expression) {
+    PostfixUnaryIncDecOp(const std::string& incdecop, Node* unary_expression) {
         this->type = "";
         this->name = incdecop;
         this->val = "";
@@ -46,7 +50,7 @@ public:
         os << this->name;
     }
 
-    void compile(std::ostream& os, const std::string& dest) const {
+    void compile(std::ostream& os, const std::string& dest, const std::string& indent) const {
         throw std::runtime_error("ImplementationError: PostfixUnaryIncDecOp");
     }
 };
@@ -54,7 +58,7 @@ public:
 
 class PrefixUnaryIncDecOp : public Node {
 public:
-    PrefixUnaryIncDecOp(const std::string& incdecop, const Node* unary_expression) {
+    PrefixUnaryIncDecOp(const std::string& incdecop, Node* unary_expression) {
         this->type = "";
         this->name = incdecop;
         this->val = "";
@@ -69,7 +73,7 @@ public:
         
     }
 
-    void compile(std::ostream& os, const std::string& dest) const {
+    void compile(std::ostream& os, const std::string& dest, const std::string& indent) const {
         throw std::runtime_error("ImplementationError: PostfixUnaryIncDecOp");
     }
 };
@@ -77,7 +81,7 @@ public:
 
 class MultOp : public Node{
 public:
-    MultOp(const Node* left, const Node* right){
+    MultOp(Node* left, Node* right){
         this->type = "";
         this->name = "*" ;
         this->val = "";
@@ -93,14 +97,18 @@ public:
         os<<")";
     }
 
-    void compile(std::ostream& os, const std::string& dest) const{
-        // TODO:
+    void compile(std::ostream& os, const std::string& dest, const std::string& indent) const{
+        std::string rs1 = make_name("rs");
+        std::string rs2 = make_name("rs");
+        this->exprs[0]->compile(os,rs1,indent);
+        this->exprs[1]->compile(os,rs2,indent);
+        os<<indent<<"mul "<<dest<<", "<<rs1<<", "<<rs2<<std::endl;
     }
 };
 
 class DivOp : public Node{
 public:
-    DivOp(const Node* left, const Node* right){
+    DivOp(Node* left, Node* right){
         this->type = "";
         this->name = "/";
         this->val = "";
@@ -116,15 +124,19 @@ public:
         os<<")";
     }
 
-    void compile(std::ostream& os, const std::string& dest) const{
-        // TODO:
+    void compile(std::ostream& os, const std::string& dest, const std::string& indent) const{
+        std::string rs1 = make_name("rs");
+        std::string rs2 = make_name("rs");
+        this->exprs[0]->compile(os,rs1,indent);
+        this->exprs[1]->compile(os,rs2,indent);
+        os<<indent<<"div "<<dest<<", "<<rs1<<", "<<rs2<<std::endl;
     }
 
 };
 
 class ModOp : public Node {
 public:
-    ModOp(const Node* left, const Node* right){
+    ModOp(Node* left, Node* right){
         this->type = "";
         this->name = "%";
         this->val = "";
@@ -140,15 +152,19 @@ public:
         os<<")";
     }
 
-    void compile(std::ostream& os, const std::string& dest) const{
-        os<<"multop: Not implemented"<<std::endl;
+    void compile(std::ostream& os, const std::string& dest, const std::string& indent) const{
+        std::string rs1 = make_name("rs");
+        std::string rs2 = make_name("rs");
+        this->exprs[0]->compile(os,rs1,indent);
+        this->exprs[1]->compile(os,rs2,indent);
+        os<<indent<<"rem "<<dest<<", "<<rs1<<", "<<rs2<<std::endl;
     }
 
 };
 
 class AddOp : public Node{
 public:
-    AddOp(const Node* left, const Node* right){
+    AddOp(Node* left, Node* right){
         this->type = "";
         this->name = "+";
         this->val = "";
@@ -164,14 +180,18 @@ public:
         os<<")";
     }
 
-    void compile(std::ostream& os, const std::string& dest) const{
-        std::string left_reg;
+    void compile(std::ostream& os, const std::string& dest, const std::string& indent) const{
+        std::string rs1 = make_name("rs");
+        std::string rs2 = make_name("rs");
+        this->exprs[0]->compile(os,rs1,indent);
+        this->exprs[1]->compile(os,rs2,indent);
+        os<<indent<<"add "<<dest<<", "<<rs1<<", "<<rs2<<std::endl;
     }
 };
 
 class SubOp : public Node{
 public:
-    SubOp(const Node* left, const Node* right){
+    SubOp(Node* left, Node* right){
         this->type = "";
         this->name = "-";
         this->val = "";
@@ -185,15 +205,19 @@ public:
         this->exprs[1]->print(os,"");
         os<<")";
     }
-    void compile(std::ostream& os, const std::string& dest) const{
-        os<<"subop: Not implemented"<<std::endl;
+    void compile(std::ostream& os, const std::string& dest, const std::string& indent) const{
+        std::string rs1 = make_name("rs");
+        std::string rs2 = make_name("rs");
+        this->exprs[0]->compile(os,rs1,indent);
+        this->exprs[1]->compile(os,rs2,indent);
+        os<<indent<<"add "<<dest<<", "<<rs1<<", "<<rs2<<std::endl;
     }
 };
 
 class LeftShift : public Node{
 
 public:
-    LeftShift(const Node* left, const Node* right){
+    LeftShift(Node* left, Node* right){
         this->type = "";
         this->name = "<<";
         this->val = "";
@@ -209,8 +233,12 @@ public:
         os<<")";
     }
 
-    void compile(std::ostream& os, const std::string& dest) const{
-        os<<"leftshiftop: Not implemented"<<std::endl;
+    void compile(std::ostream& os, const std::string& dest, const std::string& indent) const{
+        std::string rs1 = make_name("rs");
+        std::string rs2 = make_name("rs");
+        this->exprs[0]->compile(os,rs1,indent);
+        this->exprs[1]->compile(os,rs2,indent);
+        os<<indent<<"sll "<<dest<<", "<<rs1<<", "<<rs2<<std::endl;
     }
 
 };
@@ -218,7 +246,7 @@ public:
 class RightShift : public Node{
 
 public:
-    RightShift(const Node* left, const Node* right){
+    RightShift(Node* left, Node* right){
         this->type = "";
         this->name = ">>";
         this->val = "";
@@ -234,15 +262,19 @@ public:
         os<<")";
     }
 
-    void compile(std::ostream& os, const std::string& dest) const{
-        os<<"rightshiftop: Not implemented"<<std::endl;
+    void compile(std::ostream& os, const std::string& dest, const std::string& indent) const{
+        std::string rs1 = make_name("rs");
+        std::string rs2 = make_name("rs");
+        this->exprs[0]->compile(os,rs1,indent);
+        this->exprs[1]->compile(os,rs2,indent);
+        os<<indent<<"srl "<<dest<<", "<<rs1<<", "<<rs2<<std::endl;
     }
 
 };
 class LessThanOp : public Node{
 
 public:
-    LessThanOp(const Node* left, const Node* right){
+    LessThanOp(Node* left, Node* right){
         this->type = "";
         this->name = "<";
         this->val = "";
@@ -258,8 +290,12 @@ public:
         os<<")";
     }
 
-    void compile(std::ostream& os, const std::string& dest) const{
-        os<<"lessthanop: Not implemented"<<std::endl;
+    void compile(std::ostream& os, const std::string& dest, const std::string& indent) const{
+        std::string rs1 = make_name("rs");
+        std::string rs2 = make_name("rs");
+        this->exprs[0]->compile(os,rs1,indent);
+        this->exprs[1]->compile(os,rs2,indent);
+        os<<indent<<"slt "<<dest<<", "<<rs1<<", "<<rs2<<std::endl;
     }
 
 };
@@ -267,7 +303,7 @@ public:
 class MoreThanOp : public Node{
 
 public:
-    MoreThanOp(const Node* left, const Node* right){
+    MoreThanOp(Node* left, Node* right){
         this->type = "";
         this->name = ">";
         this->val = "";
@@ -283,8 +319,15 @@ public:
         os<<")";
     }
 
-    void compile(std::ostream& os, const std::string& dest) const{
-        os<<"morethanop: Not implemented"<<std::endl;
+    void compile(std::ostream& os, const std::string& dest, const std::string& indent) const{
+        std::string rs1 = make_name("rs");
+        std::string rs2 = make_name("rs");
+        std::string rs3 = make_name("rs");
+        this->exprs[0]->compile(os,rs1,indent);
+        this->exprs[1]->compile(os,rs2,indent);
+        os<<indent<<"slt "<<rs3<<", "<<rs1<<", "<<rs2<<std::endl;
+        os<<indent<<"add "<<"one, "<<"zero, "<<"0x01"<<std::endl;
+        os<<indent<<"sub "<<dest<<", "<<"one, "<<rs3<<std::endl;
     }
 
 };
@@ -292,7 +335,7 @@ public:
 class LessEqual : public Node{
 
 public:
-    LessEqual(const Node* left, const Node* right){
+    LessEqual(Node* left, Node* right){
         this->type = "";
         this->name = "<=";
         this->val = "";
@@ -308,8 +351,20 @@ public:
         os<<")";
     }
 
-    void compile(std::ostream& os, const std::string& dest) const{
-        os<<"lessequalop: Not implemented"<<std::endl;
+    void compile(std::ostream& os, const std::string& dest, const std::string& indent) const{
+        std::string lessThan = make_name("rs");
+        std::string left = make_name("rs");
+        std::string right = make_name("rs");
+        std::string diff = make_name("rs");
+        std::string end =  make_label("lte_end");
+        this->exprs[0]->compile(os,left,indent);
+        this->exprs[1]->compile(os,right,indent);
+        os<<indent<<"addi "<<diff<<", zero, 0x01"<<std::endl;
+        os<<indent<<"slt "<<dest<<", "<<left<<", "<<right<<std::endl;
+        os<<indent<<"beq "<<dest<<", zero, "<<diff<<std::endl;
+        os<<indent<<"sub "<<diff<<", "<<left<<", "<<right<<std::endl;
+        os<<indent<<"seqz "<<dest<<", "<<diff<<", "<<std::endl;
+        os<<end<<":"<<std::endl;
     }
 
 };
@@ -317,7 +372,7 @@ public:
 class MoreEqual : public Node{
 
 public:
-    MoreEqual(const Node* left, const Node* right){
+    MoreEqual(Node* left, Node* right){
         this->type = "";
         this->name = ">=";
         this->val = "";
@@ -333,8 +388,8 @@ public:
         os<<")";
     }
 
-    void compile(std::ostream& os, const std::string& dest) const{
-        os<<"moreequalop: Not implemented"<<std::endl;
+    void compile(std::ostream& os, const std::string& dest, const std::string& indent) const{
+        
     }
 
 };
@@ -342,7 +397,7 @@ public:
 class EqualTo : public Node{
 
 public:
-    EqualTo(const Node* left, const Node* right){
+    EqualTo(Node* left, Node* right){
         this->type = "";
         this->name = "==";
         this->val = "";
@@ -358,7 +413,7 @@ public:
         os<<")";
     }
 
-    void compile(std::ostream& os, const std::string& dest) const{
+    void compile(std::ostream& os, const std::string& dest, const std::string& indent) const{
         os<<"moreequalop: Not implemented"<<std::endl;
     }
 
@@ -367,7 +422,7 @@ public:
 class NotEqualTo : public Node{
 
 public:
-    NotEqualTo(const Node* left, const Node* right){
+    NotEqualTo(Node* left, Node* right){
         this->type = "";
         this->name = "!=";
         this->val = "";
@@ -383,7 +438,7 @@ public:
         os<<")";
     }
 
-    void compile(std::ostream& os, const std::string& dest) const{
+    void compile(std::ostream& os, const std::string& dest, const std::string& indent) const{
         os<<"moreequalop: Not implemented"<<std::endl;
     }
 
@@ -392,7 +447,7 @@ public:
 class BitwiseAnd : public Node{
 
 public:
-    BitwiseAnd(const Node* left, const Node* right){
+    BitwiseAnd(Node* left, Node* right){
         this->type = "";
         this->name = "&";
         this->val = "";
@@ -408,7 +463,7 @@ public:
         os<<")";
     }
 
-    void compile(std::ostream& os, const std::string& dest) const{
+    void compile(std::ostream& os, const std::string& dest, const std::string& indent) const{
         os<<"bitwiseandop: Not implemented"<<std::endl;
     }
 };
@@ -416,7 +471,7 @@ public:
 class BitwiseXor : public Node{
 
 public:
-    BitwiseXor(const Node* left, const Node* right){
+    BitwiseXor(Node* left, Node* right){
         this->type = "";
         this->name = "^";
         this->val = "";
@@ -432,7 +487,7 @@ public:
         os<<")";
     }
 
-    void compile(std::ostream& os, const std::string& dest) const{
+    void compile(std::ostream& os, const std::string& dest, const std::string& indent) const{
         os<<"bitwisexorop: Not implemented"<<std::endl;
     }
 };
@@ -440,7 +495,7 @@ public:
 class BitwiseOr : public Node{
 
 public:
-    BitwiseOr(const Node* left, const Node* right){
+    BitwiseOr(Node* left, Node* right){
         this->type = "";
         this->name = "|";
         this->val = "";
@@ -456,7 +511,7 @@ public:
         os<<")";
     }
 
-    void compile(std::ostream& os, const std::string& dest) const{
+    void compile(std::ostream& os, const std::string& dest, const std::string& indent) const{
         os<<"bitwiseorop: Not implemented"<<std::endl;
     }
 };
@@ -464,7 +519,7 @@ public:
 class LogicalAnd : public Node{
 
 public:
-    LogicalAnd(const Node* left, const Node* right){
+    LogicalAnd(Node* left, Node* right){
         this->type = "";
         this->name = "&&";
         this->val = "";
@@ -480,7 +535,7 @@ public:
         os<<")";
     }
 
-    void compile(std::ostream& os, const std::string& dest) const{
+    void compile(std::ostream& os, const std::string& dest, const std::string& indent) const{
         os<<"logicaland: Not implemented"<<std::endl;
     }
 };
@@ -488,7 +543,7 @@ public:
 class LogicalOr : public Node{
 
 public:
-    LogicalOr(const Node* left, const Node* right){
+    LogicalOr(Node* left, Node* right){
         this->type = "";
         this->name = "||";
         this->val = "";
@@ -504,7 +559,7 @@ public:
         os<<")";
     }
 
-    void compile(std::ostream& os, const std::string& dest) const{
+    void compile(std::ostream& os, const std::string& dest, const std::string& indent) const{
         os<<"logicalor: Not implemented"<<std::endl;
     }
 };
@@ -512,7 +567,7 @@ public:
 class PrefixPointerOp : public Node{
 
 public:
-    PrefixPointerOp(const Node* expr){
+    PrefixPointerOp(Node* expr){
         this->type = "";
         this->name = "*";
         this->val = "";
@@ -525,7 +580,7 @@ public:
         this->exprs[0]->print(os,"");
     }
 
-    void compile(std::ostream& os, const std::string& dst)const{
+    void compile(std::ostream& os, const std::string& dst, const std::string& indent)const{
         os<<"prefixpointerop: not implemented"<<std::endl;
     }
 };
@@ -533,7 +588,7 @@ public:
 class NegOp : public Node{
 
 public:
-    NegOp(const Node* expr){
+    NegOp(Node* expr){
         this->type = "";
         this->name = "-";
         this->val = "";
@@ -546,7 +601,7 @@ public:
         this->exprs[0]->print(os,"");
     }
 
-    void compile(std::ostream& os, const std::string& dst)const{
+    void compile(std::ostream& os, const std::string& dst, const std::string& indent)const{
         os<<"negpointerop: not implemented"<<std::endl;
     }
 };

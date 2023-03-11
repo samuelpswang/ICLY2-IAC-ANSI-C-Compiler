@@ -8,10 +8,10 @@
 
 #include "ast_node.hpp"
 
-class Int: public Node {
+class Number: public Node {
 public:
-    Int(std::string val) {
-        this->type = "int";
+    Number(std::string val) {
+        this->type = "";
         this->name = "";
         this->val = val;
         this->exprs = {};
@@ -20,8 +20,26 @@ public:
     void print(std::ostream& os, const std::string& indent) const {
         os << indent << this->val;
     }
-    void compile(std::ostream& os, const std::string& dest) const {
-        os << "addi " << dest << " zero " << this->val << std::endl;
+    void compile(std::ostream& os, const std::string& dest, const std::string& indent) const {
+        os <<indent<< "addi " << dest << " zero " << this->val << std::endl;
+    }
+};
+
+
+class Identifier: public Node {
+public:
+    Identifier(std::string val) {
+        this->type = "";
+        this->name = "";
+        this->val = val;
+        this->exprs = {};
+        this->stats = {};
+    }
+    void print(std::ostream& os, const std::string& indent) const {
+        os << indent << this->val;
+    }
+    void compile(std::ostream& os, const std::string& dest, const std::string& indent) const {
+        os <<indent<< "add " << dest << ", zero, " << this->val << std::endl;
     }
 };
 
