@@ -140,11 +140,13 @@ bool MemoryContext::asm_clean_up(std::ostream& os){
 bool MemoryContext::asm_spill_all(std::ostream& os, regtype reg_type){
     for(auto it = this->symtable[curr_func].begin(); it != this->symtable[curr_func].end(); it++){
         int offset = it->second[0];
-        std::string reg = "x" + std::to_string(it->second[1]);
-        os<<"sw "<<reg<<", "<<offset<<"(sp)"<<std::endl; 
-        it->second[2] = 0;
-        this->regfile[it->second[1]] = {0 ,-1};
-        it->second[1] = -1;
+        if(it->second[1] != -1){
+            std::string reg = "x" + std::to_string(it->second[1]);
+            os<<"sw "<<reg<<", "<<offset<<"(sp)"<<std::endl; 
+            it->second[2] = 0;
+            this->regfile[it->second[1]] = {0 ,-1};
+            it->second[1] = -1;
+        }
     }
     return true;
 }
@@ -295,7 +297,6 @@ int main() {
     m.asm_load_symbol(std::cout,"g",areg);
     m.asm_load_symbol(std::cout,"h",areg);
     m.asm_spill_all(std::cout,areg);
-    m.use_func("main1");
-    m.asm_spill_all(std::cout,areg);
+    // m.use_func("main1");
     operator<<(std::cout,m);
 }
