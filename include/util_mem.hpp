@@ -20,7 +20,7 @@ private:
     // current function
     std::string curr_func;
     // unique number for creating names
-    unsigned curr_unique_num;
+    int curr_unique_num;
 
     // Utility Functions
     // returns if have register of specific type
@@ -60,8 +60,6 @@ public:
     bool asm_clean_up(std::ostream&);
     // return true after storing all registers to memory
     bool asm_spill_all(std::ostream&, regtype);
-    // initialise register file
-    void init_regfile();
 };
 
 #endif
