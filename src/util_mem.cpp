@@ -5,7 +5,6 @@
 
 #include "../include/util_mem.hpp"
 
-// Can't return local variables if you pass functions by constant reference, same issue with make_name function, segfault
 // Basics
 // constructor, should initialize four members
 MemoryContext::MemoryContext() {}
@@ -291,12 +290,13 @@ int main() {
     m.add_symbol("l",true);
     m.asm_give_reg(std::cout,"g",areg);
     m.asm_give_reg(std::cout,"h",areg);
-    m.asm_store_symbol(std::cout,"g");
-    m.asm_load_symbol(std::cout,"g",areg);
-    m.asm_clean_up(std::cout);
-    m.asm_load_symbol(std::cout,"g",areg);
-    m.asm_load_symbol(std::cout,"h",areg);
+    m.asm_give_reg(std::cout,"i",areg);
+    m.asm_give_reg(std::cout,"j",areg);
+    m.asm_give_reg(std::cout,"k",areg);
+    m.asm_give_reg(std::cout,"l",areg);
+    // m.asm_store_symbol(std::cout,"g");
     m.asm_spill_all(std::cout,areg);
-    // m.use_func("main1");
+    m.use_func("main1");
+    m.asm_spill_all(std::cout,areg);
     operator<<(std::cout,m);
 }
