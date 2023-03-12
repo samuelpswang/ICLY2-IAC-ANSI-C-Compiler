@@ -23,13 +23,16 @@ public:
         os << " = ";
         this->stats[0]->print(os, "");
     }
-    void compile(std::ostream& os, const std::string& dest, const std::string& indent) const {
-        std::string valueReg = make_name("rs");
-        this->stats[0]->compile(os,valueReg,indent);
-        os<<indent<<"add ";
-        this->exprs[0]->print(os,"");
-        os<<", "<<valueReg<<", zero"<<std::endl;
-
+    void compile(std::ostream& os, const std::string& dest, MemoryContext m) const {
+        std::string reg = m.asm_load_symbol(os, this->exprs[0]->get_name(),areg);
+        std::string value = m.add_symbol("val",false);
+        value = m.asm_give_reg(os, value, areg);
+        if(value == ""){
+            m.asm_spill_all(os, areg);
+            value = m.asm_give_reg(os, value, areg);
+        }
+        this->stats[0]->compile(os,value,m);
+        os<<"\tadd "<< reg<<", zero, "<<value<<std::endl;
     }
 };
 
@@ -50,7 +53,7 @@ public:
         os << this->name;
     }
 
-    void compile(std::ostream& os, const std::string& dest, const std::string& indent) const {
+    void compile(std::ostream& os, const std::string& dest, MemoryContext m) const {
         throw std::runtime_error("ImplementationError: PostfixUnaryIncDecOp");
     }
 };
@@ -73,7 +76,7 @@ public:
         
     }
 
-    void compile(std::ostream& os, const std::string& dest, const std::string& indent) const {
+    void compile(std::ostream& os, const std::string& dest, MemoryContext m) const {
         throw std::runtime_error("ImplementationError: PostfixUnaryIncDecOp");
     }
 };
@@ -97,12 +100,22 @@ public:
         os<<")";
     }
 
-    void compile(std::ostream& os, const std::string& dest, const std::string& indent) const{
-        std::string rs1 = make_name("rs");
-        std::string rs2 = make_name("rs");
-        this->exprs[0]->compile(os,rs1,indent);
-        this->exprs[1]->compile(os,rs2,indent);
-        os<<indent<<"mul "<<dest<<", "<<rs1<<", "<<rs2<<std::endl;
+    void compile(std::ostream& os, const std::string& dest, MemoryContext m) const{
+        std::string val1 = m.add_symbol("val1",false);
+        val1  = m.asm_give_reg(os,val1,areg);
+        if(val1 == ""){
+            m.asm_spill_all(os, areg);
+            val1 = m.asm_give_reg(os, val1, areg);
+        }
+        std::string val2 = m.add_symbol("val2",false);
+        val2  = m.asm_give_reg(os,val2,areg);
+        if(val2 == ""){
+            m.asm_spill_all(os, areg);
+            val2 = m.asm_give_reg(os, val2, areg);
+        }
+        this->exprs[0]->compile(os,val1,m);
+        this->exprs[1]->compile(os,val2,m);
+        os<<"\tmul "<<dest<<", "<<val1<<", "<<val2<<std::endl;
     }
 };
 
@@ -124,12 +137,22 @@ public:
         os<<")";
     }
 
-    void compile(std::ostream& os, const std::string& dest, const std::string& indent) const{
-        std::string rs1 = make_name("rs");
-        std::string rs2 = make_name("rs");
-        this->exprs[0]->compile(os,rs1,indent);
-        this->exprs[1]->compile(os,rs2,indent);
-        os<<indent<<"div "<<dest<<", "<<rs1<<", "<<rs2<<std::endl;
+    void compile(std::ostream& os, const std::string& dest, MemoryContext m) const{
+        std::string val1 = m.add_symbol("val1",false);
+        val1  = m.asm_give_reg(os,val1,areg);
+        if(val1 == ""){
+            m.asm_spill_all(os, areg);
+            val1 = m.asm_give_reg(os, val1, areg);
+        }
+        std::string val2 = m.add_symbol("val2",false);
+        val2  = m.asm_give_reg(os,val2,areg);
+        if(val2 == ""){
+            m.asm_spill_all(os, areg);
+            val2 = m.asm_give_reg(os, val2, areg);
+        }
+        this->exprs[0]->compile(os,val1,m);
+        this->exprs[1]->compile(os,val2,m);
+        os<<"\tdiv "<<dest<<", "<<val1<<", "<<val2<<std::endl;
     }
 
 };
@@ -152,12 +175,22 @@ public:
         os<<")";
     }
 
-    void compile(std::ostream& os, const std::string& dest, const std::string& indent) const{
-        std::string rs1 = make_name("rs");
-        std::string rs2 = make_name("rs");
-        this->exprs[0]->compile(os,rs1,indent);
-        this->exprs[1]->compile(os,rs2,indent);
-        os<<indent<<"rem "<<dest<<", "<<rs1<<", "<<rs2<<std::endl;
+    void compile(std::ostream& os, const std::string& dest, MemoryContext m) const{
+        std::string val1 = m.add_symbol("val1",false);
+        val1  = m.asm_give_reg(os,val1,areg);
+        if(val1 == ""){
+            m.asm_spill_all(os, areg);
+            val1 = m.asm_give_reg(os, val1, areg);
+        }
+        std::string val2 = m.add_symbol("val2",false);
+        val2  = m.asm_give_reg(os,val2,areg);
+        if(val2 == ""){
+            m.asm_spill_all(os, areg);
+            val2 = m.asm_give_reg(os, val2, areg);
+        }
+        this->exprs[0]->compile(os,val1,m);
+        this->exprs[1]->compile(os,val2,m);
+        os<<"\trem "<<dest<<", "<<val1<<", "<<val2<<std::endl;
     }
 
 };
@@ -180,12 +213,22 @@ public:
         os<<")";
     }
 
-    void compile(std::ostream& os, const std::string& dest, const std::string& indent) const{
-        std::string rs1 = make_name("rs");
-        std::string rs2 = make_name("rs");
-        this->exprs[0]->compile(os,rs1,indent);
-        this->exprs[1]->compile(os,rs2,indent);
-        os<<indent<<"add "<<dest<<", "<<rs1<<", "<<rs2<<std::endl;
+    void compile(std::ostream& os, const std::string& dest, MemoryContext m) const{
+        std::string val1 = m.add_symbol("val1",false);
+        val1  = m.asm_give_reg(os,val1,areg);
+        if(val1 == ""){
+            m.asm_spill_all(os, areg);
+            val1 = m.asm_give_reg(os, val1, areg);
+        }
+        std::string val2 = m.add_symbol("val2",false);
+        val2  = m.asm_give_reg(os,val2,areg);
+        if(val2 == ""){
+            m.asm_spill_all(os, areg);
+            val2 = m.asm_give_reg(os, val2, areg);
+        }
+        this->exprs[0]->compile(os,val1,m);
+        this->exprs[1]->compile(os,val2,m);
+        os<<"\tadd "<<dest<<", "<<val1<<", "<<val2<<std::endl;
     }
 };
 
@@ -205,12 +248,22 @@ public:
         this->exprs[1]->print(os,"");
         os<<")";
     }
-    void compile(std::ostream& os, const std::string& dest, const std::string& indent) const{
-        std::string rs1 = make_name("rs");
-        std::string rs2 = make_name("rs");
-        this->exprs[0]->compile(os,rs1,indent);
-        this->exprs[1]->compile(os,rs2,indent);
-        os<<indent<<"add "<<dest<<", "<<rs1<<", "<<rs2<<std::endl;
+    void compile(std::ostream& os, const std::string& dest, MemoryContext m) const{
+        std::string val1 = m.add_symbol("val1",false);
+        val1  = m.asm_give_reg(os,val1,areg);
+        if(val1 == ""){
+            m.asm_spill_all(os, areg);
+            val1 = m.asm_give_reg(os, val1, areg);
+        }
+        std::string val2 = m.add_symbol("val2",false);
+        val2  = m.asm_give_reg(os,val2,areg);
+        if(val2 == ""){
+            m.asm_spill_all(os, areg);
+            val2 = m.asm_give_reg(os, val2, areg);
+        }
+        this->exprs[0]->compile(os,val1,m);
+        this->exprs[1]->compile(os,val2,m);
+        os<<"\tsub "<<dest<<", "<<val1<<", "<<val2<<std::endl;
     }
 };
 
@@ -233,12 +286,22 @@ public:
         os<<")";
     }
 
-    void compile(std::ostream& os, const std::string& dest, const std::string& indent) const{
-        std::string rs1 = make_name("rs");
-        std::string rs2 = make_name("rs");
-        this->exprs[0]->compile(os,rs1,indent);
-        this->exprs[1]->compile(os,rs2,indent);
-        os<<indent<<"sll "<<dest<<", "<<rs1<<", "<<rs2<<std::endl;
+    void compile(std::ostream& os, const std::string& dest, MemoryContext m) const{
+        std::string val1 = m.add_symbol("val1",false);
+        val1  = m.asm_give_reg(os,val1,areg);
+        if(val1 == ""){
+            m.asm_spill_all(os, areg);
+            val1 = m.asm_give_reg(os, val1, areg);
+        }
+        std::string val2 = m.add_symbol("val2",false);
+        val2  = m.asm_give_reg(os,val2,areg);
+        if(val2 == ""){
+            m.asm_spill_all(os, areg);
+            val2 = m.asm_give_reg(os, val2, areg);
+        }
+        this->exprs[0]->compile(os,val1,m);
+        this->exprs[1]->compile(os,val2,m);
+        os<<"\tsll "<<dest<<", "<<val1<<", "<<val2<<std::endl;
     }
 
 };
@@ -262,12 +325,22 @@ public:
         os<<")";
     }
 
-    void compile(std::ostream& os, const std::string& dest, const std::string& indent) const{
-        std::string rs1 = make_name("rs");
-        std::string rs2 = make_name("rs");
-        this->exprs[0]->compile(os,rs1,indent);
-        this->exprs[1]->compile(os,rs2,indent);
-        os<<indent<<"srl "<<dest<<", "<<rs1<<", "<<rs2<<std::endl;
+    void compile(std::ostream& os, const std::string& dest, MemoryContext m) const{
+        std::string val1 = m.add_symbol("val1",false);
+        val1  = m.asm_give_reg(os,val1,areg);
+        if(val1 == ""){
+            m.asm_spill_all(os, areg);
+            val1 = m.asm_give_reg(os, val1, areg);
+        }
+        std::string val2 = m.add_symbol("val2",false);
+        val2  = m.asm_give_reg(os,val2,areg);
+        if(val2 == ""){
+            m.asm_spill_all(os, areg);
+            val2 = m.asm_give_reg(os, val2, areg);
+        }
+        this->exprs[0]->compile(os,val1,m);
+        this->exprs[1]->compile(os,val2,m);
+        os<<"\tsrl "<<dest<<", "<<val1<<", "<<val2<<std::endl;
     }
 
 };
@@ -290,12 +363,22 @@ public:
         os<<")";
     }
 
-    void compile(std::ostream& os, const std::string& dest, const std::string& indent) const{
-        std::string rs1 = make_name("rs");
-        std::string rs2 = make_name("rs");
-        this->exprs[0]->compile(os,rs1,indent);
-        this->exprs[1]->compile(os,rs2,indent);
-        os<<indent<<"slt "<<dest<<", "<<rs1<<", "<<rs2<<std::endl;
+    void compile(std::ostream& os, const std::string& dest, MemoryContext m) const{
+        std::string val1 = m.add_symbol("val1",false);
+        val1  = m.asm_give_reg(os,val1,areg);
+        if(val1 == ""){
+            m.asm_spill_all(os, areg);
+            val1 = m.asm_give_reg(os, val1, areg);
+        }
+        std::string val2 = m.add_symbol("val2",false);
+        val2  = m.asm_give_reg(os,val2,areg);
+        if(val2 == ""){
+            m.asm_spill_all(os, areg);
+            val2 = m.asm_give_reg(os, val2, areg);
+        }
+        this->exprs[0]->compile(os,val1,m);
+        this->exprs[1]->compile(os,val2,m);
+        os<<"\t"<<"slt "<<dest<<", "<<val1<<", "<<val2<<std::endl;
     }
 
 };
@@ -319,15 +402,29 @@ public:
         os<<")";
     }
 
-    void compile(std::ostream& os, const std::string& dest, const std::string& indent) const{
-        std::string rs1 = make_name("rs");
-        std::string rs2 = make_name("rs");
-        std::string rs3 = make_name("rs");
-        this->exprs[0]->compile(os,rs1,indent);
-        this->exprs[1]->compile(os,rs2,indent);
-        os<<indent<<"slt "<<rs3<<", "<<rs1<<", "<<rs2<<std::endl;
-        os<<indent<<"add "<<"one, "<<"zero, "<<"0x01"<<std::endl;
-        os<<indent<<"sub "<<dest<<", "<<"one, "<<rs3<<std::endl;
+    void compile(std::ostream& os, const std::string& dest, MemoryContext m) const{
+        std::string val1 = m.add_symbol("val1",false);
+        val1  = m.asm_give_reg(os,val1,areg);
+        if(val1 == ""){
+            m.asm_spill_all(os, areg);
+            val1 = m.asm_give_reg(os, val1, areg);
+        }
+        std::string val2 = m.add_symbol("val2",false);
+        val2  = m.asm_give_reg(os,val2,areg);
+        if(val2 == ""){
+            m.asm_spill_all(os, areg);
+            val2 = m.asm_give_reg(os, val2, areg);
+        }
+        std::string val3 = m.add_symbol("val3",false);
+        val3  = m.asm_give_reg(os,val3,areg);
+        if(val3 == ""){
+            m.asm_spill_all(os, areg);
+            val3 = m.asm_give_reg(os, val3, areg);
+        }
+        this->exprs[0]->compile(os,val1,m);
+        this->exprs[1]->compile(os,val2,m);
+        os<<"\t"<<"slt "<<val3<<", "<<val1<<", "<<val2<<std::endl;
+        os<<"\t"<<"seqz "<<dest<<", "<<val3<<std::endl;
     }
 
 };
@@ -351,19 +448,39 @@ public:
         os<<")";
     }
 
-    void compile(std::ostream& os, const std::string& dest, const std::string& indent) const{
-        std::string lessThan = make_name("rs");
-        std::string left = make_name("rs");
-        std::string right = make_name("rs");
-        std::string diff = make_name("rs");
+    void compile(std::ostream& os, const std::string& dest, MemoryContext m) const{
+        std::string less_than = m.add_symbol("val1",false);
+        less_than  = m.asm_give_reg(os,less_than,areg);
+        if(less_than == ""){
+            m.asm_spill_all(os, areg);
+            less_than = m.asm_give_reg(os, less_than, areg);
+        }
+        std::string left = m.add_symbol("val2",false);
+        left  = m.asm_give_reg(os,left,areg);
+        if(left == ""){
+            m.asm_spill_all(os, areg);
+            left = m.asm_give_reg(os, left, areg);
+        }
+        std::string right = m.add_symbol("val1",false);
+        right  = m.asm_give_reg(os,right,areg);
+        if(right == ""){
+            m.asm_spill_all(os, areg);
+            right = m.asm_give_reg(os, right, areg);
+        }
+        std::string diff = m.add_symbol("val2",false);
+        diff  = m.asm_give_reg(os,diff,areg);
+        if(diff == ""){
+            m.asm_spill_all(os, areg);
+            diff = m.asm_give_reg(os, diff, areg);
+        }
         std::string end =  make_label("lte_end");
-        this->exprs[0]->compile(os,left,indent);
-        this->exprs[1]->compile(os,right,indent);
-        os<<indent<<"addi "<<diff<<", zero, 0x01"<<std::endl;
-        os<<indent<<"slt "<<dest<<", "<<left<<", "<<right<<std::endl;
-        os<<indent<<"beq "<<dest<<", zero, "<<diff<<std::endl;
-        os<<indent<<"sub "<<diff<<", "<<left<<", "<<right<<std::endl;
-        os<<indent<<"seqz "<<dest<<", "<<diff<<", "<<std::endl;
+        this->exprs[0]->compile(os,left,m);
+        this->exprs[1]->compile(os,right,m);
+        os<<"\taddi "<<diff<<", zero, 0x01"<<std::endl;
+        os<<"\tslt "<<dest<<", "<<left<<", "<<right<<std::endl;
+        os<<"\tbeq "<<dest<<", zero, "<<diff<<std::endl;
+        os<<"\tsub "<<diff<<", "<<left<<", "<<right<<std::endl;
+        os<<"\tseqz "<<dest<<", "<<diff<<", "<<std::endl;
         os<<end<<":"<<std::endl;
     }
 
@@ -388,7 +505,7 @@ public:
         os<<")";
     }
 
-    void compile(std::ostream& os, const std::string& dest, const std::string& indent) const{
+    void compile(std::ostream& os, const std::string& dest, MemoryContext m) const{
         
     }
 
@@ -413,7 +530,7 @@ public:
         os<<")";
     }
 
-    void compile(std::ostream& os, const std::string& dest, const std::string& indent) const{
+    void compile(std::ostream& os, const std::string& dest, MemoryContext m) const{
         os<<"moreequalop: Not implemented"<<std::endl;
     }
 
@@ -438,7 +555,7 @@ public:
         os<<")";
     }
 
-    void compile(std::ostream& os, const std::string& dest, const std::string& indent) const{
+    void compile(std::ostream& os, const std::string& dest, MemoryContext m) const{
         os<<"moreequalop: Not implemented"<<std::endl;
     }
 
@@ -463,7 +580,7 @@ public:
         os<<")";
     }
 
-    void compile(std::ostream& os, const std::string& dest, const std::string& indent) const{
+    void compile(std::ostream& os, const std::string& dest, MemoryContext m) const{
         os<<"bitwiseandop: Not implemented"<<std::endl;
     }
 };
@@ -487,7 +604,7 @@ public:
         os<<")";
     }
 
-    void compile(std::ostream& os, const std::string& dest, const std::string& indent) const{
+    void compile(std::ostream& os, const std::string& dest, MemoryContext m) const{
         os<<"bitwisexorop: Not implemented"<<std::endl;
     }
 };
@@ -511,7 +628,7 @@ public:
         os<<")";
     }
 
-    void compile(std::ostream& os, const std::string& dest, const std::string& indent) const{
+    void compile(std::ostream& os, const std::string& dest, MemoryContext m) const{
         os<<"bitwiseorop: Not implemented"<<std::endl;
     }
 };
@@ -535,7 +652,7 @@ public:
         os<<")";
     }
 
-    void compile(std::ostream& os, const std::string& dest, const std::string& indent) const{
+    void compile(std::ostream& os, const std::string& dest, MemoryContext m) const{
         os<<"logicaland: Not implemented"<<std::endl;
     }
 };
@@ -559,7 +676,7 @@ public:
         os<<")";
     }
 
-    void compile(std::ostream& os, const std::string& dest, const std::string& indent) const{
+    void compile(std::ostream& os, const std::string& dest, MemoryContext m) const{
         os<<"logicalor: Not implemented"<<std::endl;
     }
 };

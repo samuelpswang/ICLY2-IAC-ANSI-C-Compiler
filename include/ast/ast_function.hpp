@@ -22,9 +22,10 @@ public:
         this->stats[0]->print(os, indent+"\t");
         os << indent << "}" << std::endl;
     }
-    void compile(std::ostream& os, const std::string& dest, const std::string& indent) const {
+    void compile(std::ostream& os, const std::string& dest, MemoryContext m) const {
         os<<this->name<<":"<<std::endl;
-        this->stats[0]->compile(os, dest,indent);
+        m.use_func(m.add_func(this->name));
+        this->stats[0]->compile(os, dest,m);
     }
 };
 
@@ -40,12 +41,12 @@ public:
             this->exprs[i]->print(os,"");
         }
     }
-    void compile(std::ostream& os, const std::string& dest, const std::string& indent) const {
+    void compile(std::ostream& os, const std::string& dest, MemoryContext m) const {
         os << ".text" << std::endl;
         os << ".globl f" << std::endl;
         os << std::endl;
         for(int i = 0; i< this->exprs.size(); i++){
-            this->exprs[i]->compile(os,dest,indent);
+            this->exprs[i]->compile(os,dest,m);
         }
     }
 };

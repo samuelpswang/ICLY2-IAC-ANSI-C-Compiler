@@ -8,11 +8,7 @@
 #include <tuple>
 #include "util_mem.hpp"
 
-static int reg_unique_num = 0;
 static int label_unique_num = 0;
-static std::string make_name(const std::string& base) {
-    return base + std::to_string(reg_unique_num++);
-}
 
 static std::string make_label(const std::string& base){
     return "." + base + std::to_string(label_unique_num++);

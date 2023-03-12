@@ -9,7 +9,7 @@ public:
         this->type="";
         this->name="";
         this->val="";
-        this->exprs = expr_list;
+        this->exprs = {expr_list};
         this->stats = {};
     }
 

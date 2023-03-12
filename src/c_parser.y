@@ -1,13 +1,12 @@
-%{
+%code requires{
 #include "ast.hpp"
 #include <cassert>
-#include "ast_list.hpp"
 
 extern const Node* g_root;
 
 int yylex(void);
 void yyerror(const char*);
-%}
+}
 
 %union {
     Node* node;
@@ -197,7 +196,7 @@ function_list
 
 statement_list
     : statement { $$ = new StatementList($1); }
-    | statement_list statement { $$ = new StatementList($1, $2); }
+    | statement_list statement { $1->append_statement($2); }
     ;
 
 statement
