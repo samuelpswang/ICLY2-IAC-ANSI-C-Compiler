@@ -14,7 +14,7 @@ static std::string make_name(const std::string& base) {
 }
 
 static std::string make_label(const std::string& base){
-    return base+std::to_string(label_unique_num++);
+    return "." + base + std::to_string(label_unique_num++);
 }
 
 class Node {

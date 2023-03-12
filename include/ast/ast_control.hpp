@@ -7,6 +7,7 @@
 #include <map>
 
 #include "ast_node.hpp"
+#include "util_mem.hpp"
 
 class If: public Node {
 public:
@@ -24,15 +25,26 @@ public:
         this->stats[0]->print(os, indent+"\t");
         os << indent << "}" << std::endl;
     }
-    void compile(std::ostream& os, const std::string& dest, const std::string& indent) const {
-        std::string cond_reg = make_name("if_cond");
+    void compile(std::ostream& os, const std::string& dest, MemoryContext& m) const {
+        // give condition reg
+        std::string cond_symbol = m.add_symbol("if_cond", false);
+        std::string cond_reg = m.asm_give_reg(os, cond_symbol, treg);
+        if (cond_reg == "") {
+            m.asm_spill_all(os, treg);
+            cond_reg = m.asm_give_reg(os, cond_symbol, treg);
+        }
+        // compile condition reg
+        this->exprs[0]->compile(os, cond_reg, m);
+        // set up branch
         std::string endi_lbl = make_label("if_endif");
-        this->exprs[0]->compile(os, cond_reg,indent);
-        os <<indent<<"beq " << cond_reg << " zero " << endi_lbl << std::endl;
-        this->stats[0]->compile(os, dest,indent);
+        os << "\tbeq " << cond_reg << ", zero, " << endi_lbl << std::endl;
+        // compile statements
+        this->stats[0]->compile(os, dest, m);
+        // end label
         os << endi_lbl << ":" << std::endl;
     }
 };
+
 
 class IfElse: public Node {
 public:
@@ -52,19 +64,32 @@ public:
         this->stats[1]->print(os, indent+"\t");
         os << indent << "}" << std::endl;
     }
-    void compile(std::ostream& os, const std::string& dest, const std::string& indent) const {
-        std::string cond_reg = make_name("ifelse_cond");
+    void compile(std::ostream& os, const std::string& dest, MemoryContext& m) const {
+        // give condition reg
+        std::string cond_symbol = m.add_symbol("ifelse_cond", false);
+        std::string cond_reg = m.asm_give_reg(os, cond_symbol, treg);
+        if (cond_reg == "") {
+            m.asm_spill_all(os, treg);
+            cond_reg = m.asm_give_reg(os, cond_symbol, treg);
+        }
+        // compile condition reg
+        this->exprs[0]->compile(os, cond_reg, m);
+        // set up branch
         std::string else_lbl = make_label("ifelse_else");
         std::string endi_lbl = make_label("ifelse_endif");
-        this->exprs[0]->compile(os, cond_reg,indent);
-        os <<indent<< "beq " << cond_reg << " zero " << else_lbl << std::endl;
-        this->stats[0]->compile(os, dest,indent);
-        os <<indent<< "beq zero zero " << endi_lbl << std::endl;
-        os <<else_lbl<<  ":" << std::endl;
-        this->stats[1]->compile(os, dest,indent);
-        os<<endi_lbl << ":" <<  std::endl;
+        os << "\tbeq " << cond_reg << ", zero, " << else_lbl << std::endl;
+        // compile true statement
+        this->stats[0]->compile(os, dest, m);
+        os << "\tbeq zero, zero, " << endi_lbl << std::endl;
+        // add false label
+        os << else_lbl<<  ":" << std::endl;
+        // compile false statement
+        this->stats[1]->compile(os, dest, m);
+        // add end label
+        os << endi_lbl << ":" <<  std::endl;
     }
 };
+
 
 class While: public Node {
 public:
@@ -82,15 +107,28 @@ public:
         this->stats[0]->print(os, indent+"\t");
         os<<indent<< "}" << std::endl;
     }
-    void compile(std::ostream& os, const std::string& dest, const std::string& indent) const {
-        std::string cond_reg = make_name("while_cond");
+    void compile(std::ostream& os, const std::string& dest, MemoryContext& m) const {
+        // give condition reg
+        std::string cond_symbol = m.add_symbol("ifelse_cond", false);
+        std::string cond_reg = m.asm_give_reg(os, cond_symbol, treg);
+        if (cond_reg == "") {
+            m.asm_spill_all(os, treg);
+            cond_reg = m.asm_give_reg(os, cond_symbol, treg);
+        }
+        // make labels
         std::string strt_lbl = make_label("while_start");
         std::string endl_lbl = make_label("while_end");
-        os <<strt_lbl << ":" <<  std::endl;
-        this->exprs[0]->compile(os, cond_reg,indent);
-        os <<indent<< "beq " << cond_reg << " zero " << endl_lbl << std::endl;
-        this->stats[0]->compile(os, dest,indent);
-        os <<indent<< "beq zero zero " << strt_lbl << std::endl;
+        // add while start label
+        os << strt_lbl << ":" <<  std::endl;
+        // compile condition reg
+        this->exprs[0]->compile(os, cond_reg, m);
+        // set up branch
+        os << "\tbeq " << cond_reg << " zero " << endl_lbl << std::endl;
+        // compile statements
+        this->stats[0]->compile(os, dest, m);
+        // jump unconditionally to start
+        os << "\tbeq zero zero " << strt_lbl << std::endl;
+        // add end label
         os <<endl_lbl << ":" <<  std::endl;
     }
 };
