@@ -605,7 +605,9 @@ public:
     }
 
     void compile(std::ostream& os, const std::string& dest, MemoryContext& m) const{
+
         os<<"bitwisexorop: Not implemented"<<std::endl;
+        
     }
 };
 
