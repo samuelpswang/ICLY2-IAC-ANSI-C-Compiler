@@ -102,10 +102,16 @@ std::string MemoryContext::asm_load_symbol(std::ostream& os, const std::string& 
     if (it == this->symtable[curr_func].end()) {
         throw std::runtime_error("MemoryContextError: symbol name not initialized");
     }
-    int offset = this->symtable[curr_func][name][0];
-    std::string reg = asm_give_reg(os, name, t);
-    os << "lw " << reg << ", " << offset << "(sp)" <<std::endl; 
-    return reg;
+    
+    if (have(t)) {
+        int offset = this->symtable[curr_func][name][0];
+        std::string reg = asm_give_reg(os, name, t);
+        os << "lw " << reg << ", " << offset << "(sp)" <<std::endl; 
+        return reg;
+    } else {
+        return "";
+    }
+
 }
 
 // return true after writing asm to store symbol to memory

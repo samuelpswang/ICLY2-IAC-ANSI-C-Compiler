@@ -27,7 +27,8 @@ int main(int argc, char** argv) {
 
     std::cout << "[compiler.cpp] Parsing from: " << sourcePath << std::endl;
     const Node* ast = parse_ast();
-    ast->compile(output, "a0", "\t");
+    MemoryContext m;
+    ast->compile(output, "a0", m);
     std::cout << "[compiler.cpp] Compiled to: " << outputPath << std::endl;
 
     output.close();
