@@ -36,7 +36,7 @@ bool MemoryContext::use_func(const std::string& func_name) {
         this->curr_func = func_name;
         return true;
     } else {
-        throw std::runtime_error("MemoryContextError: use_func() function name not initialized");
+        throw std::runtime_error("MemoryContextError: use_func() function name not initialized: "+func_name);
     }
 }
 
@@ -61,7 +61,7 @@ bool MemoryContext::use_symbol(const std::string& symbol_name) {
         it->second[2] = 1;
         return true;
     } else {
-        throw std::runtime_error("MemoryContextError: use_symbol() symbol name not initialized");
+        throw std::runtime_error("MemoryContextError: use_symbol() symbol name not initialized: "+symbol_name);
     }
 }
 
@@ -71,7 +71,7 @@ int MemoryContext::get_symbol(const std::string& symbol_name) {
     if (it != this->symtable[curr_func].end()) {
         return it->second[1];
     } else {
-        throw std::runtime_error("MemoryContextError: get_symbol() symbol name not initialized");
+        throw std::runtime_error("MemoryContextError: get_symbol() symbol name not initialized: "+symbol_name);
     }
 }
 
@@ -79,7 +79,7 @@ int MemoryContext::get_symbol(const std::string& symbol_name) {
 std::string MemoryContext::asm_give_reg(std::ostream& os, const std::string& name, regtype t) {
     auto it = this->symtable[curr_func].find(name);
     if (it == this->symtable[curr_func].end()) {
-        throw std::runtime_error("MemoryContextError: asm_give_reg() symbol name not initialized");
+        throw std::runtime_error("MemoryContextError: asm_give_reg() symbol name not initialized: "+name);
     }
     
     std::string reg;
@@ -100,7 +100,7 @@ std::string MemoryContext::asm_give_reg(std::ostream& os, const std::string& nam
 std::string MemoryContext::asm_load_symbol(std::ostream& os, const std::string& name, regtype t) {
     auto it = this->symtable[curr_func].find(name);
     if (it == this->symtable[curr_func].end()) {
-        throw std::runtime_error("MemoryContextError: asm_load_symbol() symbol name not initialized");
+        throw std::runtime_error("MemoryContextError: asm_load_symbol() symbol name not initialized: "+name);
     }
     
     if (have(t)) {
@@ -118,7 +118,7 @@ std::string MemoryContext::asm_load_symbol(std::ostream& os, const std::string& 
 bool MemoryContext::asm_store_symbol(std::ostream& os, const std::string& name) {
     auto it = this->symtable[curr_func].find(name);
     if (it == this->symtable[curr_func].end()) {
-        throw std::runtime_error("MemoryContextError: asm_store_symbol() symbol name not initialized");
+        throw std::runtime_error("MemoryContextError: asm_store_symbol() symbol name not initialized: "+name);
     }
 
     int offset = this->symtable[curr_func][name][0];
