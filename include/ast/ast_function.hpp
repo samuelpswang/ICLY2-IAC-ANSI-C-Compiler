@@ -33,7 +33,7 @@ public:
 class FunctionList: public Node {
 public:
     FunctionList(Node* expr) { // without arguments
-        this->appendList(expr);
+        this->append_list(expr);
     }
     void print(std::ostream& os, const std::string& indent) const {
         for(int i = 0; i< this->exprs.size(); i++){

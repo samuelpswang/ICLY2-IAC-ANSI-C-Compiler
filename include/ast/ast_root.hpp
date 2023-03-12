@@ -5,7 +5,7 @@
 class Root: public Node{
 
 public:
-    Root(std::vector<Node*> expr_list){
+    Root(Node* expr_list){
         this->type="";
         this->name="";
         this->val="";

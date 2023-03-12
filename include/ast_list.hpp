@@ -18,7 +18,7 @@ inline ListPtr makeList(const Node* expr){
     return list;
 }
 
-inline ListPtr appendList(ListPtr expr_list, const Node* expr){
+inline ListPtr append_list(ListPtr expr_list, const Node* expr){
     expr_list->push_back(expr);
     return expr_list;
 }

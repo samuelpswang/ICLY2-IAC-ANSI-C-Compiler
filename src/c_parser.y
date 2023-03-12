@@ -193,7 +193,7 @@ function
 
 function_list
     : function { $$ = new FunctionList($1); }
-    | function_list function { $1->appendList($2); }
+    | function_list function { $1->append_list($2); }
 
 statement_list
     : statement { $$ = new StatementList($1); }

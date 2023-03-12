@@ -22,8 +22,13 @@ public:
     virtual ~Node() {}
     virtual void print(std::ostream& os, const std::string& indent) const = 0;
     virtual void compile(std::ostream& os, const std::string& dest, const std::string& indent) const = 0;
-    void appendList(Node* expr){
+    
+    void append_list(Node* expr){
         exprs.push_back(expr);
+    }
+
+    void append_statement(Node* expr){
+        stats.push_back(expr);
     }
 
 protected:
