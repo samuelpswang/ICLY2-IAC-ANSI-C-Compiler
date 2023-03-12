@@ -22,7 +22,7 @@ public:
         os << indent << this->val;
     }
     void compile(std::ostream& os, const std::string& dest, MemoryContext& m) const {
-        os << "\taddi " << dest << ", zero, " << this->val << std::endl;
+        os << "\tli " << dest << ", " << this->val << std::endl;
     }
 };
 
