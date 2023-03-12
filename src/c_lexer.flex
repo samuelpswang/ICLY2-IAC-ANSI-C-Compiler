@@ -115,8 +115,8 @@ L?\"(\\.|[^\\"])*\"	{ yylval.string = new std::string(yytext); yyprint(yytext, "
 
 {L}+                { yylval.string = new std::string(yytext); yyprint(yytext, "identifier"); return IDENTIFIER; }
 
-[ \t\v\n\f]		    {}
-.			        { yyprint(yytext, "invalid token"); exit(1); }
+[ \t\v\n\f\r]		    {}
+.			        { yyprint(yytext, "invalid token"); exit(1);}
 
 %%
 
