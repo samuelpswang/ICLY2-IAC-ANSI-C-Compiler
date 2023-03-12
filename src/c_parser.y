@@ -1,4 +1,4 @@
-%code requires{
+%{
 #include "ast.hpp"
 #include <cassert>
 #include "ast_list.hpp"
@@ -7,7 +7,7 @@ extern const Node* g_root;
 
 int yylex(void);
 void yyerror(const char*);
-}
+%}
 
 %union {
     Node* node;
