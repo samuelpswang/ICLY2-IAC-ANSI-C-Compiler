@@ -4,6 +4,7 @@
 
 #include "cli.hpp"
 #include "ast.hpp"
+#include "util_mem.hpp"
 
 extern FILE *yyin;
 

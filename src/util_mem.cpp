@@ -3,7 +3,7 @@
 #include <string>
 #include <map>
 
-#include "../include/util_mem.hpp"
+#include "util_mem.hpp"
 
 // Basics
 // constructor, should initialize four members
@@ -87,7 +87,7 @@ std::string MemoryContext::asm_give_reg(std::ostream& os, const std::string& nam
     if (have(t)) {
         std::string reg_number = std::to_string(next(t));
         reg = "x" + reg_number;
-        os << "li " << reg << ", 0x00" << std::endl;
+        os << "\tli " << reg << ", 0x00" << std::endl;
         this->symtable[curr_func][name] = {offset, next(t), 1};
         this->regfile[next(t)] = {1, offset};
     } else {
@@ -106,7 +106,7 @@ std::string MemoryContext::asm_load_symbol(std::ostream& os, const std::string& 
     if (have(t)) {
         int offset = this->symtable[curr_func][name][0];
         std::string reg = asm_give_reg(os, name, t);
-        os << "lw " << reg << ", " << offset << "(sp)" <<std::endl; 
+        os << "\tlw " << reg << ", " << offset << "(sp)" <<std::endl; 
         return reg;
     } else {
         return "";
@@ -125,7 +125,7 @@ bool MemoryContext::asm_store_symbol(std::ostream& os, const std::string& name) 
     std::string reg = "x" + std::to_string(this->symtable[curr_func][name][1]);
     this->regfile[this->symtable[curr_func][name][1]] = {0 , -1};
     this->symtable[curr_func][name][1] = -1;
-    os << "sw " << reg << ", " << offset << "(sp)" << std::endl;
+    os << "\tsw " << reg << ", " << offset << "(sp)" << std::endl;
     return true;
 }
 
@@ -137,7 +137,7 @@ bool MemoryContext::asm_clean_up(std::ostream& os) {
         std::string reg = "x" + std::to_string(it->second[1]);
         int dirty_bit = it->second[2];
         if (dirty_bit == 1) {
-            os << "sw " << reg << ", " << offset << "(sp)" << std::endl;
+            os << "\tsw " << reg << ", " << offset << "(sp)" << std::endl;
             it->second[2] = 0;
             this->regfile[it->second[1]] = {0 ,-1};
             it->second[1] = -1;
@@ -152,7 +152,7 @@ bool MemoryContext::asm_spill_all(std::ostream& os, regtype t) {
         int offset = it->second[0];
         if(it->second[1] != -1) {
             std::string reg = "x" + std::to_string(it->second[1]);
-            os << "sw " << reg << ", " << offset << "(sp)" << std::endl; 
+            os << "\tsw " << reg << ", " << offset << "(sp)" << std::endl; 
             it->second[2] = 0;
             this->regfile[it->second[1]] = {0 ,-1};
             it->second[1] = -1;
