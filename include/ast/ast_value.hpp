@@ -41,7 +41,7 @@ public:
     }
     void compile(std::ostream& os, const std::string& dest, MemoryContext& m) const {
         std::string iden_reg = m.asm_load_symbol(os, this->name, treg);
-        os << "\tadd" << dest << ", " << iden_reg << ", zero" << std::endl;
+        os << "\tadd " << dest << ", " << iden_reg << ", zero" << std::endl;
     }
 };
 
