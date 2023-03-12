@@ -6,6 +6,7 @@
 #include <vector>
 #include <map>
 #include <tuple>
+#include "util_mem.hpp"
 
 static int reg_unique_num = 0;
 static int label_unique_num = 0;
@@ -21,7 +22,7 @@ class Node {
 public:
     virtual ~Node() {}
     virtual void print(std::ostream& os, const std::string& indent) const = 0;
-    virtual void compile(std::ostream& os, const std::string& dest, const std::string& indent) const = 0;
+    virtual void compile(std::ostream& os, const std::string& dest, MemoryContext m) const = 0;
     
     void append_list(Node* expr){
         exprs.push_back(expr);
@@ -29,6 +30,14 @@ public:
 
     void append_statement(Node* expr){
         stats.push_back(expr);
+    }
+
+    std::string get_name() const{ 
+        return name;
+    }
+
+    std::string get_val() const{
+        return val;
     }
 
 protected:
