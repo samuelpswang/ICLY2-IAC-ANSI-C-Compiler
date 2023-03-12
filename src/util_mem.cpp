@@ -96,6 +96,7 @@ std::string MemoryContext::asm_give_reg(std::ostream& os, const std::string& nam
     return reg;
 }
 
+// FIXME:
 // return loaded register after writing asm to load symbol into regfile and linked to symtable
 std::string MemoryContext::asm_load_symbol(std::ostream& os, const std::string& name, regtype t) {
     auto it = this->symtable[curr_func].find(name);

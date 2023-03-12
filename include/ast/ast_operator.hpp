@@ -24,7 +24,6 @@ public:
         this->stats[0]->print(os, "");
     }
     void compile(std::ostream& os, const std::string& dest, MemoryContext& m) const {
-        std::string reg = m.asm_load_symbol(os, this->exprs[0]->get_name(),areg);
         std::string symbol = m.add_symbol("val",false);
         std::string value = m.asm_give_reg(os, symbol, areg);
         if(value == ""){
@@ -32,7 +31,9 @@ public:
             value = m.asm_give_reg(os, symbol, areg);
         }
         this->stats[0]->compile(os,value,m);
+        std::string reg = m.asm_load_symbol(os, this->exprs[0]->get_name(),areg);
         os<<"\tadd "<< reg<<", zero, "<<value<<std::endl;
+        m.asm_store_symbol(os, this->exprs[0]->get_name());
     }
 };
 
@@ -423,8 +424,8 @@ public:
         }
         this->exprs[0]->compile(os,val1,m);
         this->exprs[1]->compile(os,val2,m);
-        os<<"\t"<<"slt "<<val3<<", "<<val1<<", "<<val2<<std::endl;
-        os<<"\t"<<"seqz "<<dest<<", "<<val3<<std::endl;
+        os<<"\t"<<"slt "<<val3<<", "<<val2<<", "<<val1<<std::endl;
+        os << "\tadd " << dest << ", " << val3 << ", zero" << std::endl;
     }
 
 };
