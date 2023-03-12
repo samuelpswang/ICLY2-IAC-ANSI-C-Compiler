@@ -17,8 +17,8 @@ static std::string make_label(const std::string& base){
 class Node {
 public:
     virtual ~Node() {}
-    virtual void print(std::ostream& os, const std::string& indent) const = 0;
-    virtual void compile(std::ostream& os, const std::string& dest, MemoryContext m) const = 0;
+    virtual void print(std::ostream& os, const std::string& indent) const {};
+    virtual void compile(std::ostream& os, const std::string& dest, MemoryContext& m) const {};
     
     void append_list(Node* expr){
         exprs.push_back(expr);

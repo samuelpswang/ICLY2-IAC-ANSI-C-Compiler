@@ -23,7 +23,7 @@ public:
         os << " = ";
         this->stats[0]->print(os, "");
     }
-    void compile(std::ostream& os, const std::string& dest, MemoryContext m) const {
+    void compile(std::ostream& os, const std::string& dest, MemoryContext& m) const {
         std::string reg = m.asm_load_symbol(os, this->exprs[0]->get_name(),areg);
         std::string value = m.add_symbol("val",false);
         value = m.asm_give_reg(os, value, areg);
@@ -53,7 +53,7 @@ public:
         os << this->name;
     }
 
-    void compile(std::ostream& os, const std::string& dest, MemoryContext m) const {
+    void compile(std::ostream& os, const std::string& dest, MemoryContext& m) const {
         throw std::runtime_error("ImplementationError: PostfixUnaryIncDecOp");
     }
 };
@@ -76,7 +76,7 @@ public:
         
     }
 
-    void compile(std::ostream& os, const std::string& dest, MemoryContext m) const {
+    void compile(std::ostream& os, const std::string& dest, MemoryContext& m) const {
         throw std::runtime_error("ImplementationError: PostfixUnaryIncDecOp");
     }
 };
@@ -100,7 +100,7 @@ public:
         os<<")";
     }
 
-    void compile(std::ostream& os, const std::string& dest, MemoryContext m) const{
+    void compile(std::ostream& os, const std::string& dest, MemoryContext& m) const{
         std::string val1 = m.add_symbol("val1",false);
         val1  = m.asm_give_reg(os,val1,areg);
         if(val1 == ""){
@@ -137,7 +137,7 @@ public:
         os<<")";
     }
 
-    void compile(std::ostream& os, const std::string& dest, MemoryContext m) const{
+    void compile(std::ostream& os, const std::string& dest, MemoryContext& m) const{
         std::string val1 = m.add_symbol("val1",false);
         val1  = m.asm_give_reg(os,val1,areg);
         if(val1 == ""){
@@ -175,7 +175,7 @@ public:
         os<<")";
     }
 
-    void compile(std::ostream& os, const std::string& dest, MemoryContext m) const{
+    void compile(std::ostream& os, const std::string& dest, MemoryContext& m) const{
         std::string val1 = m.add_symbol("val1",false);
         val1  = m.asm_give_reg(os,val1,areg);
         if(val1 == ""){
@@ -213,7 +213,7 @@ public:
         os<<")";
     }
 
-    void compile(std::ostream& os, const std::string& dest, MemoryContext m) const{
+    void compile(std::ostream& os, const std::string& dest, MemoryContext& m) const{
         std::string val1 = m.add_symbol("val1",false);
         val1  = m.asm_give_reg(os,val1,areg);
         if(val1 == ""){
@@ -248,7 +248,7 @@ public:
         this->exprs[1]->print(os,"");
         os<<")";
     }
-    void compile(std::ostream& os, const std::string& dest, MemoryContext m) const{
+    void compile(std::ostream& os, const std::string& dest, MemoryContext& m) const{
         std::string val1 = m.add_symbol("val1",false);
         val1  = m.asm_give_reg(os,val1,areg);
         if(val1 == ""){
@@ -286,7 +286,7 @@ public:
         os<<")";
     }
 
-    void compile(std::ostream& os, const std::string& dest, MemoryContext m) const{
+    void compile(std::ostream& os, const std::string& dest, MemoryContext& m) const{
         std::string val1 = m.add_symbol("val1",false);
         val1  = m.asm_give_reg(os,val1,areg);
         if(val1 == ""){
@@ -325,7 +325,7 @@ public:
         os<<")";
     }
 
-    void compile(std::ostream& os, const std::string& dest, MemoryContext m) const{
+    void compile(std::ostream& os, const std::string& dest, MemoryContext& m) const{
         std::string val1 = m.add_symbol("val1",false);
         val1  = m.asm_give_reg(os,val1,areg);
         if(val1 == ""){
@@ -363,7 +363,7 @@ public:
         os<<")";
     }
 
-    void compile(std::ostream& os, const std::string& dest, MemoryContext m) const{
+    void compile(std::ostream& os, const std::string& dest, MemoryContext& m) const{
         std::string val1 = m.add_symbol("val1",false);
         val1  = m.asm_give_reg(os,val1,areg);
         if(val1 == ""){
@@ -402,7 +402,7 @@ public:
         os<<")";
     }
 
-    void compile(std::ostream& os, const std::string& dest, MemoryContext m) const{
+    void compile(std::ostream& os, const std::string& dest, MemoryContext& m) const{
         std::string val1 = m.add_symbol("val1",false);
         val1  = m.asm_give_reg(os,val1,areg);
         if(val1 == ""){
@@ -448,7 +448,7 @@ public:
         os<<")";
     }
 
-    void compile(std::ostream& os, const std::string& dest, MemoryContext m) const{
+    void compile(std::ostream& os, const std::string& dest, MemoryContext& m) const{
         std::string less_than = m.add_symbol("val1",false);
         less_than  = m.asm_give_reg(os,less_than,areg);
         if(less_than == ""){
@@ -505,7 +505,7 @@ public:
         os<<")";
     }
 
-    void compile(std::ostream& os, const std::string& dest, MemoryContext m) const{
+    void compile(std::ostream& os, const std::string& dest, MemoryContext& m) const{
         
     }
 
@@ -530,7 +530,7 @@ public:
         os<<")";
     }
 
-    void compile(std::ostream& os, const std::string& dest, MemoryContext m) const{
+    void compile(std::ostream& os, const std::string& dest, MemoryContext& m) const{
         os<<"moreequalop: Not implemented"<<std::endl;
     }
 
@@ -555,7 +555,7 @@ public:
         os<<")";
     }
 
-    void compile(std::ostream& os, const std::string& dest, MemoryContext m) const{
+    void compile(std::ostream& os, const std::string& dest, MemoryContext& m) const{
         os<<"moreequalop: Not implemented"<<std::endl;
     }
 
@@ -580,7 +580,7 @@ public:
         os<<")";
     }
 
-    void compile(std::ostream& os, const std::string& dest, MemoryContext m) const{
+    void compile(std::ostream& os, const std::string& dest, MemoryContext& m) const{
         os<<"bitwiseandop: Not implemented"<<std::endl;
     }
 };
@@ -604,7 +604,7 @@ public:
         os<<")";
     }
 
-    void compile(std::ostream& os, const std::string& dest, MemoryContext m) const{
+    void compile(std::ostream& os, const std::string& dest, MemoryContext& m) const{
         os<<"bitwisexorop: Not implemented"<<std::endl;
     }
 };
@@ -628,7 +628,7 @@ public:
         os<<")";
     }
 
-    void compile(std::ostream& os, const std::string& dest, MemoryContext m) const{
+    void compile(std::ostream& os, const std::string& dest, MemoryContext& m) const{
         os<<"bitwiseorop: Not implemented"<<std::endl;
     }
 };
@@ -652,7 +652,7 @@ public:
         os<<")";
     }
 
-    void compile(std::ostream& os, const std::string& dest, MemoryContext m) const{
+    void compile(std::ostream& os, const std::string& dest, MemoryContext& m) const{
         os<<"logicaland: Not implemented"<<std::endl;
     }
 };
@@ -676,7 +676,7 @@ public:
         os<<")";
     }
 
-    void compile(std::ostream& os, const std::string& dest, MemoryContext m) const{
+    void compile(std::ostream& os, const std::string& dest, MemoryContext& m) const{
         os<<"logicalor: Not implemented"<<std::endl;
     }
 };
