@@ -6,8 +6,8 @@
 set -euo pipefail
 
 make bin/compiler
-./bin/compiler -S "compiler_tests/_example/example.c" -o "bin/riscv_example.s"
-riscv64-unknown-elf-gcc -march=rv32imfd -mabi=ilp32d -o "bin/riscv_example" "bin/riscv_example.s" "compiler_tests/_example/example_driver.c"
+./bin/compiler -S "tests/_example/example.c" -o "bin/riscv_example.s"
+riscv64-unknown-elf-gcc -march=rv32imfd -mabi=ilp32d -o "bin/riscv_example" "bin/riscv_example.s" "tests/_example/example_driver.c"
 
 set +e
 spike pk "bin/riscv_example"

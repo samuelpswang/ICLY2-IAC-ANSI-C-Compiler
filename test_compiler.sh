@@ -6,7 +6,7 @@
 set -uo pipefail
 shopt -s globstar
 
-make bin/c_compiler
+make bin/compiler
 
 mkdir -p bin
 mkdir -p bin/output
@@ -24,7 +24,7 @@ fail_testcase() {
     printf '%s\n' "</testcase>" >> "${J_UNIT_OUTPUT_FILE}"
 }
 
-for DRIVER in compiler_tests/**/*_driver.c; do
+for DRIVER in tests/**/*_driver.c; do
     (( TOTAL++ ))
 
     TO_ASSEMBLE="${DRIVER%_driver.c}.c"
@@ -38,7 +38,7 @@ for DRIVER in compiler_tests/**/*_driver.c; do
     rm -f "${OUT}.s"
     rm -f "${OUT}.o"
     rm -f "${OUT}"
-    ./bin/c_compiler -S "${TO_ASSEMBLE}" -o "${OUT}.s" 2> "${LOG_PATH}.compiler.stderr.log" > "${LOG_PATH}.compiler.stdout.log"
+    ./bin/compiler -S "${TO_ASSEMBLE}" -o "${OUT}.s" 2> "${LOG_PATH}.compiler.stderr.log" > "${LOG_PATH}.compiler.stdout.log"
     if [ $? -ne 0 ]; then
         fail_testcase "Fail: see ${LOG_PATH}.compiler.stderr.log and ${LOG_PATH}.compiler.stdout.log"
         continue
