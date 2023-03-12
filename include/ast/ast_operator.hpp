@@ -25,11 +25,11 @@ public:
     }
     void compile(std::ostream& os, const std::string& dest, MemoryContext& m) const {
         std::string reg = m.asm_load_symbol(os, this->exprs[0]->get_name(),areg);
-        std::string value = m.add_symbol("val",false);
-        value = m.asm_give_reg(os, value, areg);
+        std::string symbol = m.add_symbol("val",false);
+        std::string value = m.asm_give_reg(os, symbol, areg);
         if(value == ""){
             m.asm_spill_all(os, areg);
-            value = m.asm_give_reg(os, value, areg);
+            value = m.asm_give_reg(os, symbol, areg);
         }
         this->stats[0]->compile(os,value,m);
         os<<"\tadd "<< reg<<", zero, "<<value<<std::endl;
@@ -101,17 +101,17 @@ public:
     }
 
     void compile(std::ostream& os, const std::string& dest, MemoryContext& m) const{
-        std::string val1 = m.add_symbol("val1",false);
-        val1  = m.asm_give_reg(os,val1,areg);
+        std::string symbol1 = m.add_symbol("val1",false);
+        std::string val1  = m.asm_give_reg(os,symbol1,areg);
         if(val1 == ""){
             m.asm_spill_all(os, areg);
-            val1 = m.asm_give_reg(os, val1, areg);
+            val1 = m.asm_give_reg(os, symbol1, areg);
         }
-        std::string val2 = m.add_symbol("val2",false);
-        val2  = m.asm_give_reg(os,val2,areg);
+        std::string symbol2 = m.add_symbol("val2",false);
+        std::string val2  = m.asm_give_reg(os,symbol2,areg);
         if(val2 == ""){
             m.asm_spill_all(os, areg);
-            val2 = m.asm_give_reg(os, val2, areg);
+            val2 = m.asm_give_reg(os, symbol2, areg);
         }
         this->exprs[0]->compile(os,val1,m);
         this->exprs[1]->compile(os,val2,m);
@@ -138,17 +138,17 @@ public:
     }
 
     void compile(std::ostream& os, const std::string& dest, MemoryContext& m) const{
-        std::string val1 = m.add_symbol("val1",false);
-        val1  = m.asm_give_reg(os,val1,areg);
+        std::string symbol1 = m.add_symbol("val1",false);
+        std::string val1  = m.asm_give_reg(os,symbol1,areg);
         if(val1 == ""){
             m.asm_spill_all(os, areg);
-            val1 = m.asm_give_reg(os, val1, areg);
+            val1 = m.asm_give_reg(os, symbol1, areg);
         }
-        std::string val2 = m.add_symbol("val2",false);
-        val2  = m.asm_give_reg(os,val2,areg);
+        std::string symbol2 = m.add_symbol("val2",false);
+        std::string val2  = m.asm_give_reg(os,symbol2,areg);
         if(val2 == ""){
             m.asm_spill_all(os, areg);
-            val2 = m.asm_give_reg(os, val2, areg);
+            val2 = m.asm_give_reg(os, symbol2, areg);
         }
         this->exprs[0]->compile(os,val1,m);
         this->exprs[1]->compile(os,val2,m);
@@ -176,17 +176,17 @@ public:
     }
 
     void compile(std::ostream& os, const std::string& dest, MemoryContext& m) const{
-        std::string val1 = m.add_symbol("val1",false);
-        val1  = m.asm_give_reg(os,val1,areg);
+        std::string symbol1 = m.add_symbol("val1",false);
+        std::string val1  = m.asm_give_reg(os,symbol1,areg);
         if(val1 == ""){
             m.asm_spill_all(os, areg);
-            val1 = m.asm_give_reg(os, val1, areg);
+            val1 = m.asm_give_reg(os, symbol1, areg);
         }
-        std::string val2 = m.add_symbol("val2",false);
-        val2  = m.asm_give_reg(os,val2,areg);
+        std::string symbol2 = m.add_symbol("val2",false);
+        std::string val2  = m.asm_give_reg(os,symbol2,areg);
         if(val2 == ""){
             m.asm_spill_all(os, areg);
-            val2 = m.asm_give_reg(os, val2, areg);
+            val2 = m.asm_give_reg(os, symbol2, areg);
         }
         this->exprs[0]->compile(os,val1,m);
         this->exprs[1]->compile(os,val2,m);
@@ -214,17 +214,17 @@ public:
     }
 
     void compile(std::ostream& os, const std::string& dest, MemoryContext& m) const{
-        std::string val1 = m.add_symbol("val1",false);
-        val1  = m.asm_give_reg(os,val1,areg);
+        std::string symbol1 = m.add_symbol("val1",false);
+        std::string val1  = m.asm_give_reg(os,symbol1,areg);
         if(val1 == ""){
             m.asm_spill_all(os, areg);
-            val1 = m.asm_give_reg(os, val1, areg);
+            val1 = m.asm_give_reg(os, symbol1, areg);
         }
-        std::string val2 = m.add_symbol("val2",false);
-        val2  = m.asm_give_reg(os,val2,areg);
+        std::string symbol2 = m.add_symbol("val2",false);
+        std::string val2  = m.asm_give_reg(os,symbol2,areg);
         if(val2 == ""){
             m.asm_spill_all(os, areg);
-            val2 = m.asm_give_reg(os, val2, areg);
+            val2 = m.asm_give_reg(os, symbol2, areg);
         }
         this->exprs[0]->compile(os,val1,m);
         this->exprs[1]->compile(os,val2,m);
@@ -249,17 +249,17 @@ public:
         os<<")";
     }
     void compile(std::ostream& os, const std::string& dest, MemoryContext& m) const{
-        std::string val1 = m.add_symbol("val1",false);
-        val1  = m.asm_give_reg(os,val1,areg);
+        std::string symbol1 = m.add_symbol("val1",false);
+        std::string val1  = m.asm_give_reg(os,symbol1,areg);
         if(val1 == ""){
             m.asm_spill_all(os, areg);
-            val1 = m.asm_give_reg(os, val1, areg);
+            val1 = m.asm_give_reg(os, symbol1, areg);
         }
-        std::string val2 = m.add_symbol("val2",false);
-        val2  = m.asm_give_reg(os,val2,areg);
+        std::string symbol2 = m.add_symbol("val2",false);
+        std::string val2  = m.asm_give_reg(os,symbol2,areg);
         if(val2 == ""){
             m.asm_spill_all(os, areg);
-            val2 = m.asm_give_reg(os, val2, areg);
+            val2 = m.asm_give_reg(os, symbol2, areg);
         }
         this->exprs[0]->compile(os,val1,m);
         this->exprs[1]->compile(os,val2,m);
@@ -287,17 +287,17 @@ public:
     }
 
     void compile(std::ostream& os, const std::string& dest, MemoryContext& m) const{
-        std::string val1 = m.add_symbol("val1",false);
-        val1  = m.asm_give_reg(os,val1,areg);
+        std::string symbol1 = m.add_symbol("val1",false);
+        std::string val1  = m.asm_give_reg(os,symbol1,areg);
         if(val1 == ""){
             m.asm_spill_all(os, areg);
-            val1 = m.asm_give_reg(os, val1, areg);
+            val1 = m.asm_give_reg(os, symbol1, areg);
         }
-        std::string val2 = m.add_symbol("val2",false);
-        val2  = m.asm_give_reg(os,val2,areg);
+        std::string symbol2 = m.add_symbol("val2",false);
+        std::string val2  = m.asm_give_reg(os,symbol2,areg);
         if(val2 == ""){
             m.asm_spill_all(os, areg);
-            val2 = m.asm_give_reg(os, val2, areg);
+            val2 = m.asm_give_reg(os, symbol2, areg);
         }
         this->exprs[0]->compile(os,val1,m);
         this->exprs[1]->compile(os,val2,m);
@@ -326,17 +326,17 @@ public:
     }
 
     void compile(std::ostream& os, const std::string& dest, MemoryContext& m) const{
-        std::string val1 = m.add_symbol("val1",false);
-        val1  = m.asm_give_reg(os,val1,areg);
+        std::string symbol1 = m.add_symbol("val1",false);
+        std::string val1  = m.asm_give_reg(os,symbol1,areg);
         if(val1 == ""){
             m.asm_spill_all(os, areg);
-            val1 = m.asm_give_reg(os, val1, areg);
+            val1 = m.asm_give_reg(os, symbol1, areg);
         }
-        std::string val2 = m.add_symbol("val2",false);
-        val2  = m.asm_give_reg(os,val2,areg);
+        std::string symbol2 = m.add_symbol("val2",false);
+        std::string val2  = m.asm_give_reg(os,symbol2,areg);
         if(val2 == ""){
             m.asm_spill_all(os, areg);
-            val2 = m.asm_give_reg(os, val2, areg);
+            val2 = m.asm_give_reg(os, symbol2, areg);
         }
         this->exprs[0]->compile(os,val1,m);
         this->exprs[1]->compile(os,val2,m);
@@ -364,17 +364,17 @@ public:
     }
 
     void compile(std::ostream& os, const std::string& dest, MemoryContext& m) const{
-        std::string val1 = m.add_symbol("val1",false);
-        val1  = m.asm_give_reg(os,val1,areg);
+        std::string symbol1 = m.add_symbol("val1",false);
+        std::string val1  = m.asm_give_reg(os,symbol1,areg);
         if(val1 == ""){
             m.asm_spill_all(os, areg);
-            val1 = m.asm_give_reg(os, val1, areg);
+            val1 = m.asm_give_reg(os, symbol1, areg);
         }
-        std::string val2 = m.add_symbol("val2",false);
-        val2  = m.asm_give_reg(os,val2,areg);
+        std::string symbol2 = m.add_symbol("val2",false);
+        std::string val2  = m.asm_give_reg(os,symbol2,areg);
         if(val2 == ""){
             m.asm_spill_all(os, areg);
-            val2 = m.asm_give_reg(os, val2, areg);
+            val2 = m.asm_give_reg(os, symbol2, areg);
         }
         this->exprs[0]->compile(os,val1,m);
         this->exprs[1]->compile(os,val2,m);
@@ -403,23 +403,23 @@ public:
     }
 
     void compile(std::ostream& os, const std::string& dest, MemoryContext& m) const{
-        std::string val1 = m.add_symbol("val1",false);
-        val1  = m.asm_give_reg(os,val1,areg);
+        std::string symbol1 = m.add_symbol("val1",false);
+        std::string val1  = m.asm_give_reg(os,symbol1,areg);
         if(val1 == ""){
             m.asm_spill_all(os, areg);
-            val1 = m.asm_give_reg(os, val1, areg);
+            val1 = m.asm_give_reg(os, symbol1, areg);
         }
-        std::string val2 = m.add_symbol("val2",false);
-        val2  = m.asm_give_reg(os,val2,areg);
+        std::string symbol2 = m.add_symbol("val2",false);
+        std::string val2  = m.asm_give_reg(os,symbol2,areg);
         if(val2 == ""){
             m.asm_spill_all(os, areg);
-            val2 = m.asm_give_reg(os, val2, areg);
+            val2 = m.asm_give_reg(os, symbol2, areg);
         }
-        std::string val3 = m.add_symbol("val3",false);
-        val3  = m.asm_give_reg(os,val3,areg);
+        std::string symbol3 = m.add_symbol("val3",false);
+        std::string val3  = m.asm_give_reg(os,symbol3,areg);
         if(val3 == ""){
             m.asm_spill_all(os, areg);
-            val3 = m.asm_give_reg(os, val3, areg);
+            val3 = m.asm_give_reg(os, symbol3, areg);
         }
         this->exprs[0]->compile(os,val1,m);
         this->exprs[1]->compile(os,val2,m);
@@ -450,28 +450,28 @@ public:
 
     void compile(std::ostream& os, const std::string& dest, MemoryContext& m) const{
         std::string less_than = m.add_symbol("val1",false);
-        less_than  = m.asm_give_reg(os,less_than,areg);
+        std::string less_than_value  = m.asm_give_reg(os,less_than,areg);
         if(less_than == ""){
             m.asm_spill_all(os, areg);
-            less_than = m.asm_give_reg(os, less_than, areg);
+            less_than_value = m.asm_give_reg(os, less_than, areg);
         }
         std::string left = m.add_symbol("val2",false);
-        left  = m.asm_give_reg(os,left,areg);
-        if(left == ""){
+        std::string left_value  = m.asm_give_reg(os,left,areg);
+        if(left_value == ""){
             m.asm_spill_all(os, areg);
-            left = m.asm_give_reg(os, left, areg);
+            left_value = m.asm_give_reg(os, left, areg);
         }
         std::string right = m.add_symbol("val1",false);
-        right  = m.asm_give_reg(os,right,areg);
-        if(right == ""){
+        std::string right_value  = m.asm_give_reg(os,right,areg);
+        if(right_value == ""){
             m.asm_spill_all(os, areg);
-            right = m.asm_give_reg(os, right, areg);
+            right_value = m.asm_give_reg(os, right, areg);
         }
         std::string diff = m.add_symbol("val2",false);
-        diff  = m.asm_give_reg(os,diff,areg);
-        if(diff == ""){
+        std::string diff_value  = m.asm_give_reg(os,diff,areg);
+        if(diff_value == ""){
             m.asm_spill_all(os, areg);
-            diff = m.asm_give_reg(os, diff, areg);
+            diff_value = m.asm_give_reg(os, diff, areg);
         }
         std::string end =  make_label("lte_end");
         this->exprs[0]->compile(os,left,m);
