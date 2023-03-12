@@ -123,11 +123,11 @@ public:
         // compile condition reg
         this->exprs[0]->compile(os, cond_reg, m);
         // set up branch
-        os << "\tbeq " << cond_reg << " zero " << endl_lbl << std::endl;
+        os << "\tbeq " << cond_reg << ", zero, " << endl_lbl << std::endl;
         // compile statements
         this->stats[0]->compile(os, dest, m);
         // jump unconditionally to start
-        os << "\tbeq zero zero " << strt_lbl << std::endl;
+        os << "\tbeq zero, zero, " << strt_lbl << std::endl;
         // add end label
         os <<endl_lbl << ":" <<  std::endl;
     }
