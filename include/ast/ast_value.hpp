@@ -4,9 +4,10 @@
 #include <iostream>
 #include <string>
 #include <vector>
-#include <map>
 
 #include "ast_node.hpp"
+#include "util_mem.hpp"
+
 
 class Number: public Node {
 public:
@@ -20,8 +21,8 @@ public:
     void print(std::ostream& os, const std::string& indent) const {
         os << indent << this->val;
     }
-    void compile(std::ostream& os, const std::string& dest, const std::string& indent) const {
-        os <<indent<< "addi " << dest << ", zero, " << this->val << std::endl;
+    void compile(std::ostream& os, const std::string& dest, MemoryContext& m) const {
+        os << "\taddi " << dest << ", zero, " << this->val << std::endl;
     }
 };
 
@@ -30,16 +31,17 @@ class Identifier: public Node {
 public:
     Identifier(std::string val) {
         this->type = "";
-        this->name = "";
-        this->val = val;
+        this->name = name;
+        this->val = "";
         this->exprs = {};
         this->stats = {};
     }
     void print(std::ostream& os, const std::string& indent) const {
-        os << indent << this->val;
+        os << indent << this->name;
     }
-    void compile(std::ostream& os, const std::string& dest, const std::string& indent) const {
-        os <<indent<< "add " << dest << ", zero, " << this->val << std::endl;
+    void compile(std::ostream& os, const std::string& dest, MemoryContext& m) const {
+        std::string iden_reg = m.asm_load_symbol(os, this->name, treg);
+        os << "\tadd" << dest << ", " << iden_reg << ", zero" << std::endl;
     }
 };
 

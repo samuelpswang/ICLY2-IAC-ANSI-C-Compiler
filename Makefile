@@ -37,5 +37,7 @@ clean:
 	rm -f src/*.o
 	rm -rf bin
 	mkdir bin
-	touch bin/.gitkeep
+	mkdir bin/output
+	mkdir bin/output/_debug
+	touch bin/output/_debug/.gitkeep
 	rm -rf src/*.dSYM
