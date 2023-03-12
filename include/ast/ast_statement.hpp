@@ -24,6 +24,7 @@ public:
     }
     void compile(std::ostream& os, const std::string& dest, const std::string& indent) const {
         this->exprs[0]->compile(os, dest, indent);
+        os << indent << "ret" << std::endl;
     }
 };
 

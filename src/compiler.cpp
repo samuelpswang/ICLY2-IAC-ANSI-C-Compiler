@@ -5,19 +5,6 @@
 #include "cli.hpp"
 #include "ast.hpp"
 
-void compile(std::ostream &w)
-{
-    w << ".text" << std::endl;
-    w << ".globl f" << std::endl;
-    w << std::endl;
-
-    w << "f:" << std::endl;
-    w << "addi  t0, zero, 0" << std::endl;
-    w << "addi  t0, t0,   5" << std::endl;
-    w << "add   a0, zero, t0" << std::endl;
-    w << "ret" << std::endl;
-}
-
 extern FILE *yyin;
 
 int main(int argc, char** argv) {
@@ -40,7 +27,7 @@ int main(int argc, char** argv) {
 
     std::cout << "[compiler.cpp] Parsing from: " << sourcePath << std::endl;
     const Node* ast = parse_ast();
-    ast->compile(output, "rst","    ");
+    ast->compile(output, "a0", "\t");
     std::cout << "[compiler.cpp] Compiled to: " << outputPath << std::endl;
 
     output.close();

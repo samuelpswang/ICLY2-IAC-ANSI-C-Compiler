@@ -21,7 +21,7 @@ public:
         os << indent << this->val;
     }
     void compile(std::ostream& os, const std::string& dest, const std::string& indent) const {
-        os <<indent<< "addi " << dest << " zero " << this->val << std::endl;
+        os <<indent<< "addi " << dest << ", zero, " << this->val << std::endl;
     }
 };
 
