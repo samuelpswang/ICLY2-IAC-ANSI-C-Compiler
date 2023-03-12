@@ -29,9 +29,9 @@ public:
 
 class Identifier: public Node {
 public:
-    Identifier(std::string val) {
+    Identifier(std::string identifier_name) {
         this->type = "";
-        this->name = name;
+        this->name = identifier_name;
         this->val = "";
         this->exprs = {};
         this->stats = {};
