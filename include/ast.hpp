@@ -8,13 +8,16 @@
 
 #include "ast/ast_node.hpp"
 
-#include "ast/control_flow/ast_for.hpp"
-#include "ast/control_flow/ast_if.hpp"
-#include "ast/control_flow/ast_while.hpp"
+#include "ast/control_flows/ast_for.hpp"
+#include "ast/control_flows/ast_if.hpp"
+#include "ast/control_flows/ast_while.hpp"
+
+#include "ast/ast_operator.hpp"
+#include "ast/operators/unary/ast_address_of.hpp"
+#include "ast/operators/unary/ast_dereference.hpp"
 
 #include "ast/ast_expression.hpp"
 #include "ast/ast_function.hpp"
-#include "ast/ast_operator.hpp"
 #include "ast/ast_statement.hpp"
 #include "ast/ast_value.hpp"
 #include "ast/ast_root.hpp"
