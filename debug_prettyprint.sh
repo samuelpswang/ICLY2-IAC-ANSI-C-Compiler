@@ -10,5 +10,5 @@ make clean
 echo "${ID}[debug_prettyprint.sh]${COMD} make bin/prettyprint${RSET}"
 make bin/prettyprint
 
-echo "${ID}[debug_prettyprint.sh]${COMD} bin/prettyprint -S tests/_debug/target.c -o bin/_debug/target.out.txt${RSET}"
-bin/prettyprint -S tests/_debug/target.c -o bin/_debug/target.out.txt
+echo "${ID}[debug_prettyprint.sh]${COMD} bin/prettyprint -S tests/_debug/target.c -o parsed/output/target.out.txt${RSET}"
+bin/prettyprint -S tests/_debug/target.c -o parsed/output/target.out.txt

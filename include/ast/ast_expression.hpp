@@ -30,9 +30,33 @@ public:
             iden_reg = m.asm_give_reg(os, iden_name_in_symtable, treg);
         }
         m.asm_store_symbol(os, iden_name_in_symtable);
+
     }
 };
 
+class DeclarationList: public Node {
+public:
+    DeclarationList(Node* declaration) {
+        this->type = "";
+        this->name = "";
+        this->val = "";
+        this->exprs = {declaration};
+        this->stats = {};
+    }
+    void print(std::ostream& os, const std::string& indent) const {
+        for(int i = 0; i < this->exprs.size(); i++){
+            this->exprs[i]->print(os,indent);
+            if(i != this->exprs.size()-1){
+                os<<",";
+            }
+        }
+    }
+    void compile(std::ostream& os, const std::string& dest, MemoryContext& m) const {
+        for(int i = 0; i < this->exprs.size(); i++){
+            this->exprs[i]->compile(os,dest,m);
+        }
+    }
+};
 
 class InitDeclaration: public Node {
 public:
@@ -61,6 +85,55 @@ public:
         m.asm_store_symbol(os, iden_name_in_symtable);
     }
 };
+
+
+class ArgumentList: public Node {
+public:
+    ArgumentList(Node* argument) {
+        this->type = "";
+        this->name = "";
+        this->val = "";
+        this->exprs = {argument};
+        this->stats = {};
+    }
+    void print(std::ostream& os, const std::string& indent) const {
+        for(int i = 0; i < this->exprs.size(); i++){
+            this->exprs[i]->print(os,indent);
+            if(i != this->exprs.size()-1){
+                os<<",";
+            }
+        }
+    }
+    void compile(std::ostream& os, const std::string& dest, MemoryContext& m) const {
+        for(int i = 0; i < this->exprs.size(); i++){
+            this->exprs[i]->compile(os,dest,m);
+        }
+    }
+};
+
+
+class Argument: public Node {
+public:
+    Argument(const std::string& type,const std::string& name) {
+        this->type = type;
+        this->name = name;
+        this->val = "";
+        this->exprs = {};
+        this->stats = {};
+    }
+    void print(std::ostream& os, const std::string& indent) const {
+        os << indent << this->type << " " << this->name;
+    }
+    void compile(std::ostream& os, const std::string& dest, MemoryContext& m) const {
+        std::string iden_name_in_symtable = m.add_symbol(this->name, true);
+        std::string iden_reg = m.asm_give_reg(os, iden_name_in_symtable, fareg);
+        if (iden_reg == "") {
+            m.asm_spill_all(os, fareg);
+            iden_reg = m.asm_give_reg(os, iden_name_in_symtable, fareg);
+        }
+    }
+};
+
 
 
 #endif

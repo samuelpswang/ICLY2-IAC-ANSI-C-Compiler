@@ -28,7 +28,8 @@ void yyerror(const char*);
 %type <node> expression statement_list statement function declaration init_declarator constant_expression primary_expression
 %type <node> unary_expression postfix_expression multiplicative_expression additive_expression shift_expression relational_expression
 %type <node> equality_expression and_expression exclusive_or_expression inclusive_or_expression logical_and_expression logical_or_expression
-%type <node> conditional_expression assignment_expression selection_statement iteration_statement jump_statement function_list
+%type <node> conditional_expression assignment_expression selection_statement iteration_statement jump_statement function_list 
+%type <node> declaration_list argument_expression_list FOR for_loop_declaration
 %type <string> CONSTANT IDENTIFIER INT type_specifier direct_declarator INC_OP DEC_OP declarator VOID DOUBLE LEFT_OP RIGHT_OP
 %type <string> LE_OP GE_OP IF ELSE WHILE DO unary_operator RETURN
 
@@ -59,7 +60,13 @@ postfix_expression
 	: primary_expression { $$ = $1; }
     | postfix_expression INC_OP { $$ = new PostfixUnaryIncDecOp(*$2,$1); }
     | postfix_expression DEC_OP { $$ = new PostfixUnaryIncDecOp(*$2,$1); }
-    | postfix_expression '(' ')'
+    | postfix_expression '(' ')' { $$ = new FunctionCall($1);}
+	| postfix_expression '(' declaration_list ')'  { $$ = new FunctionCall($1,$3);}
+
+argument_expression_list
+	: declaration { $$ = new ArgumentList(new Argument($1->get_type(),$1->get_name())); }
+	| argument_expression_list ',' declaration {$1->append_expr(new Argument($3->get_type(),$3->get_name()));  }
+	;
 
 unary_expression
 	: postfix_expression { $$ = $1;}
@@ -182,17 +189,16 @@ declarator
 
 direct_declarator
 	: IDENTIFIER { $$ = $1;}
-	| '(' declarator ')' {$$ = $2;}
-	| direct_declarator '(' ')' { $$ = $1 ;}
 	;
 
 function
-    : type_specifier declarator '{' statement_list '}' { $$ = new Function(*$1, *$2, $4); }
+    : type_specifier declarator '(' ')' '{' statement_list '}' { $$ = new Function(*$1, *$2, $6); }
+	| type_specifier declarator '(' argument_expression_list ')'  '{' statement_list '}'    { $$ = new Function(*$1, *$2, $4, $7);}
     ;
 
 function_list
     : function { $$ = new FunctionList($1); }
-    | function_list function { $1->append_list($2); }
+    | function_list function { $1->append_expr($2); }
 
 statement_list
     : statement { $$ = new StatementList($1); }
@@ -210,6 +216,12 @@ statement
 	;
 
 
+declaration_list
+	: declaration { $$ = new DeclarationList($1); }
+	| declaration_list ',' declaration { $1->append_expr($3); }
+
+
+
 
 declaration
     : type_specifier declarator  { $$ = new Declaration(*$1,*$2); }
@@ -222,12 +234,28 @@ init_declarator
 selection_statement
 	: IF '(' conditional_expression ')' '{' statement_list '}' { $$ = new If($3,$6); }
 	| IF '(' conditional_expression ')' '{'statement_list '}' ELSE '{'statement'}' { $$ = new IfElse($3,$6,$10); }
+	| IF '(' conditional_expression ')' '{''}' { $$ = new If($3, nullptr); }
+	| IF '(' conditional_expression ')''{''}' ELSE '{''}' { $$ = new IfElse($3, nullptr,nullptr); }
 	;
 
+for_loop_declaration
+	: init_declarator { $$ = $1; }
+	| assignment_expression { $$ = $1; }
+
 iteration_statement
-	: WHILE '(' conditional_expression ')' '{'statement_list '}' { $$ = new While($3,$6); }
-	| DO '{'statement_list '}' WHILE '(' conditional_expression ')' { $$ = new While($7,$3); }
+	: WHILE '(' conditional_expression ')' '{' statement_list '}' { $$ = new While($3,$6); }
+	| WHILE '(' conditional_expression ')' '{''}' { $$ = new While($3, nullptr); }
+	| DO '{'statement_list'}' WHILE '(' conditional_expression ')' { $$ = new While($7,$3); }
+	| FOR '(' for_loop_declaration ';' conditional_expression ';' expression ')' '{' statement_list'}' { $$ = new For($3,$5,$7,$10);}
+	| FOR '(' for_loop_declaration ';' conditional_expression ')' '{' statement_list'}' { $$ = new For($3,$5,nullptr,$8); }
+	| FOR '(' conditional_expression ';' expression ')' '{' statement_list'}' { $$ = new For(nullptr,$3,$5,$8); }
+	| FOR '(' conditional_expression ')' '{' statement_list'}' { $$ = new For(nullptr,$3,nullptr,$6); }
+	| FOR '(' for_loop_declaration ';' conditional_expression ';' expression ')' '{''}' { $$ = new For($3,$5,$7,nullptr); }	
+	| FOR '(' for_loop_declaration ';' conditional_expression ')' '{''}' { $$ = new For($3,$5,nullptr,nullptr); }
+	| FOR '(' conditional_expression ';' expression ')' '{''}' { $$ = new For(nullptr,$3,$5,nullptr); }																			
+	| FOR '(' conditional_expression ')' '{' '}' { $$ = new For(nullptr,$3,nullptr,nullptr); }
 	;
+
 
 jump_statement
 	: RETURN expression ';' { $$ = new Return($2); }

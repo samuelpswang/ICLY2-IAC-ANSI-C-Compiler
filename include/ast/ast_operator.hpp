@@ -55,7 +55,7 @@ public:
     }
 
     void compile(std::ostream& os, const std::string& dest, MemoryContext& m) const {
-        throw std::runtime_error("ImplementationError: PostfixUnaryIncDecOp");
+        os<<"addi "<<dest<<", "<<dest<<", 0x01"<<std::endl;
     }
 };
 
@@ -69,7 +69,7 @@ public:
         this->exprs = { unary_expression };
         this->stats = {};
     }
-
+  
     void print(std::ostream& os, const std::string& indent) const {
         os << indent;
         os << this->name;
@@ -78,7 +78,7 @@ public:
     }
 
     void compile(std::ostream& os, const std::string& dest, MemoryContext& m) const {
-        throw std::runtime_error("ImplementationError: PostfixUnaryIncDecOp");
+        os<<"addi "<<dest<<", "<<dest<<", 0x01"<<std::endl;
     }
 };
 
@@ -475,13 +475,12 @@ public:
             diff_value = m.asm_give_reg(os, diff, areg);
         }
         std::string end =  make_label("lte_end");
-        this->exprs[0]->compile(os,left,m);
-        this->exprs[1]->compile(os,right,m);
-        os<<"\taddi "<<diff<<", zero, 0x01"<<std::endl;
-        os<<"\tslt "<<dest<<", "<<left<<", "<<right<<std::endl;
-        os<<"\tbeq "<<dest<<", zero, "<<diff<<std::endl;
-        os<<"\tsub "<<diff<<", "<<left<<", "<<right<<std::endl;
-        os<<"\tseqz "<<dest<<", "<<diff<<", "<<std::endl;
+        this->exprs[0]->compile(os,left_value,m);
+        this->exprs[1]->compile(os,right_value,m);
+        os<<"\tslt "<<less_than_value<<", "<<left_value<<", "<<right_value<<std::endl;
+        os<<"\tsub "<<diff_value<<", "<<left_value<<", "<<right_value<<std::endl;
+        os<<"\tseqz "<<diff_value<<", "<<diff_value<<std::endl;
+        os<<"\tor "<<dest<<", "<<diff_value<<", "<<less_than_value<<std::endl;
         os<<end<<":"<<std::endl;
     }
 
@@ -507,7 +506,28 @@ public:
     }
 
     void compile(std::ostream& os, const std::string& dest, MemoryContext& m) const{
-        
+        std::string symbol1 = m.add_symbol("val1",false);
+        std::string val1  = m.asm_give_reg(os,symbol1,areg);
+        if(val1 == ""){
+            m.asm_spill_all(os, areg);
+            val1 = m.asm_give_reg(os, symbol1, areg);
+        }
+        std::string symbol2 = m.add_symbol("val2",false);
+        std::string val2  = m.asm_give_reg(os,symbol2,areg);
+        if(val2 == ""){
+            m.asm_spill_all(os, areg);
+            val2 = m.asm_give_reg(os, symbol2, areg);
+        }
+        std::string symbol3 = m.add_symbol("val3",false);
+        std::string val3  = m.asm_give_reg(os,symbol3,areg);
+        if(val3 == ""){
+            m.asm_spill_all(os, areg);
+            val3 = m.asm_give_reg(os, symbol3, areg);
+        }
+        this->exprs[0]->compile(os,val1,m);
+        this->exprs[1]->compile(os,val2,m);
+        os<<"\t"<<"slt "<<val3<<", "<<val2<<", "<<val1<<std::endl;
+        os << "\tseqz" << dest << ", " << val3 << std::endl;
     }
 
 };
@@ -532,7 +552,32 @@ public:
     }
 
     void compile(std::ostream& os, const std::string& dest, MemoryContext& m) const{
-        os<<"moreequalop: Not implemented"<<std::endl;
+        std::string symbol1 = m.add_symbol("val1",false);
+        std::string val1  = m.asm_give_reg(os,symbol1,areg);
+        if(val1 == ""){
+            m.asm_spill_all(os, areg);
+            val1 = m.asm_give_reg(os, symbol1, areg);
+        }
+        std::string symbol2 = m.add_symbol("val2",false);
+        std::string val2  = m.asm_give_reg(os,symbol2,areg);
+        if(val2 == ""){
+            m.asm_spill_all(os, areg);
+            val2 = m.asm_give_reg(os, symbol2, areg);
+        }
+        std::string diff = m.add_symbol("val2",false);
+        std::string diff_value  = m.asm_give_reg(os,diff,areg);
+        if(diff_value == ""){
+            m.asm_spill_all(os, areg);
+            diff_value = m.asm_give_reg(os, diff, areg);
+        }
+        this->exprs[0]->compile(os,val1,m);
+        this->exprs[1]->compile(os,val2,m);
+        os<<"\tsub "<<diff_value<<", "<<val1<<", "<<val2<<std::endl;
+        os<<"\tseqz "<<dest<<", "<<diff_value<<std::endl;
+        
+
+
+
     }
 
 };

@@ -145,6 +145,7 @@ assignment_operator
 expression
 	: assignment_expression
 	| expression ',' assignment_expression
+	|postfix_expression
 	;
 
 constant_expression

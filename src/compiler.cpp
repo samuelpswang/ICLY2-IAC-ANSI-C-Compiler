@@ -30,8 +30,8 @@ int main(int argc, char** argv) {
     const Node* ast = parse_ast();
     MemoryContext m;
     ast->compile(output, "a0", m);
+    std::cout<<m<<std::endl;
     std::cout << "[compiler.cpp] Compiled to: " << outputPath << std::endl;
-
     output.close();
     return 0;
 }

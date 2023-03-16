@@ -42,8 +42,11 @@ clean:
 	rm -f src/*.output
 	rm -f src/*.o
 	rm -rf bin
+	rm -rf parsed
 	mkdir bin
 	mkdir bin/output
 	mkdir bin/output/_debug
+	mkdir parsed
+	mkdir parsed/output
 	touch bin/output/_debug/.gitkeep
 	rm -rf src/*.dSYM

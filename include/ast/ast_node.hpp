@@ -42,12 +42,15 @@ public:
     std::string get_val() const { return val; }
 
     // Accessors
-    void append_list(Node* expr) { exprs.push_back(expr); }
+    void append_expr(Node* expr) { exprs.push_back(expr); }
     void append_statement(Node* expr) { stats.push_back(expr); }
     
     // Members 
     virtual void print(std::ostream& os, const std::string& indent) const {};
     virtual void compile(std::ostream& os, const std::string& dest, MemoryContext& m) const {};
+    
+
+
 protected:
     std::string type; // type of node
     std::string name; // name, e.g. "int var = 3" -> var

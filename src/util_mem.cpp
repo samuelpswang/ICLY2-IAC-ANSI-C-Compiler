@@ -84,15 +84,29 @@ std::string MemoryContext::asm_give_reg(std::ostream& os, const std::string& nam
     
     std::string reg;
     int offset = this->symtable[this->curr_func][name][0];
-    if (have(t)) {
-        std::string reg_number = std::to_string(next(t));
-        reg = "x" + reg_number;
-        os << "\tli " << reg << ", 0x00" << std::endl;
-        this->symtable[curr_func][name] = {offset, next(t), 1};
-        this->regfile[next(t)] = {1, offset};
-    } else {
-        reg = "";
+
+    if( t == fareg){
+        if (have(t)) {
+            this->symtable[curr_func][name] = {offset, next(t), 1};
+            this->regfile[next(t)] = {1, offset};
+        } 
+        else {
+            reg = "";
+        }
     }
+    else{
+        if (have(t)) {
+            std::string reg_number = std::to_string(next(t));
+            reg = "x" + reg_number;
+            os << "\tli " << reg << ", 0x00" << std::endl;
+            this->symtable[curr_func][name] = {offset, next(t), 1};
+            this->regfile[next(t)] = {1, offset};
+        } 
+        else {
+            reg = "";
+        }
+    }
+
     return reg;
 }
 
