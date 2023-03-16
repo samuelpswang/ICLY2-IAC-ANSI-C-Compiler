@@ -602,7 +602,20 @@ public:
     }
 
     void compile(std::ostream& os, const std::string& dest, MemoryContext& m) const{
-        os<<"moreequalop: Not implemented"<<std::endl;
+        std::string symbol1 = m.add_symbol("val1",false);
+        std::string val1  = m.asm_give_reg(os,symbol1,areg);
+        if(val1 == ""){
+            m.asm_spill_all(os, areg);
+            val1 = m.asm_give_reg(os, symbol1, areg);
+        }
+        std::string symbol2 = m.add_symbol("val2",false);
+        std::string val2  = m.asm_give_reg(os,symbol2,areg);
+        if(val2 == ""){
+            m.asm_spill_all(os, areg);
+            val2 = m.asm_give_reg(os, symbol2, areg);
+        }
+        os<<"slt "<<dest<<", "<<val1<<", "<<val2<<std::endl;
+        os<<"seqz "<<dest<<", "<<dest<<std::endl;
     }
 
 };
@@ -627,7 +640,19 @@ public:
     }
 
     void compile(std::ostream& os, const std::string& dest, MemoryContext& m) const{
-        os<<"bitwiseandop: Not implemented"<<std::endl;
+        std::string symbol1 = m.add_symbol("val1",false);
+        std::string val1  = m.asm_give_reg(os,symbol1,areg);
+        if(val1 == ""){
+            m.asm_spill_all(os, areg);
+            val1 = m.asm_give_reg(os, symbol1, areg);
+        }
+        std::string symbol2 = m.add_symbol("val2",false);
+        std::string val2  = m.asm_give_reg(os,symbol2,areg);
+        if(val2 == ""){
+            m.asm_spill_all(os, areg);
+            val2 = m.asm_give_reg(os, symbol2, areg);
+        }
+        os<<"and "<<dest<<", "<<val1<<", "<<val2<<std::endl;
     }
 };
 
@@ -652,7 +677,19 @@ public:
 
     void compile(std::ostream& os, const std::string& dest, MemoryContext& m) const{
 
-        os<<"bitwisexorop: Not implemented"<<std::endl;
+        std::string symbol1 = m.add_symbol("val1",false);
+        std::string val1  = m.asm_give_reg(os,symbol1,areg);
+        if(val1 == ""){
+            m.asm_spill_all(os, areg);
+            val1 = m.asm_give_reg(os, symbol1, areg);
+        }
+        std::string symbol2 = m.add_symbol("val2",false);
+        std::string val2  = m.asm_give_reg(os,symbol2,areg);
+        if(val2 == ""){
+            m.asm_spill_all(os, areg);
+            val2 = m.asm_give_reg(os, symbol2, areg);
+        }
+        os<<"xor "<<dest<<", "<<val1<<", "<<val2<<std::endl;
         
     }
 };
@@ -677,7 +714,19 @@ public:
     }
 
     void compile(std::ostream& os, const std::string& dest, MemoryContext& m) const{
-        os<<"bitwiseorop: Not implemented"<<std::endl;
+        std::string symbol1 = m.add_symbol("val1",false);
+        std::string val1  = m.asm_give_reg(os,symbol1,areg);
+        if(val1 == ""){
+            m.asm_spill_all(os, areg);
+            val1 = m.asm_give_reg(os, symbol1, areg);
+        }
+        std::string symbol2 = m.add_symbol("val2",false);
+        std::string val2  = m.asm_give_reg(os,symbol2,areg);
+        if(val2 == ""){
+            m.asm_spill_all(os, areg);
+            val2 = m.asm_give_reg(os, symbol2, areg);
+        }
+        os<<"or "<<dest<<", "<<val1<<", "<<val2<<std::endl;
     }
 };
 
