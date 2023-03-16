@@ -12,6 +12,10 @@
 #include "ast/control_flows/ast_if.hpp"
 #include "ast/control_flows/ast_while.hpp"
 
+#include "ast/literals/ast_char.hpp"
+#include "ast/literals/ast_float.hpp"
+#include "ast/literals/ast_int.hpp"
+
 #include "ast/ast_operator.hpp"
 #include "ast/operators/unary/ast_address_of.hpp"
 #include "ast/operators/unary/ast_dereference.hpp"
@@ -23,6 +27,7 @@
 #include "ast/ast_root.hpp"
 
 #include "util_mem.hpp"
+#include "util_float.hpp"
 
 extern const Node* parse_ast();
 

@@ -50,7 +50,7 @@ type_specifier
 
 primary_expression
 	: IDENTIFIER { $$ = new Identifier(*$1);}
-	| CONSTANT {$$ = new Number(*$1);}
+	| CONSTANT {$$ = new Int(*$1);}
 	| '(' expression ')' {$$ = $2;}
 	;
 

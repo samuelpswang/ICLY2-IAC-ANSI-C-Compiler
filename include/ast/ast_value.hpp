@@ -8,29 +8,10 @@
 #include "ast_node.hpp"
 #include "util_mem.hpp"
 
-
-class Number: public Node {
-public:
-    Number(std::string val) {
-        this->type = "";
-        this->name = "";
-        this->val = val;
-        this->exprs = {};
-        this->stats = {};
-    }
-    void print(std::ostream& os, const std::string& indent) const {
-        os << indent << this->val;
-    }
-    void compile(std::ostream& os, const std::string& dest, MemoryContext& m) const {
-        os << "\tli " << dest << ", " << this->val << std::endl;
-    }
-};
-
-
 class Identifier: public Node {
 public:
     Identifier(std::string identifier_name) {
-        this->type = "";
+        this->type = "var";
         this->name = identifier_name;
         this->val = "";
         this->exprs = {};
