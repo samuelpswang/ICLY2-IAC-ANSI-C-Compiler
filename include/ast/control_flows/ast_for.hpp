@@ -26,7 +26,7 @@ public:
     }
 
     // Members
-    void print(ostream& os, const string& indent) {
+    void print(ostream& os, const string& indent) const override {
         os << indent << "for (";
         for (auto it = this->exprs.begin(); it != this->exprs.end(); it++) {
             (*it)->print(os, "");
@@ -41,7 +41,7 @@ public:
             os << indent << "}\n";
         }
     }
-    void compile(ostream& os, const string& dest, MemoryContext& m) {
+    void compile(ostream& os, const string& dest, MemoryContext& m) const override {
         // make labels
         string cond_label = make_label("for_cond");
         string end_label = make_label("for_end");
