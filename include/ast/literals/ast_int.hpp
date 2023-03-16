@@ -10,10 +10,11 @@ public:
     Int(std::string val): Node{"int", "", val, nullptr, nullptr} {}
 
     // Members
-    void print(std::ostream& os, const std::string& indent) const {
+    void print(std::ostream& os, const std::string& indent) const override {
         os << indent << this->val;
     }
-    void compile(std::ostream& os, const std::string& dest, MemoryContext& m) const {
+    void compile(std::ostream& os, const std::string& dest, MemoryContext& m) \
+        const override {
         os << "\tli " << dest << ", " << this->val << std::endl;
     }
 };

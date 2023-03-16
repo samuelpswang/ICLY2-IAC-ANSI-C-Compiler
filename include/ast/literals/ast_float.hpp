@@ -10,11 +10,11 @@ public:
     Float(std::string val): Node{"float", "", val, nullptr, nullptr} {}
 
     // Members
-    void print(std::ostream& os, const std::string& indent) const {
+    void print(std::ostream& os, const std::string& indent) const override {
         os << indent << this->val;
     }
     void compile(std::ostream& os, const std::string& dest, MemoryContext& m) \
-        const {
+        const override {
         // give register
         string temp_symbol = m.add_symbol("float_upper", false);
         string temp_reg = m.asm_give_reg(os, temp_symbol, treg);

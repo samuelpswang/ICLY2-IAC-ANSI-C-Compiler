@@ -6,6 +6,9 @@
 #include <string>
 #include <map>
 
+#include "util_mem.hpp"
+#include "util_float.hpp"
+
 #include "ast/ast_node.hpp"
 
 #include "ast/control_flows/ast_for.hpp"
@@ -25,9 +28,6 @@
 #include "ast/ast_statement.hpp"
 #include "ast/ast_value.hpp"
 #include "ast/ast_root.hpp"
-
-#include "util_mem.hpp"
-#include "util_float.hpp"
 
 extern const Node* parse_ast();
 
