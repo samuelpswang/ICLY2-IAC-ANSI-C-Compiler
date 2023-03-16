@@ -1,5 +1,5 @@
-#ifndef compiler_ast_control_flow_while
-#define compiler_ast_control_flow_while
+#ifndef compiler_ast_control_flows_while
+#define compiler_ast_control_flows_while
 
 #include "ast.hpp"
 using namespace std;

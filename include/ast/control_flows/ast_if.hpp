@@ -1,5 +1,5 @@
-#ifndef compiler_ast_control_flow_if
-#define compiler_ast_control_flow_if
+#ifndef compiler_ast_control_flows_if
+#define compiler_ast_control_flows_if
 
 #include "ast.hpp"
 using namespace std;
