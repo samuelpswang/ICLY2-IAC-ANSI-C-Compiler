@@ -100,5 +100,5 @@ std::string ieee754(std::string s) {
     }
 
     // 4 assembling
-    return sign + exp + mantissa;
+    return _sbtosi(sign + exp + mantissa);
 }
