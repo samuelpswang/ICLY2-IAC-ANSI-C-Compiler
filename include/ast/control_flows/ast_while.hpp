@@ -30,7 +30,8 @@ public:
             os << indent << "}\n";
         }
     }
-    void compile(ostream& os, const string& dest, MemoryContext& m) const override {
+    void compile(ostream& os, const string& dest, MemoryContext& m) const \
+        override {
         // give condition reg
         string cond_symbol = m.add_symbol("while_cond", false);
         string cond_reg = m.asm_give_reg(os, cond_symbol, treg);
@@ -79,7 +80,7 @@ public:
     }
 
     // Members
-    void print(ostream& os, const string& indent) const {
+    void print(ostream& os, const string& indent) const override {
         os << indent << "do {";
         if (this->stats[0]->get_type() == "") {
             os << " ";
@@ -90,7 +91,8 @@ public:
         this->exprs[0]->print(os, indent);
         os << indent << ");";
     }
-    void compile(ostream& os, const string& dest, MemoryContext& m) const {
+    void compile(ostream& os, const string& dest, MemoryContext& m) const \
+        override {
         // give condition reg
         string cond_symbol = m.add_symbol("dowhile_cond", false);
         string cond_reg = m.asm_give_reg(os, cond_symbol, treg);

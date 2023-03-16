@@ -19,7 +19,7 @@ public:
     }
     
     // Members
-    void print(ostream& os, const string& indent) const {
+    void print(ostream& os, const string& indent) const override {
         os << indent << "if (";
         this->exprs[0]->print(os, "");
         os << ") {\n";
@@ -30,7 +30,8 @@ public:
             os << indent << "}\n";
         }
     }
-    void compile(ostream& os, const string& dest, MemoryContext& m) const {
+    void compile(ostream& os, const string& dest, MemoryContext& m) const \
+        override {
         // give condition reg
         string cond_symbol = m.add_symbol("if_cond", false);
         string cond_reg = m.asm_give_reg(os, cond_symbol, treg);
@@ -73,7 +74,7 @@ public:
     }
 
     // Members
-    void print(ostream& os, const string& indent) const {
+    void print(ostream& os, const string& indent) const override {
         os << indent << "if (";
         this->exprs[0]->print(os, "");
         os << ") {";
@@ -93,7 +94,8 @@ public:
             os << "}\n";
         }
     }
-    void compile(ostream& os, const string& dest, MemoryContext& m) const {
+    void compile(ostream& os, const string& dest, MemoryContext& m) const \
+        override {
         // give condition reg
         string cond_symbol = m.add_symbol("ifelse_cond", false);
         string cond_reg = m.asm_give_reg(os, cond_symbol, treg);
