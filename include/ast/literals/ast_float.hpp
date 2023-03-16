@@ -4,16 +4,17 @@
 #include "ast.hpp"
 using namespace std;
 
+// (a nunber with or without ".")
 class Float: public Node {
 public:
     // Constructors
-    Float(std::string val): Node{"float", "", val, nullptr, nullptr} {}
+    Float(string val): Node{"float", "", val, nullptr, nullptr} {}
 
     // Members
-    void print(std::ostream& os, const std::string& indent) const override {
+    void print(ostream& os, const string& indent) const override {
         os << indent << this->val;
     }
-    void compile(std::ostream& os, const std::string& dest, MemoryContext& m) \
+    void compile(ostream& os, const string& dest, MemoryContext& m) \
         const override {
         // give register
         string temp_symbol = m.add_symbol("float_upper", false);

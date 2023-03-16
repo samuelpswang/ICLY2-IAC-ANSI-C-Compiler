@@ -4,18 +4,19 @@
 #include "ast.hpp"
 using namespace std;
 
+// (a nunber without ".")
 class Int: public Node {
 public:
     // Constructors
-    Int(std::string val): Node{"int", "", val, nullptr, nullptr} {}
+    Int(string val): Node{"int", "", val, nullptr, nullptr} {}
 
     // Members
-    void print(std::ostream& os, const std::string& indent) const override {
+    void print(ostream& os, const string& indent) const override {
         os << indent << this->val;
     }
-    void compile(std::ostream& os, const std::string& dest, MemoryContext& m) \
+    void compile(ostream& os, const string& dest, MemoryContext& m) \
         const override {
-        os << "\tli " << dest << ", " << this->val << std::endl;
+        os << "\tli " << dest << ", " << this->val << endl;
     }
 };
 
