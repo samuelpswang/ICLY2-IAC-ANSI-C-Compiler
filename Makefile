@@ -1,4 +1,6 @@
-CPPFLAGS = -std=c++11 -W -Wall -g -Wno-unused-parameter -I include
+CPPFLAGS = -std=c++11 -W -Wall -g 
+CPPFLAGS += -Wno-unused-parameter -Wno-unused-function -Wno-backslash-newline-escape 
+CPPFLAGS += -I include
 
 default: bin/compiler bin/prettyprint
 
@@ -14,13 +16,17 @@ bin/cli: src/cli.o
 
 bin/util_mem: src/util_mem.o
 	mkdir -p bin
-	g++ $(CPPFLAGS) -o bin/cli $^
+	g++ $(CPPFLAGS) -o bin/mem $^
 
-bin/compiler: src/cli.o src/util_mem.o src/compiler.o src/c_parser.tab.o src/c_lexer.yy.o
+bin/util_float: src/util_float.o
+	mkdir -p bin
+	g++ $(CPPFLAGS) -o bin/float $^
+
+bin/compiler: src/cli.o src/util_mem.o src/util_float.o src/compiler.o src/c_parser.tab.o src/c_lexer.yy.o
 	mkdir -p bin
 	g++ $(CPPFLAGS) -o bin/compiler $^
 
-bin/prettyprint: src/cli.o src/util_mem.o src/prettyprint.o src/c_parser.tab.o src/c_lexer.yy.o
+bin/prettyprint: src/cli.o src/util_mem.o src/util_float.o src/prettyprint.o src/c_parser.tab.o src/c_lexer.yy.o
 	mkdir -p bin
 	g++ $(CPPFLAGS) -o bin/prettyprint $^
 
