@@ -7,6 +7,7 @@ using namespace std;
 // (type) (name)[(length)]
 // * do not guarenteed that everything in array is 0
 class ArrayDeclarator: public Node {
+public:
     // Constructors
     // name: name of array, e.g. arr
     // type: array type, e.g. int[]
