@@ -27,7 +27,6 @@ private:
     bool have(regtype);
     // returns the next available address of a specific type
     int next(regtype);
-    
     // Operator
     // overload <<
     friend std::ostream& operator<<(std::ostream&, const MemoryContext&);
@@ -60,6 +59,10 @@ public:
     bool asm_clean_up(std::ostream&);
     // return true after storing all registers to memory
     bool asm_spill_all(std::ostream&, regtype);
+    //returns curr_offset for function
+    int get_curr_offset(std::string);
+    //returns current function
+    std::string get_curr_function();
 };
 
 #endif

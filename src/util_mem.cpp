@@ -87,6 +87,8 @@ std::string MemoryContext::asm_give_reg(std::ostream& os, const std::string& nam
 
     if( t == fareg){
         if (have(t)) {
+            std::string reg_number = std::to_string(next(t));
+            reg = "x" + reg_number;
             this->symtable[curr_func][name] = {offset, next(t), 1};
             this->regfile[next(t)] = {1, offset};
         } 
@@ -163,18 +165,25 @@ bool MemoryContext::asm_clean_up(std::ostream& os) {
 
 // return true after storing all registers to memory
 bool MemoryContext::asm_spill_all(std::ostream& os, regtype t) {
-    for (auto it = this->symtable[curr_func].begin(); it != this->symtable[curr_func].end(); it++) {
-        int offset = it->second[0];
-        if(it->second[1] != -1) {
-            std::string reg = "x" + std::to_string(it->second[1]);
-            os << "\tsw " << reg << ", " << offset << "(sp)" << std::endl; 
-            it->second[2] = 0;
-            this->regfile[it->second[1]] = {0 ,-1};
-            it->second[1] = -1;
+    for (auto it = this->symtable.begin(); it != this->symtable.end(); it++) {
+        std::string function = it->first;
+        for(auto it2 = this->symtable[function].begin(); it2 != this->symtable[function].end(); it2++){
+            int reg = it2->second[1];
+            int offset = it2->second[0];
+            if (reg > 0){
+                it2->second[2] = 0;
+                std::string reg_file = "x" + std::to_string(reg);
+                os << "\tsw " << reg_file << ", " << offset << "(sp)" << std::endl;
+                this->regfile[reg] = {0, -1};
+                it2->second[1] = -1;
+            }    
         }
+            
     }
     return true;
 }
+    
+    
 
 
 // Utility Functions
@@ -246,6 +255,14 @@ int MemoryContext::next(regtype t) {
                 }
             }
             return -1;
+
+        case fareg:
+            for (size_t reg = 10; reg < 18; reg++) {
+                if (this->regfile[reg][0] == 0) {
+                    return reg;
+                }
+            }
+            return -1;
         default:
             for (size_t reg = 0; reg < 32; reg++) {
                 if (this->regfile[reg][0] == 0) {
@@ -254,6 +271,16 @@ int MemoryContext::next(regtype t) {
             }
             return -1;
     }
+}
+
+// returns the current offset
+
+int MemoryContext::get_curr_offset(std::string function_name){
+    return this->curr_offset[function_name];
+}
+
+std::string MemoryContext::get_curr_function(){
+    return this->curr_func;
 }
 
 
