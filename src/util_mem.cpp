@@ -309,14 +309,6 @@ int MemoryContext::next(regtype t) {
                 }
             }
             return -1;
-
-        case fareg:
-            for (size_t reg = 10; reg < 18; reg++) {
-                if (this->regfile[reg][0] == 0) {
-                    return reg;
-                }
-            }
-            return -1;
         default:
             for (size_t reg = 0; reg < 32; reg++) {
                 if (this->regfile[reg][0] == 0) {
