@@ -30,7 +30,7 @@ public:
             iden_reg = m.asm_give_reg(os, iden_name_in_symtable, treg);
         }
         m.asm_store_symbol(os, iden_name_in_symtable);
-
+        m.add_type(this->name, this->type, m.get_size(this->type));
     }
 };
 
@@ -83,6 +83,7 @@ public:
         this->exprs[0]->compile(os, iden_reg, m);
         // store value back to memory
         m.asm_store_symbol(os, iden_name_in_symtable);
+        m.add_type(this->name, this->type, m.get_size(this->type));
     }
 };
 
