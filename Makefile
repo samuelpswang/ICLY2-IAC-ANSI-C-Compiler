@@ -1,5 +1,6 @@
 CPPFLAGS = -std=c++11 -W -Wall -g 
-CPPFLAGS += -Wno-unused-parameter -Wno-unused-function -Wno-backslash-newline-escape 
+CPPFLAGS += -Wno-unused-parameter -Wno-unused-function 
+CPPFLAGS += -Wno-backslash-newline-escape -Wno-sign-compare
 CPPFLAGS += -I include
 
 default: bin/compiler bin/prettyprint
