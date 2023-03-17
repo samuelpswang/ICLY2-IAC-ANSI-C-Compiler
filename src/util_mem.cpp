@@ -156,7 +156,7 @@ std::string MemoryContext::asm_give_reg(std::ostream& os, const std::string& nam
     std::string reg;
     int offset = this->symtable[this->curr_func][name][0];
 
-    if( t == fareg){
+    if( t == areg){
         if (have(t)) {
             std::string reg_number = std::to_string(next(t));
             reg = "x" + reg_number;
@@ -196,8 +196,13 @@ std::string MemoryContext::asm_load_symbol(std::ostream& os, const std::string& 
         os << "\tlw " << reg << ", " << offset << "(sp)" <<std::endl; 
         return reg;
     } else {
-        return "";
+        asm_spill_all(os,t);
+        int offset = this->symtable[curr_func][name][0];
+        std::string reg = asm_give_reg(os, name, t);
+        os << "\tlw " << reg << ", " << offset << "(sp)" <<std::endl; 
+        return reg;
     }
+    
 
 }
 
@@ -234,24 +239,59 @@ bool MemoryContext::asm_clean_up(std::ostream& os) {
 }
 
 // return true after storing all registers to memory
-bool MemoryContext::asm_spill_all(std::ostream& os, regtype t) {
+bool MemoryContext::asm_spill_all(std::ostream& os, regtype t = treg) {
     for (auto it = this->symtable.begin(); it != this->symtable.end(); it++) {
         std::string function = it->first;
         for(auto it2 = this->symtable[function].begin(); it2 != this->symtable[function].end(); it2++){
             int reg = it2->second[1];
+            std::string reg_file = "x" + std::to_string(reg);
             int offset = it2->second[0];
-            if (reg > 0){
-                it2->second[2] = 0;
-                std::string reg_file = "x" + std::to_string(reg);
-                os << "\tsw " << reg_file << ", " << offset << "(sp)" << std::endl;
-                this->regfile[reg] = {0, -1};
-                it2->second[1] = -1;
-            }    
+            switch (t) {
+            case areg:
+                if(0<=reg && reg<18){
+                    os << "\tsw " << reg_file << ", " << offset << "(sp)" << std::endl;
+                    it2->second[2] = 0;
+                    this->regfile[reg] = {0 ,-1};
+                    it2->second[1] = -1;
+                }
+                break;
+            case sreg:
+                if(18<=reg && reg<28){
+                    os << "\tsw " << reg_file << ", " << offset << "(sp)" << std::endl;
+                    it2->second[2] = 0;
+                    this->regfile[reg] = {0 ,-1};
+                    it2->second[1] = -1;
+                }
+                break;
+            case treg:
+                if(5<=reg && reg<8){
+                    os << "\tsw " << reg_file << ", " << offset << "(sp)" << std::endl;
+                    it2->second[2] = 0;
+                    this->regfile[reg] = {0 ,-1};
+                    it2->second[1] = -1;
+                }
+                if(28<=reg && reg<32){
+                    os << "\tsw " << reg_file << ", " << offset << "(sp)" << std::endl;
+                    it2->second[2] = 0;
+                    this->regfile[reg] = {0 ,-1};
+                    it2->second[1] = -1;
+                }
+                break;
+            default:
+                if(0<=reg && reg<32){
+                    os << "\tsw " << reg_file << ", " << offset << "(sp)" << std::endl;
+                    it2->second[2] = 0;
+                    this->regfile[reg] = {0 ,-1};
+                    it2->second[1] = -1;
+                }
+                break;
+            }
+                 
         }
-            
     }
     return true;
 }
+
 
 // return the control flow labels
 std::pair<std::string, std::string> MemoryContext::get_cf_label() {
