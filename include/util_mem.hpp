@@ -23,6 +23,10 @@ private:
     map<string, int> curr_offset;
     // current function
     string curr_func;
+    // current control flow start label
+    vector<string> curr_cf_start;
+    // current control flow start label
+    vector<string> curr_cf_end;
     // unique number for creating names
     int curr_unique_num;
 
@@ -53,6 +57,10 @@ public:
     bool add_type(const string&, const string&, int);
     // returns true when symbol deleted from typetable
     bool delete_type(const string&);
+    // returns true after control flow labels are pushed
+    bool add_cf_label(const string&, const string&);
+    // returns true after control flow labels are poped
+    bool delete_cf_label();
 
     // Getters
     // returns the address offset of a symbol
@@ -65,6 +73,8 @@ public:
     string get_type(const string&);
     // returns the size of a symbol
     int get_size(const string&);
+    // return the control flow labels
+    pair<string, string> get_cf_label();
 
     // Assembly Generation
     // return initialized register after writing asm to set reg to 0 and linked to symtable

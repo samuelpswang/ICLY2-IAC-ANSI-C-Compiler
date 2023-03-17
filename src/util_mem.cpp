@@ -92,6 +92,20 @@ bool MemoryContext::delete_type(const std::string& symbol_name) {
     }
 }
 
+// returns true after control flow labels are pushed
+bool MemoryContext::add_cf_label(const std::string& start_label, const std::string& end_label) {
+    this->curr_cf_start.push_back(start_label);
+    this->curr_cf_end.push_back(end_label);
+    return true;
+}
+
+// returns true after control flow labels are poped
+bool MemoryContext::delete_cf_label() {
+    this->curr_cf_start.pop_back();
+    this->curr_cf_end.pop_back();
+    return true;
+}
+
 
 // Getters
 // returns the address offset of a symbol
@@ -237,6 +251,11 @@ bool MemoryContext::asm_spill_all(std::ostream& os, regtype t) {
             
     }
     return true;
+}
+
+// return the control flow labels
+std::pair<std::string, std::string> MemoryContext::get_cf_label() {
+    return { this->curr_cf_start.back(), this->curr_cf_end.back() };
 }
 
 

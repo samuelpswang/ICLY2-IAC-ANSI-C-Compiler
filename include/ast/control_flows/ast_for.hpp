@@ -46,6 +46,7 @@ public:
         // make labels
         string cond_label = make_label("for_cond");
         string end_label = make_label("for_end");
+        m.add_cf_label(cond_label, end_label);
 
         // make condition register
         string cond_symbol = m.add_symbol("for_cond", false);
@@ -78,6 +79,7 @@ public:
 
         // add end label
         os << end_label << ":\n";
+        m.delete_cf_label();
     }
 };
 

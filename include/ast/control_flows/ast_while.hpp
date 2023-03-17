@@ -43,6 +43,7 @@ public:
         // make labels
         string start_label = make_label("while_start");
         string end_label = make_label("while_end");
+        m.add_cf_label(start_label, end_label);
 
         // add while start label
         os << start_label << ":\n";
@@ -61,6 +62,7 @@ public:
 
         // add end label
         os << end_label << ":" << "\n";
+        m.delete_cf_label();
     }
 };
 
