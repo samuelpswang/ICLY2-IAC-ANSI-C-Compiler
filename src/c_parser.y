@@ -13,25 +13,25 @@ void yyerror(const char*);
 	std::string* string;
 }
 
-%token IDENTIFIER CONSTANT STRING_LITERAL SIZEOF
+%token IDENTIFIER INT_VALUE FLOAT_VALUE STRING_LITERAL SIZEOF
 %token PTR_OP INC_OP DEC_OP LEFT_OP RIGHT_OP LE_OP GE_OP EQ_OP NE_OP
 %token AND_OP OR_OP MUL_ASSIGN DIV_ASSIGN MOD_ASSIGN ADD_ASSIGN
 %token SUB_ASSIGN LEFT_ASSIGN RIGHT_ASSIGN AND_ASSIGN
 %token XOR_ASSIGN OR_ASSIGN TYPE_NAME
 
 %token TYPEDEF EXTERN STATIC AUTO REGISTER
-%token CHAR SHORT INT LONG SIGNED UNSIGNED FLOAT DOUBLE CONST VOLATILE VOID
+%token CHAR SHORT INT LONG SIGNED UNSIGNED FLOAT DOUBLE CONST VOLATILE VOID HEX
 %token STRUCT UNION ENUM ELLIPSIS
 
 %token CASE DEFAULT IF ELSE SWITCH WHILE DO FOR GOTO CONTINUE BREAK RETURN
 
-%type <node> expression statement_list statement function declaration init_declarator constant_expression primary_expression
+%type <node> expression statement_list statement function declaration init_declarator INT_VALUE_expression primary_expression
 %type <node> unary_expression postfix_expression multiplicative_expression additive_expression shift_expression relational_expression
 %type <node> equality_expression and_expression exclusive_or_expression inclusive_or_expression logical_and_expression logical_or_expression
 %type <node> conditional_expression assignment_expression selection_statement iteration_statement jump_statement function_list 
-%type <node> declaration_list argument_expression_list FOR for_loop_declaration
-%type <string> CONSTANT IDENTIFIER INT type_specifier direct_declarator INC_OP DEC_OP declarator VOID DOUBLE LEFT_OP RIGHT_OP
-%type <string> LE_OP GE_OP IF ELSE WHILE DO unary_operator RETURN
+%type <node> declaration_list argument_expression_list FOR for_loop_declaration primary_expression_list argument array_declaration
+%type <string> INT_VALUE FLOAT_VALUE IDENTIFIER INT type_specifier direct_declarator INC_OP DEC_OP declarator VOID DOUBLE LEFT_OP RIGHT_OP
+%type <string> LE_OP GE_OP IF ELSE WHILE DO unary_operator RETURN FLOAT
 
 %start root
 
@@ -47,13 +47,20 @@ type_specifier
     : INT { $$ = new std::string("int"); }
     | VOID { $$ =  new std::string("void"); }
     | DOUBLE { $$ = new std::string ("double");}
+	| FLOAT { $$ = new std::string ("float"); }
 
 
 primary_expression
 	: IDENTIFIER { $$ = new Identifier(*$1);}
-	| CONSTANT {$$ = new Int(*$1);}
+	| INT_VALUE {$$ = new Int(*$1);}
+	|	FLOAT_VALUE { $$ = new Float(*$1); }
 	| '(' expression ')' {$$ = $2;}
 	;
+
+primary_expression_list
+	: primary_expression { $$ = new PrimaryExpressionList($1); }
+	| primary_expression_list ',' primary_expression { $1->append_expr($3); }
+
 
 
 postfix_expression
@@ -61,12 +68,17 @@ postfix_expression
     | postfix_expression INC_OP { $$ = new PostfixUnaryIncDecOp(*$2,$1); }
     | postfix_expression DEC_OP { $$ = new PostfixUnaryIncDecOp(*$2,$1); }
     | postfix_expression '(' ')' { $$ = new FunctionCall($1);}
-	| postfix_expression '(' declaration_list ')'  { $$ = new FunctionCall($1,$3);}
+	| postfix_expression '(' primary_expression_list ')'   { $$ = new FunctionCall($1, $3);}
+	
 
 argument_expression_list
-	: declaration { $$ = new ArgumentList(new Argument($1->get_type(),$1->get_name())); }
-	| argument_expression_list ',' declaration {$1->append_expr(new Argument($3->get_type(),$3->get_name()));  }
+	: argument { $$ = new ArgumentList(new Argument($1->get_type(),$1->get_name())); }
+	| argument_expression_list ',' argument {$1->append_expr(new Argument($3->get_type(),$3->get_name()));  }
 	;
+
+argument
+    : type_specifier declarator  { $$ = new Argument(*$1,*$2); }
+    ;
 
 unary_expression
 	: postfix_expression { $$ = $1;}
@@ -165,7 +177,7 @@ expression
 	| expression ',' assignment_expression
 	;
 
-constant_expression
+INT_VALUE_expression
 	: conditional_expression { $$ = $1 ;}
 	;
 
@@ -187,13 +199,20 @@ declarator
 	: direct_declarator { $$ = $1 ;}
 	;
 
+array_declaration
+	: type_specifier direct_declarator '[' INT_VALUE ']' ';' { $$ = new ArrayDeclarator(*$1,*$2, *$4); }
+
+
 direct_declarator
 	: IDENTIFIER { $$ = $1;}
 	;
 
 function
-    : type_specifier declarator '(' ')' '{' statement_list '}' { $$ = new Function(*$1, *$2, $6); }
+    : type_specifier declarator '(' ')' '{' statement_list '}' { $$ = new Function(*$1, *$2,nullptr, $6); }
 	| type_specifier declarator '(' argument_expression_list ')'  '{' statement_list '}'    { $$ = new Function(*$1, *$2, $4, $7);}
+	| type_specifier declarator '(' ')' '{' '}' { $$ = new Function(*$1, *$2, nullptr, nullptr); }
+	| type_specifier declarator '(' ')' ';' { $$ = new Function(*$1, *$2, nullptr,nullptr); }
+	| type_specifier declarator '(' argument_expression_list ')' ';' { $$ = new Function(*$1, *$2,$4,nullptr); }
     ;
 
 function_list
@@ -213,6 +232,7 @@ statement
     | iteration_statement { $$ = new Statement("",$1); }
     | jump_statement { $$ = new Statement("",$1); }
     | function  { $$ = new Statement("",$1); }
+	| array_declaration { $$ = new Statement("",$1); }
 	;
 
 
@@ -228,7 +248,7 @@ declaration
     ;
 
 init_declarator
-    : type_specifier direct_declarator '=' constant_expression { $$ = new InitDeclaration(*$1,*$2,$4);}
+    : type_specifier direct_declarator '=' INT_VALUE_expression { $$ = new InitDeclaration(*$1,*$2,$4);}
 
 
 selection_statement
