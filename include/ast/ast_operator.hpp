@@ -24,16 +24,34 @@ public:
         this->stats[0]->print(os, "");
     }
     void compile(std::ostream& os, const std::string& dest, MemoryContext& m) const {
-        std::string symbol = m.add_symbol("val",false);
-        std::string value = m.asm_give_reg(os, symbol, areg);
-        if(value == ""){
-            m.asm_spill_all(os, areg);
-            value = m.asm_give_reg(os, symbol, areg);
+        // compile values
+        std::string symbol = m.add_symbol("assign_val",false);
+        std::string value = m.asm_give_reg(os, symbol, treg);
+        if (value == "") {
+            m.asm_spill_all(os, treg);
+            value = m.asm_give_reg(os, symbol, treg);
         }
-        this->stats[0]->compile(os,value,m);
-        std::string reg = m.asm_load_symbol(os, this->exprs[0]->get_name(),areg);
-        os<<"\tadd "<< reg<<", zero, "<<value<<std::endl;
-        m.asm_store_symbol(os, this->exprs[0]->get_name());
+        this->stats[0]->compile(os, value, m);
+
+        // if is array...cannot normal store
+        if (this->exprs[0]->get_type() == "[]") {
+            int offset = m.get_symbol(this->exprs[0]->get_name()+"[0]");
+            std::string array_offset_symbol = m.add_symbol("assign_array_offset",false);
+            std::string array_offset_reg = m.asm_give_reg(os, array_offset_symbol, treg);
+            if (array_offset_reg == "") {
+                m.asm_spill_all(os, treg);
+                array_offset_reg = m.asm_give_reg(os, symbol, treg);
+            }
+            this->exprs[0]->get_expr(0)->compile(os, array_offset_reg, m);
+            os << "\tadd " << array_offset_reg << ", " <<  array_offset_reg << ", sp\n";
+            os << "\tsw " << value << ", " << offset << "(" << array_offset_reg << ")\n";
+        } 
+        // normal store
+        else {
+            std::string reg = m.asm_load_symbol(os, this->exprs[0]->get_name(), areg);
+            os << "\tadd " << reg <<", zero, " << value << std::endl;
+            m.asm_store_symbol(os, this->exprs[0]->get_name());
+        }
     }
 };
 

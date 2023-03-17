@@ -37,9 +37,11 @@ public:
     virtual ~Node() {}
 
     // Getters
-    std::string get_type() const { return type; }
-    std::string get_name() const { return name; }
-    std::string get_val() const { return val; }
+    std::string get_type() const { return this->type; }
+    std::string get_name() const { return this->name; }
+    std::string get_val() const { return this->val; }
+    Node* get_expr(int i) const { return this->exprs[i]; }
+    Node* get_stat(int i) const { return this->stats[i]; }
 
     // Accessors
     void append_expr(Node* expr) { exprs.push_back(expr); }
