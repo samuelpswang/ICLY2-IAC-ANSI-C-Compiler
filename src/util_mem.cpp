@@ -8,14 +8,18 @@
 // Basics
 // constructor, should initialize four members
 MemoryContext::MemoryContext() {
+    // iitialize typetable
+    this->typetable["int"] = {"", 4};
+    this->typetable["char"] = {"", 1};
+    this->typetable["float"] = {"", 4};
+    this->typetable["enum"] = {"", 4};
+    this->typetable["*"] = {"", 4};
+    // initialize regfile
     for (int i = 0; i < 32; i++) {
-        if (i < 10) {
-            this->regfile[i] = {1, -1};
-        }
-        else {
-            this->regfile[i] = {0, -1};
-        }
+        if (i < 10) this->regfile[i] = {1, -1};
+        else this->regfile[i] = {0, -1};
     }
+    // initialize other members
     this->curr_func = "";
     this->curr_unique_num = 0;
 }
@@ -65,6 +69,31 @@ bool MemoryContext::use_symbol(const std::string& symbol_name) {
     }
 }
 
+// returns true when symbol added to typetable
+bool MemoryContext::add_type(const std::string& symbol_name, const std::string& type, int size) {
+    for (const auto& entry: this->typetable) {
+        if (entry.first == symbol_name) throw std::runtime_error("MemeoryContextError: add_type() duplicate symbol found: "+symbol_name);
+    }
+    this->typetable[symbol_name] = {type, size};
+    return true;
+}
+
+// returns true when symbol deleted from typetable
+bool MemoryContext::delete_type(const std::string& symbol_name) {
+    bool found = false;
+    for (const auto& entry: this->typetable) {
+        if (entry.first == symbol_name) found = true;
+    }
+    if (found) {
+        this->typetable.erase(symbol_name);
+        return true;
+    } else {
+        throw std::runtime_error("MemeoryContextError: delete_type() symbol not found: "+symbol_name);
+    }
+}
+
+
+// Getters
 // returns the address offset of a symbol
 int MemoryContext::get_symbol(const std::string& symbol_name) {
     auto it = this->symtable[curr_func].find(symbol_name);
@@ -75,6 +104,34 @@ int MemoryContext::get_symbol(const std::string& symbol_name) {
     }
 }
 
+// returns the current offset
+int MemoryContext::get_curr_offset(std::string function_name) {
+    return this->curr_offset[function_name];
+}
+
+// returns the current function
+std::string MemoryContext::get_curr_function() {
+    return this->curr_func;
+}
+
+// returns the type of a symbol
+std::string MemoryContext::get_type(const std::string& symbol_name) {
+    for (const auto& entry: this->typetable) {
+        if (entry.first == symbol_name) return entry.second.first;
+    }
+    throw std::runtime_error("MemeoryContextError: get_type() symbol not found: "+symbol_name);
+}
+
+// returns the size of a symbol
+int MemoryContext::get_size(const std::string& symbol_name) {
+    for (const auto& entry: this->typetable) {
+        if (entry.first == symbol_name) return entry.second.second;
+    }
+    throw std::runtime_error("MemeoryContextError: get_size() symbol not found: "+symbol_name);
+}
+
+
+// Assembly Generation
 // return initialized register after writing asm to set reg to 0 and link to symtable
 std::string MemoryContext::asm_give_reg(std::ostream& os, const std::string& name, regtype t) {
     auto it = this->symtable[curr_func].find(name);
@@ -112,7 +169,6 @@ std::string MemoryContext::asm_give_reg(std::ostream& os, const std::string& nam
     return reg;
 }
 
-// FIXME:
 // return loaded register after writing asm to load symbol into regfile and linked to symtable
 std::string MemoryContext::asm_load_symbol(std::ostream& os, const std::string& name, regtype t) {
     auto it = this->symtable[curr_func].find(name);
@@ -182,8 +238,6 @@ bool MemoryContext::asm_spill_all(std::ostream& os, regtype t) {
     }
     return true;
 }
-    
-    
 
 
 // Utility Functions
@@ -271,16 +325,6 @@ int MemoryContext::next(regtype t) {
             }
             return -1;
     }
-}
-
-// returns the current offset
-
-int MemoryContext::get_curr_offset(std::string function_name){
-    return this->curr_offset[function_name];
-}
-
-std::string MemoryContext::get_curr_function(){
-    return this->curr_func;
 }
 
 
