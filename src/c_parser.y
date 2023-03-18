@@ -3,7 +3,6 @@
 #include <cassert>
 
 extern const Node* g_root;
-extern int count;
 
 int yylex(void);
 void yyerror(const char*);
@@ -40,7 +39,6 @@ void yyerror(const char*);
 
 root : function_list { 
         g_root = $1;
-		count = 0;
     }
     ;
 
@@ -304,7 +302,6 @@ const Node* g_root;
 
 const Node* parse_ast() {
     g_root = 0;
-	count = 0;
     yyparse();
 	std::cout<<count<<std::endl;
     return g_root;
