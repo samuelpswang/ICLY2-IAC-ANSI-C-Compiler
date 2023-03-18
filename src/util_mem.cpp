@@ -9,11 +9,13 @@
 // constructor, should initialize four members
 MemoryContext::MemoryContext() {
     // iitialize typetable
-    this->typetable["int"] = {"", 4};
     this->typetable["char"] = {"", 1};
-    this->typetable["float"] = {"", 4};
+    this->typetable["int"] = {"", 4};
     this->typetable["enum"] = {"", 4};
+    this->typetable["unsigned"] = {"", 4};
+    this->typetable["float"] = {"", 4};
     this->typetable["*"] = {"", 4};
+    this->typetable["double"] = {"", 8};
     // initialize regfile
     for (int i = 0; i < 32; i++) {
         if (i < 10) this->regfile[i] = {1, -1};
