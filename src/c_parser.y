@@ -53,10 +53,10 @@ type_specifier
 
 primary_expression
 	: IDENTIFIER { $$ = new Identifier(*$1);}
-	| INT_VALUE {$$ = new Int(*$1); count +=4; }
+	| INT_VALUE {$$ = new Int(*$1); }
 	/* | FLOAT_VALUE { $$ = new Float(*$1); } */
 	| '(' expression ')' {$$ = $2;}
-	| STRING_LITERAL { $$ = new Char(*$1); count+=1; }
+	| STRING_LITERAL { $$ = new Char(*$1);  }
 	;
 
 primary_expression_list
