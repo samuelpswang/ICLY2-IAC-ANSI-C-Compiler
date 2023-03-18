@@ -21,6 +21,7 @@ MemoryContext::MemoryContext() {
     }
     // initialize other members
     this->curr_func = "";
+    this->curr_en_num = -1;
     this->curr_unique_num = 0;
 }
 
@@ -103,6 +104,28 @@ bool MemoryContext::add_cf_label(const std::string& start_label, const std::stri
 bool MemoryContext::delete_cf_label() {
     this->curr_cf_start.pop_back();
     this->curr_cf_end.pop_back();
+    return true;
+}
+
+// returns true after an enum symbol is added to the enum table
+bool MemoryContext::add_en_symbol(const std::string& symbol_name, bool value_given, int value) {
+    for (const auto& p: this->enumtable) {
+        if (symbol_name == p.first) 
+            throw std::runtime_error("MemoryContextError: add_en_symbol() duplicate symbol name: "+symbol_name);
+    }
+    if (value_given) {
+        this->enumtable[symbol_name] = value;
+        this->curr_en_num = value;
+        return true;
+    } else {
+        this->enumtable[symbol_name] = ++this->curr_en_num;
+        return true;
+    }
+}
+
+// returns true after the curr enum count is reset
+bool MemoryContext::delete_en_count() {
+    this->curr_en_num = -1;
     return true;
 }
 
@@ -292,10 +315,28 @@ bool MemoryContext::asm_spill_all(std::ostream& os, regtype t = treg) {
     return true;
 }
 
-
 // return the control flow labels
 std::pair<std::string, std::string> MemoryContext::get_cf_label() {
     return { this->curr_cf_start.back(), this->curr_cf_end.back() };
+}
+
+// return true if the enum symbol is in enumtable
+bool MemoryContext::get_en_symbol_check(const string& symbol_name) {
+    bool found = false;
+    for (const auto& p: this->enumtable) {
+        if (symbol_name == p.first) found = true;
+    }
+    return found;
+}
+
+// return the value of the enum symbol
+int MemoryContext::get_en_symbol(const std::string& symbol_name) {
+    bool found = false;
+    for (const auto& p: this->enumtable) {
+        if (symbol_name == p.first) found = true;
+    }
+    if (!found) throw std::runtime_error("MemoryContextError: get_en_symbol() symbol name not initalized: "+symbol_name);
+    else return this->enumtable[symbol_name];
 }
 
 

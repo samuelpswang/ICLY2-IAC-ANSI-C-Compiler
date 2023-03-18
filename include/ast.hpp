@@ -27,6 +27,8 @@
 #include "ast/operators/unary/ast_dereference.hpp"
 #include "ast/operators/unary/ast_sizeof.hpp"
 
+#include "ast/types/ast_enum.hpp"
+
 #include "ast/ast_expression.hpp"
 #include "ast/ast_function.hpp"
 #include "ast/ast_statement.hpp"

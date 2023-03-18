@@ -17,6 +17,8 @@ private:
     map<string, map<string, vector<int>>> symtable;
     // symbol & their types & sizes
     map<string, pair<string, int>> typetable;
+    // enum symbol & their values
+    map<string, int> enumtable;
     // current state of registers and their address
     map<int, vector<int>> regfile;
     // current offset of a specific function stack 
@@ -27,6 +29,8 @@ private:
     vector<string> curr_cf_start;
     // current control flow start label
     vector<string> curr_cf_end;
+    // current enum number
+    int curr_en_num;
     // unique number for creating names
     int curr_unique_num;
 
@@ -61,6 +65,10 @@ public:
     bool add_cf_label(const string&, const string&);
     // returns true after control flow labels are poped
     bool delete_cf_label();
+    // returns true after an enum symbol is added to the enum table
+    bool add_en_symbol(const string&, bool, int);
+    // returns true after the curr enum count is reset
+    bool delete_en_count();
 
     // Getters
     // returns the address offset of a symbol
@@ -75,6 +83,10 @@ public:
     int get_size(const string&);
     // return the control flow labels
     pair<string, string> get_cf_label();
+    // return true if the enum symbol is in enumtable
+    bool get_en_symbol_check(const string&);
+    // return the value of the enum symbol
+    int get_en_symbol(const string&);
 
     // Assembly Generation
     // return initialized register after writing asm to set reg to 0 and linked to symtable

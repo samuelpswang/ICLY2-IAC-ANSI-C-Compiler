@@ -1,29 +1,27 @@
-#ifndef LANGPROC_COMPILER_AST_VALUE
-#define LANGPROC_COMPILER_AST_VALUE
+#ifndef compiler_ast_value
+#define compiler_ast_value
 
-#include <iostream>
-#include <string>
-#include <vector>
+#include "ast.hpp"
+using namespace std;
 
-#include "ast_node.hpp"
-#include "util_mem.hpp"
 
 class Identifier: public Node {
 public:
-    Identifier(std::string identifier_name) {
-        this->type = "var";
-        this->name = identifier_name;
-        this->val = "";
-        this->exprs = {};
-        this->stats = {};
-    }
-    void print(std::ostream& os, const std::string& indent) const {
+    // Constructors
+    Identifier(string identifier_name): Node{"identifier", "", \
+        identifier_name, nullptr, nullptr} {}
+
+    // Members
+    void print(ostream& os, const string& indent) const override {
         os << indent << this->name;
     }
-    void compile(std::ostream& os, const std::string& dest, MemoryContext& m) const {
-        std::string iden_reg = m.asm_load_symbol(os, this->name, treg);
-        os << "\tadd " << dest << ", " << iden_reg << ", zero" << std::endl;
-        std::cout<<std::endl;
+    void compile(ostream& os, const string& dest, MemoryContext& m) const override {
+        if (m.get_en_symbol_check(this->name)) {
+            os << "\taddi " << dest << ", zero, " << m.get_en_symbol(this->name) << "\n";
+        } else {
+            string iden_reg = m.asm_load_symbol(os, this->name, treg);
+            os << "\tadd " << dest << ", " << iden_reg << ", zero\n";
+        }
     }
 };
 
