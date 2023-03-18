@@ -3,6 +3,7 @@
 #include <cassert>
 
 extern const Node* g_root;
+extern int count;
 
 int yylex(void);
 void yyerror(const char*);
@@ -25,13 +26,13 @@ void yyerror(const char*);
 
 %token CASE DEFAULT IF ELSE SWITCH WHILE DO FOR GOTO CONTINUE BREAK RETURN
 
-%type <node> expression statement_list statement function declaration init_declarator INT_VALUE_expression primary_expression
+%type <node> expression statement_list statement function declaration init_declarator constant_expression primary_expression
 %type <node> unary_expression postfix_expression multiplicative_expression additive_expression shift_expression relational_expression
 %type <node> equality_expression and_expression exclusive_or_expression inclusive_or_expression logical_and_expression logical_or_expression
 %type <node> conditional_expression assignment_expression selection_statement iteration_statement jump_statement function_list 
 %type <node> declaration_list argument_expression_list FOR for_loop_declaration primary_expression_list argument array_declaration
 %type <string> INT_VALUE FLOAT_VALUE IDENTIFIER INT type_specifier direct_declarator INC_OP DEC_OP declarator VOID DOUBLE LEFT_OP RIGHT_OP
-%type <string> LE_OP GE_OP IF ELSE WHILE DO unary_operator RETURN FLOAT
+%type <string> LE_OP GE_OP IF ELSE WHILE DO unary_operator RETURN FLOAT STRING_LITERAL CHAR
 
 %start root
 
@@ -39,6 +40,7 @@ void yyerror(const char*);
 
 root : function_list { 
         g_root = $1;
+		count = 0;
     }
     ;
 
@@ -46,15 +48,17 @@ root : function_list {
 type_specifier
     : INT { $$ = new std::string("int"); }
     | VOID { $$ =  new std::string("void"); }
-    | DOUBLE { $$ = new std::string ("double");}
-	| FLOAT { $$ = new std::string ("float"); }
+    | DOUBLE { $$ = new std::string ("double"); }
+	/* | FLOAT { $$ = new std::string ("float"); } */
+	| CHAR { $$ = new std::string("char"); }
 
 
 primary_expression
 	: IDENTIFIER { $$ = new Identifier(*$1);}
-	| INT_VALUE {$$ = new Int(*$1);}
-	|	FLOAT_VALUE { $$ = new Float(*$1); }
+	| INT_VALUE {$$ = new Int(*$1); count +=4; }
+	/* | FLOAT_VALUE { $$ = new Float(*$1); } */
 	| '(' expression ')' {$$ = $2;}
+	| STRING_LITERAL { $$ = new Char(*$1); count+=1; }
 	;
 
 primary_expression_list
@@ -177,7 +181,7 @@ expression
 	| expression ',' assignment_expression
 	;
 
-INT_VALUE_expression
+constant_expression
 	: conditional_expression { $$ = $1 ;}
 	;
 
@@ -228,11 +232,11 @@ statement
 	: declaration ';' { $$ = new Statement("declaration",$1) ;}
     | init_declarator ';' { $$ = new Statement("init_declarator",$1) ;}
     | expression ';' { $$ = new Statement("expression",$1) ;}
-    | selection_statement { $$ = new Statement("",$1); }
-    | iteration_statement { $$ = new Statement("",$1); }
-    | jump_statement { $$ = new Statement("",$1); }
-    | function  { $$ = new Statement("",$1); }
-	| array_declaration { $$ = new Statement("",$1); }
+    | selection_statement { $$ = new Statement("selection",$1); }
+    | iteration_statement { $$ = new Statement("iteration",$1); }
+    | jump_statement { $$ = new Statement("jump",$1); }
+    | function  { $$ = new Statement("function",$1); }
+	| array_declaration { $$ = new Statement("array",$1); }
 	;
 
 
@@ -248,7 +252,7 @@ declaration
     ;
 
 init_declarator
-    : type_specifier direct_declarator '=' INT_VALUE_expression { $$ = new InitDeclaration(*$1,*$2,$4);}
+    : type_specifier direct_declarator '=' constant_expression { $$ = new InitDeclaration(*$1,*$2,$4);}
 
 
 selection_statement
@@ -270,7 +274,7 @@ iteration_statement
 	| FOR '(' for_loop_declaration ';' conditional_expression ')' '{' statement_list'}' { $$ = new For($3,$5,nullptr,$8); }
 	| FOR '(' conditional_expression ';' expression ')' '{' statement_list'}' { $$ = new For(nullptr,$3,$5,$8); }
 	| FOR '(' conditional_expression ')' '{' statement_list'}' { $$ = new For(nullptr,$3,nullptr,$6); }
-	| FOR '(' for_loop_declaration ';' conditional_expression ';' expression ')' '{''}' { $$ = new For($3,$5,$7,nullptr); }	
+	| FOR '(' for_loop_declaration ';' conditional_expression ';' expression ')' '{''}' { $$ = new For($3,$5,$7,nullptr); }
 	| FOR '(' for_loop_declaration ';' conditional_expression ')' '{''}' { $$ = new For($3,$5,nullptr,nullptr); }
 	| FOR '(' conditional_expression ';' expression ')' '{''}' { $$ = new For(nullptr,$3,$5,nullptr); }																			
 	| FOR '(' conditional_expression ')' '{' '}' { $$ = new For(nullptr,$3,nullptr,nullptr); }
@@ -300,6 +304,8 @@ const Node* g_root;
 
 const Node* parse_ast() {
     g_root = 0;
+	count = 0;
     yyparse();
+	std::cout<<count<<std::endl;
     return g_root;
 }

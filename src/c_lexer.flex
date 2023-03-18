@@ -55,14 +55,11 @@ IS			(u|U|l|L)*
 "volatile"		    { yylval.string = new std::string(yytext); yyprint(yytext, "keyword"); return VOLATILE; }
 "while"			    { yylval.string = new std::string(yytext); yyprint(yytext, "keyword"); return WHILE; }
 
-0[xX]{H}+{IS}?		{ yylval.string = new std::string(yytext); yyprint(yytext, "constant"); return CONSTANT; }
-0{D}+{IS}?		    { yylval.string = new std::string(yytext); yyprint(yytext, "constant"); return CONSTANT; }
-{D}+{IS}?		    { yylval.string = new std::string(yytext); yyprint(yytext, "constant"); return CONSTANT; }
-L?'(\\.|[^\\'])+'	{ yylval.string = new std::string(yytext); yyprint(yytext, "constant"); return CONSTANT; }
+0[xX]{H}+{IS}?		{ yylval.string = new std::string(yytext); yyprint(yytext, "constant"); return HEX; }
+L?'(\\.|[^\\'])+'	{ yylval.string = new std::string(yytext); yyprint(yytext, "constant"); return STRING_LITERAL; }
 
-{D}+[{E}{FS}]?		{ yylval.string = new std::string(yytext); yyprint(yytext, "constant"); return CONSTANT; }
-{D}*"."{D}+({E})?{FS}?	{ yylval.string = new std::string(yytext); yyprint(yytext, "constant"); return CONSTANT; }
-{D}+"."{D}*({E})?{FS}?	{ yylval.string = new std::string(yytext); yyprint(yytext, "constant"); return CONSTANT; }
+{D}+[{E}{FS}]?		{ yylval.string = new std::string(yytext); yyprint(yytext, "integer"); return INT_VALUE; }
+{D}*"."{D}+({E})?{FS}?	{ yylval.string = new std::string(yytext); yyprint(yytext, "constant"); return FLOAT_VALUE; }
 
 L?\"(\\.|[^\\"])*\"	{ yylval.string = new std::string(yytext); yyprint(yytext, "string literal"); return(STRING_LITERAL); }
 
