@@ -303,6 +303,5 @@ const Node* g_root;
 const Node* parse_ast() {
     g_root = 0;
     yyparse();
-	std::cout<<count<<std::endl;
     return g_root;
 }
