@@ -116,11 +116,9 @@ unary_expression
 	| unary_operator unary_expression { if(*$1 == "-"){
                                             $$ = new NegOp($2);
                                         } 
-
-                                        
-                                    
-                                    
-                                    }
+										}
+	| SIZEOF unary_expression { $$ = new SizeOf($2); }
+	| SIZEOF '(' type_specifier ')' { $$ = new SizeOf(*$3); }
 	;
 
 unary_operator

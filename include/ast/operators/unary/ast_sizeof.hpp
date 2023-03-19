@@ -6,6 +6,8 @@ using namespace std;
 
 // sizeof((exprssion))
 class SizeOf: public Node {
+
+public:
     // Constructors
     // for sizeof(identifier)
     SizeOf(Node* expression): Node{"sizeof", "", "", expression, nullptr} {}
@@ -19,10 +21,10 @@ class SizeOf: public Node {
     }
     void compile(ostream& os, const string& dest, MemoryContext& m) const \
         override {
-        if (type != "") {
-            os << "\taddi " << dest << ", zero, " << m.get_size(type);
+        if (val != "") {
+            os << "\taddi " << dest << ", zero, " << m.get_size(val)<<std::endl;
         } else {
-            os << "\taddi " << dest << ", zero, " << m.get_size(this->exprs[0]->get_name());
+            os << "\taddi " << dest << ", zero, " << m.get_size(this->exprs[0]->get_name())<<std::endl;
         }
         
         // TODO: add array sizeof
