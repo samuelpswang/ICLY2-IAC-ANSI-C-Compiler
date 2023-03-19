@@ -26,6 +26,9 @@ public:
     }
     void compile(std::ostream& os, const std::string& dest, MemoryContext& m) const {
         this->exprs[0]->compile(os, dest, m);
+        os<<"\tlw ra, 128(sp)"<<std::endl;
+        os<<"\tlw s0, 124(sp)"<<std::endl;
+        os<<"\taddi sp, sp, 128"<<std::endl;
         os << "\tret" << std::endl;
     }
 };

@@ -50,10 +50,10 @@ public:
 
         // make condition register
         string cond_symbol = m.add_symbol("for_cond", false);
-        string cond_reg = m.asm_give_reg(os, cond_symbol, treg);
+        string cond_reg = m.asm_give_reg(os, cond_symbol, sreg);
         if (cond_reg == "") {
-            m.asm_spill_all(os, treg);
-            cond_reg = m.asm_give_reg(os, cond_symbol, treg);
+            m.asm_spill_all(os, sreg);
+            cond_reg = m.asm_give_reg(os, cond_symbol, sreg);
         }
 
         // compile initializer statement

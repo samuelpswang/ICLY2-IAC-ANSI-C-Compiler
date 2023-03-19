@@ -108,7 +108,8 @@ public:
     void compile(std::ostream& os, const std::string& dest, MemoryContext& m) const {
         for(int i = 0; i < this->exprs.size(); i++){
             this->exprs[i]->compile(os,dest,m);
-        }       
+        }
+        m.asm_spill_all(os,areg);     
     }
     
 };
@@ -133,10 +134,6 @@ public:
             m.asm_spill_all(os, areg);
             iden_reg = m.asm_give_reg(os, iden_name_in_symtable, areg);
         }
-        
-        std::string current_function = m.get_curr_function();
-        int offset = m.get_curr_offset(current_function)-4;
-        os<<"\tsw "<<iden_reg<<", "<<offset<<"(s0)"<<std::endl;
     }
 };
 

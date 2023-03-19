@@ -18,7 +18,7 @@ MemoryContext::MemoryContext() {
     this->typetable["double"] = {"", 8};
     // initialize regfile
     for (int i = 0; i < 32; i++) {
-        if (i < 10) this->regfile[i] = {1, -1};
+        if ((i>=0 && i<5)||(i>=8 && i< 10)) this->regfile[i] = {1, -1};
         else this->regfile[i] = {0, -1};
     }
     // initialize other members
@@ -34,6 +34,7 @@ std::string MemoryContext::add_func(const std::string& func_name) {
     std::string unique_func_name = func_name + std::to_string(++this->curr_unique_num);
     std::map<std::string, std::vector<int>> entry;
     this->symtable[unique_func_name] = entry;
+    this->curr_offset[unique_func_name] = -8;
     return unique_func_name;
 }
 
@@ -51,12 +52,12 @@ bool MemoryContext::use_func(const std::string& func_name) {
 std::string MemoryContext::add_symbol(const std::string& symbol_name, bool variable) {
     if (variable) {
         this->symtable[this->curr_func][symbol_name] = {this->curr_offset[this->curr_func], -1, 0};
-        this->curr_offset[this->curr_func] = this->curr_offset[this->curr_func]+4;
+        this->curr_offset[this->curr_func] = this->curr_offset[this->curr_func]-4;
         return symbol_name;
     } else {
         std::string unique_symbol_name = symbol_name + std::to_string(++this->curr_unique_num);
         this->symtable[this->curr_func][unique_symbol_name] = {this->curr_offset[this->curr_func], -1, 0};
-        this->curr_offset[this->curr_func] = this->curr_offset[this->curr_func]+4;
+        this->curr_offset[this->curr_func] = this->curr_offset[this->curr_func]-4;
         return unique_symbol_name;
     }
 }
@@ -183,6 +184,7 @@ std::string MemoryContext::asm_give_reg(std::ostream& os, const std::string& nam
 
     if( t == areg){
         if (have(t)) {
+            // os<<"Have: "<<have(t)<<"Register"<<next(t)<<std::endl;
             std::string reg_number = std::to_string(next(t));
             reg = "x" + reg_number;
             this->symtable[curr_func][name] = {offset, next(t), 1};
@@ -218,13 +220,13 @@ std::string MemoryContext::asm_load_symbol(std::ostream& os, const std::string& 
     if (have(t)) {
         int offset = this->symtable[curr_func][name][0];
         std::string reg = asm_give_reg(os, name, t);
-        os << "\tlw " << reg << ", " << offset << "(sp)" <<std::endl; 
+        os << "\tlw " << reg << ", " << offset << "(s0)" <<std::endl; 
         return reg;
     } else {
         asm_spill_all(os,t);
         int offset = this->symtable[curr_func][name][0];
         std::string reg = asm_give_reg(os, name, t);
-        os << "\tlw " << reg << ", " << offset << "(sp)" <<std::endl; 
+        os << "\tlw " << reg << ", " << offset << "(s0)" <<std::endl; 
         return reg;
     }
     
@@ -239,10 +241,13 @@ bool MemoryContext::asm_store_symbol(std::ostream& os, const std::string& name) 
     }
 
     int offset = this->symtable[curr_func][name][0];
-    std::string reg = "x" + std::to_string(this->symtable[curr_func][name][1]);
-    this->regfile[this->symtable[curr_func][name][1]] = {0 , -1};
-    this->symtable[curr_func][name][1] = -1;
-    os << "\tsw " << reg << ", " << offset << "(sp)" << std::endl;
+    if(this->symtable[curr_func][name][1] != -1){
+        std::string reg = "x" + std::to_string(this->symtable[curr_func][name][1]);
+        this->regfile[this->symtable[curr_func][name][1]] = {0 , -1};
+        this->symtable[curr_func][name][1] = -1;
+        // os<<"Storing"<<reg<<std::endl;
+        os << "\tsw " << reg << ", " << offset << "(s0)" << std::endl;
+    }
     return true;
 }
 
@@ -254,7 +259,7 @@ bool MemoryContext::asm_clean_up(std::ostream& os) {
         std::string reg = "x" + std::to_string(it->second[1]);
         int dirty_bit = it->second[2];
         if (dirty_bit == 1) {
-            os << "\tsw " << reg << ", " << offset << "(sp)" << std::endl;
+            os << "\tsw " << reg << ", " << offset << "(s0)" << std::endl;
             it->second[2] = 0;
             this->regfile[it->second[1]] = {0 ,-1};
             it->second[1] = -1;
@@ -273,8 +278,8 @@ bool MemoryContext::asm_spill_all(std::ostream& os, regtype t = treg) {
             int offset = it2->second[0];
             switch (t) {
             case areg:
-                if(0<=reg && reg<18){
-                    os << "\tsw " << reg_file << ", " << offset << "(sp)" << std::endl;
+                if(10<=reg && reg<18){
+                    os << "\tsw " << reg_file << ", " << offset << "(s0)" << std::endl;
                     it2->second[2] = 0;
                     this->regfile[reg] = {0 ,-1};
                     it2->second[1] = -1;
@@ -282,7 +287,7 @@ bool MemoryContext::asm_spill_all(std::ostream& os, regtype t = treg) {
                 break;
             case sreg:
                 if(18<=reg && reg<28){
-                    os << "\tsw " << reg_file << ", " << offset << "(sp)" << std::endl;
+                    os << "\tsw " << reg_file << ", " << offset << "(s0)" << std::endl;
                     it2->second[2] = 0;
                     this->regfile[reg] = {0 ,-1};
                     it2->second[1] = -1;
@@ -290,13 +295,13 @@ bool MemoryContext::asm_spill_all(std::ostream& os, regtype t = treg) {
                 break;
             case treg:
                 if(5<=reg && reg<8){
-                    os << "\tsw " << reg_file << ", " << offset << "(sp)" << std::endl;
+                    os << "\tsw " << reg_file << ", " << offset << "(s0)" << std::endl;
                     it2->second[2] = 0;
                     this->regfile[reg] = {0 ,-1};
                     it2->second[1] = -1;
                 }
                 if(28<=reg && reg<32){
-                    os << "\tsw " << reg_file << ", " << offset << "(sp)" << std::endl;
+                    os << "\tsw " << reg_file << ", " << offset << "(s0)" << std::endl;
                     it2->second[2] = 0;
                     this->regfile[reg] = {0 ,-1};
                     it2->second[1] = -1;
@@ -304,7 +309,7 @@ bool MemoryContext::asm_spill_all(std::ostream& os, regtype t = treg) {
                 break;
             default:
                 if(0<=reg && reg<32){
-                    os << "\tsw " << reg_file << ", " << offset << "(sp)" << std::endl;
+                    os << "\tsw " << reg_file << ", " << offset << "(s0)" << std::endl;
                     it2->second[2] = 0;
                     this->regfile[reg] = {0 ,-1};
                     it2->second[1] = -1;

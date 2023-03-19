@@ -211,7 +211,7 @@ direct_declarator
 
 function
     : type_specifier declarator '(' ')' '{' statement_list '}' { $$ = new Function(*$1, *$2,nullptr, $6); }
-	| type_specifier declarator '(' argument_expression_list ')'  '{' statement_list '}'    { $$ = new Function(*$1, *$2, $4, $7);}
+	| type_specifier declarator '(' argument_expression_list ')'  '{' statement_list '}' { $$ = new Function(*$1, *$2, $4, $7);}
 	| type_specifier declarator '(' ')' '{' '}' { $$ = new Function(*$1, *$2, nullptr, nullptr); }
 	| type_specifier declarator '(' ')' ';' { $$ = new Function(*$1, *$2, nullptr,nullptr); }
 	| type_specifier declarator '(' argument_expression_list ')' ';' { $$ = new Function(*$1, *$2,$4,nullptr); }
