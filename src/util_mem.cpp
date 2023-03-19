@@ -488,5 +488,9 @@ std::ostream& operator<<(std::ostream& os, const MemoryContext& mc) {
     }
     os << "Current Function:\n" << mc.curr_func << "\n";
     os << "Unique Number:\n" << mc.curr_unique_num << "\n";
+    os << "Enum Table:\n";
+    for (auto it = mc.enumtable.begin(); it != mc.enumtable.end(); it++) {
+        os << it->first << "\t" << it->second<<"\n";
+    }
     return os;
 }

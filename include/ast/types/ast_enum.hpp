@@ -13,12 +13,12 @@ public:
 
     // Members
     void print(ostream& os, const string& indent) const override {
-        os << indent << this->name;
+        os << indent << this->type;
     }
     void compile(ostream& os, const string& dest, MemoryContext& m) const \
         override {
-        m.add_en_symbol(this->name, false, 0);
-        m.add_type(this->name, "enum", 4);
+        m.add_en_symbol(this->type, false, 0);
+        m.add_type(this->type, "enum", 4);
     }
 };
 
@@ -31,12 +31,12 @@ public:
         
     // Members
     void print(ostream& os, const string& indent) const override {
-        os << indent << this->name << " = " << this->val;
+        os << indent << this->type << " = " << this->val;
     }
     void compile(ostream& os, const string& dest, MemoryContext& m) const \
         override {
-        m.add_en_symbol(this->name, true, stoi(this->val));
-        m.add_type(this->name, "enum", 4);
+        m.add_en_symbol(this->type, true, stoi(this->val));
+        m.add_type(this->type, "enum", 4);
     }
 };
 
@@ -66,7 +66,7 @@ public:
         for (auto& e: this->exprs) {
             e->compile(os, dest, m);
         }
-        m.add_type(this->name, "enum", 4);
+        m.add_type(this->type, "enum", 4);
     }
 };
 
