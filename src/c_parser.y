@@ -69,6 +69,7 @@ postfix_expression
 	: primary_expression { $$ = $1; }
     | postfix_expression INC_OP { $$ = new PostfixUnaryIncDecOp(*$2,$1); }
     | postfix_expression DEC_OP { $$ = new PostfixUnaryIncDecOp(*$2,$1); }
+	| postfix_expression '[' expression ']'  { $$ = new ArrayAccessor($1->get_name(),$3);}
     | postfix_expression '(' ')' { $$ = new FunctionCall($1);}
 	| postfix_expression '(' primary_expression_list ')'   { $$ = new FunctionCall($1, $3);}
 	
