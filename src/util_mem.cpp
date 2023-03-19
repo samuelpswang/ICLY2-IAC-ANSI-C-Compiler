@@ -44,7 +44,7 @@ bool MemoryContext::use_func(const std::string& func_name) {
         this->curr_func = func_name;
         return true;
     } else {
-        throw std::runtime_error("MemoryContextError: use_func() function name not initialized: "+func_name);
+        throw std::runtime_error("MemoryContext::use_func() function name not initialized: "+func_name);
     }
 }
 
@@ -69,7 +69,7 @@ bool MemoryContext::use_symbol(const std::string& symbol_name) {
         it->second[2] = 1;
         return true;
     } else {
-        throw std::runtime_error("MemoryContextError: use_symbol() symbol name not initialized: "+symbol_name);
+        throw std::runtime_error("MemoryContext::use_symbol() symbol name not initialized: "+symbol_name);
     }
 }
 
@@ -86,7 +86,10 @@ bool MemoryContext::add_type(const std::string& symbol_name, const std::string& 
 bool MemoryContext::delete_type(const std::string& symbol_name) {
     bool found = false;
     for (const auto& entry: this->typetable) {
-        if (entry.first == symbol_name) found = true;
+        if (entry.first == symbol_name) {
+            found = true;
+            break;
+        }
     }
     if (found) {
         this->typetable.erase(symbol_name);
@@ -114,7 +117,7 @@ bool MemoryContext::delete_cf_label() {
 bool MemoryContext::add_en_symbol(const std::string& symbol_name, bool value_given, int value) {
     for (const auto& p: this->enumtable) {
         if (symbol_name == p.first) 
-            throw std::runtime_error("MemoryContextError: add_en_symbol() duplicate symbol name: "+symbol_name);
+            throw std::runtime_error("MemoryContext::add_en_symbol() duplicate symbol name: "+symbol_name);
     }
     if (value_given) {
         this->enumtable[symbol_name] = value;
@@ -132,6 +135,16 @@ bool MemoryContext::delete_en_count() {
     return true;
 }
 
+// returns true after the typedef symbol is added
+bool MemoryContext::add_td_symbol(const std::string& typedef_rep, const std::string& typedef_actual) {
+    for (const auto& p: this->typedeftable) {
+        if (p.first == typedef_rep) 
+            throw std::runtime_error("MemoryContext::add_td_symbol() duplicate typedef representation: "+typedef_rep);
+    }
+    this->typedeftable[typedef_rep] = typedef_actual;
+    return true;
+}
+
 
 // Getters
 // returns the address offset of a symbol
@@ -140,7 +153,7 @@ int MemoryContext::get_symbol(const std::string& symbol_name) {
     if (it != this->symtable[curr_func].end()) {
         return it->second[0];
     } else {
-        throw std::runtime_error("MemoryContextError: get_symbol() symbol name not initialized: "+symbol_name);
+        throw std::runtime_error("MemoryContext::get_symbol() symbol name not initialized: "+symbol_name);
     }
 }
 
@@ -176,7 +189,7 @@ int MemoryContext::get_size(const std::string& symbol_name) {
 std::string MemoryContext::asm_give_reg(std::ostream& os, const std::string& name, regtype t) {
     auto it = this->symtable[curr_func].find(name);
     if (it == this->symtable[curr_func].end()) {
-        throw std::runtime_error("MemoryContextError: asm_give_reg() symbol name not initialized: "+name);
+        throw std::runtime_error("MemoryContext::asm_give_reg() symbol name not initialized: "+name);
     }
     
     std::string reg;
@@ -214,7 +227,7 @@ std::string MemoryContext::asm_give_reg(std::ostream& os, const std::string& nam
 std::string MemoryContext::asm_load_symbol(std::ostream& os, const std::string& name, regtype t) {
     auto it = this->symtable[curr_func].find(name);
     if (it == this->symtable[curr_func].end()) {
-        throw std::runtime_error("MemoryContextError: asm_load_symbol() symbol name not initialized: "+name);
+        throw std::runtime_error("MemoryContext::asm_load_symbol() symbol name not initialized: "+name);
     }
     
     if (have(t)) {
@@ -237,7 +250,7 @@ std::string MemoryContext::asm_load_symbol(std::ostream& os, const std::string& 
 bool MemoryContext::asm_store_symbol(std::ostream& os, const std::string& name) {
     auto it = this->symtable[curr_func].find(name);
     if (it == this->symtable[curr_func].end()) {
-        throw std::runtime_error("MemoryContextError: asm_store_symbol() symbol name not initialized: "+name);
+        throw std::runtime_error("MemoryContext::asm_store_symbol() symbol name not initialized: "+name);
     }
 
     int offset = this->symtable[curr_func][name][0];
@@ -331,7 +344,10 @@ std::pair<std::string, std::string> MemoryContext::get_cf_label() {
 bool MemoryContext::get_en_symbol_check(const string& symbol_name) {
     bool found = false;
     for (const auto& p: this->enumtable) {
-        if (symbol_name == p.first) found = true;
+        if (symbol_name == p.first) {
+            found = true;
+            break;
+        }
     }
     return found;
 }
@@ -340,10 +356,26 @@ bool MemoryContext::get_en_symbol_check(const string& symbol_name) {
 int MemoryContext::get_en_symbol(const std::string& symbol_name) {
     bool found = false;
     for (const auto& p: this->enumtable) {
-        if (symbol_name == p.first) found = true;
+        if (symbol_name == p.first) {
+            found = true;
+            break;
+        }
     }
-    if (!found) throw std::runtime_error("MemoryContextError: get_en_symbol() symbol name not initalized: "+symbol_name);
+    if (!found) throw std::runtime_error("MemoryContext::get_en_symbol() symbol name not initalized: "+symbol_name);
     else return this->enumtable[symbol_name];
+}
+
+// returns true after the typedef symbol is added
+std::string MemoryContext::get_td_symbol(const std::string& typedef_rep) {
+    bool found = false;
+    for (const auto& p: this->typedeftable) {
+        if (p.first == typedef_rep) {
+            found = true;
+            break;
+        }
+    }
+    if (found) return this->typedeftable[typedef_rep];
+    else throw std::runtime_error("MemoryContext::get_td_symbol() typedef representation not initialized: "+typedef_rep);
 }
 
 

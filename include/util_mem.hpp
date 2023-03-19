@@ -19,6 +19,8 @@ private:
     map<string, pair<string, int>> typetable;
     // enum symbol & their values
     map<string, int> enumtable;
+    // typedef symbol & their values
+    map<string, string> typedeftable;
     // current state of registers and their address
     map<int, vector<int>> regfile;
     // current offset of a specific function stack 
@@ -69,6 +71,8 @@ public:
     bool add_en_symbol(const string&, bool, int);
     // returns true after the curr enum count is reset
     bool delete_en_count();
+    // returns true after the typedef symbol is added
+    bool add_td_symbol(const string&, const string&);
 
     // Getters
     // returns the address offset of a symbol
@@ -87,6 +91,8 @@ public:
     bool get_en_symbol_check(const string&);
     // return the value of the enum symbol
     int get_en_symbol(const string&);
+    // returns the value of a typedef symbol
+    string get_td_symbol(const string&);
 
     // Assembly Generation
     // return initialized register after writing asm to set reg to 0 and linked to symtable
