@@ -36,11 +36,13 @@ public:
         this->exprs[0]->compile(os, offset_reg, m);
 
         // add stack offset to offset register
-        os << "\tadd " << offset_reg << ", " << offset_reg << ", sp\n";
+        os << "\tneg " << offset_reg << ", " << offset_reg << "\n"; // invert: 1 -> -1
+        os << "\tadd " << offset_reg << ", " << offset_reg << ", " << offset_reg << "\n"; // add once: -1 -> -2
+        os << "\tadd " << offset_reg << ", " << offset_reg << ", " << offset_reg << "\n"; // add again: -2 -> -4
+        os << "\tadd " << offset_reg << ", " << offset_reg << ", sp\n"; // add sp: -4 -> -4+sp
 
         // load word from offset
-        os << "\tlw " << dest << ", " << m.get_symbol(this->name+"[0]") << "(" \
-            << offset_reg << ")\n";
+        os << "\tlw " << dest << ", " << m.get_symbol(this->name+"[0]") << "(" << offset_reg << ")\n";
     }
 };
 
