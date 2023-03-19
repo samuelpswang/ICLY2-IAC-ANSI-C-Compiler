@@ -8,8 +8,8 @@ using namespace std;
 class Identifier: public Node {
 public:
     // Constructors
-    Identifier(string identifier_name): Node{"identifier", "", \
-        identifier_name, nullptr, nullptr} {}
+    Identifier(string identifier_name): Node{identifier_name, "var", \
+        "", nullptr, nullptr} {}
 
     // Members
     void print(ostream& os, const string& indent) const override {

@@ -38,10 +38,10 @@ public:
     void compile(std::ostream& os, const std::string& dest, MemoryContext& m) const{
         os<<this->name<<":"<<std::endl;
         m.use_func(m.add_func(this->name));
-        if(this->exprs.size() != 0 ){
+        if (this->exprs.size() > 0 && this->exprs[0] != nullptr)
             this->exprs[0]->compile(os,dest,m);
-        }
-        this->stats[0]->compile(os, dest,m);
+        if (this->stats.size() > 0 && this->stats[0] != nullptr)
+            this->stats[0]->compile(os, dest,m);
     }
 };
 
