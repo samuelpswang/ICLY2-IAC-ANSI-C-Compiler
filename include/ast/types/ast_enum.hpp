@@ -23,10 +23,10 @@ public:
 };
 
 // enum ... { item_name = item value, ... }
-class EnumItemWtihValue: public Node {
+class EnumItemWithValue: public Node {
 public:
     // Constructor
-    EnumItemWtihValue(string item_name, string item_value):
+    EnumItemWithValue(string item_name, string item_value):
         Node{"enumitemwithvalue", item_name, item_value, nullptr, nullptr} {}
         
     // Members
@@ -68,6 +68,32 @@ public:
         }
         m.add_type(this->name, "enum", 4);
     }
+};
+
+
+class EnumList: public Node {
+public:
+    EnumList(Node* argument) {
+        this->type = "";
+        this->name = "";
+        this->val = "";
+        this->exprs = {argument};
+        this->stats = {};
+    }
+    void print(std::ostream& os, const std::string& indent) const {
+        for(int i = 0; i < this->exprs.size(); i++){
+            this->exprs[i]->print(os,indent);
+            if(i != this->exprs.size()-1){
+                os<<",";
+            }
+        }
+    }
+    void compile(std::ostream& os, const std::string& dest, MemoryContext& m) const {
+        for(int i = 0; i < this->exprs.size(); i++){
+            this->exprs[i]->compile(os,dest,m);
+        }    
+    }
+    
 };
 
 #endif

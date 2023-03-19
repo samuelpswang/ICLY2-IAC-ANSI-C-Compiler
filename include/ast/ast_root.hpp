@@ -20,8 +20,13 @@ public:
         }
     }
 
-    void compile(std::ostream& os,const std::string& dst)const{
-        os<<"root: Not implemented"<<std::endl;
+    void compile(std::ostream& os,const std::string& dest,MemoryContext& m)const{
+        os << ".text" << std::endl;
+        os<< ".globl "<<this->exprs[this->exprs.size()-1]->get_name()<<std::endl;
+        os<<std::endl;
+        for(int i = 0; i<(this->exprs).size(); i++){
+            (this->exprs)[i]->compile(os,dest,m);
+        }
     }
 
 

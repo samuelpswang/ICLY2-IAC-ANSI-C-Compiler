@@ -28,19 +28,31 @@ void yyerror(const char*);
 %type <node> expression statement_list statement function declaration init_declarator constant_expression primary_expression
 %type <node> unary_expression postfix_expression multiplicative_expression additive_expression shift_expression relational_expression
 %type <node> equality_expression and_expression exclusive_or_expression inclusive_or_expression logical_and_expression logical_or_expression
-%type <node> conditional_expression assignment_expression selection_statement iteration_statement jump_statement function_list 
-%type <node> declaration_list argument_expression_list FOR for_loop_declaration primary_expression_list argument array_declaration
+%type <node> conditional_expression assignment_expression selection_statement iteration_statement jump_statement globals_list enumerator_list enum_specifier
+%type <node> declaration_list argument_expression_list FOR for_loop_declaration primary_expression_list argument array_declaration enum_item globals
 %type <string> INT_VALUE FLOAT_VALUE IDENTIFIER INT type_specifier direct_declarator INC_OP DEC_OP declarator VOID DOUBLE LEFT_OP RIGHT_OP
-%type <string> LE_OP GE_OP IF ELSE WHILE DO unary_operator RETURN FLOAT STRING_LITERAL CHAR
+%type <string> LE_OP GE_OP IF ELSE WHILE DO unary_operator RETURN FLOAT STRING_LITERAL CHAR ENUM
 
 %start root
 
 %%
 
-root : function_list { 
+root : globals_list { 
         g_root = $1;
     }
     ;
+
+globals_list
+	: globals { $$ = new Root($1); }
+	| globals_list globals { $1->append_expr($2); }
+
+
+globals
+	: function { $$ = $1; }
+	| type_specifier declarator { $$ = new GlobalDeclaration(*$1, *$2); }
+	| type_specifier direct_declarator '=' constant_expression { $$ = new GlobalInitDeclaration(*$1,*$2,$4);}
+	| type_specifier direct_declarator '[' INT_VALUE ']' ';' { $$ = new GlobalArrayDeclarator(*$1,*$2, *$4); }
+	| enum_specifier { $$ = $1; }
 
 
 type_specifier
@@ -49,6 +61,20 @@ type_specifier
     | DOUBLE { $$ = new std::string ("double"); }
 	/* | FLOAT { $$ = new std::string ("float"); } */
 	| CHAR { $$ = new std::string("char"); }
+
+
+enum_specifier
+	: ENUM '{' enumerator_list '}' ';' { $$ = new EnumDeclarator("", $3); }
+	| ENUM IDENTIFIER '{' enumerator_list '}' ';' { $$ = new EnumDeclarator(*$2, $4); }
+	;
+
+enumerator_list
+	: enum_item { $$ = new EnumList($1); }
+	| enumerator_list ',' enum_item { $1->append_expr($3); }
+
+enum_item
+	: IDENTIFIER { $$ = new EnumItem(*$1);}
+	| IDENTIFIER '=' INT_VALUE { $$ = new EnumItemWithValue(*$1, *$3); }
 
 
 primary_expression
@@ -217,10 +243,6 @@ function
 	| type_specifier declarator '(' ')' ';' { $$ = new Function(*$1, *$2, nullptr,nullptr); }
 	| type_specifier declarator '(' argument_expression_list ')' ';' { $$ = new Function(*$1, *$2,$4,nullptr); }
     ;
-
-function_list
-    : function { $$ = new FunctionList($1); }
-    | function_list function { $1->append_expr($2); }
 
 statement_list
     : statement { $$ = new StatementList($1); }

@@ -172,5 +172,66 @@ public:
 };
 
 
+class GlobalDeclaration: public Node {
+public:
+    GlobalDeclaration(const std::string& type,const std::string& name) {
+        this->type = type;
+        this->name = name;
+        this->val = "";
+        this->exprs = {};
+        this->stats = {};
+    }
+    void print(std::ostream& os, const std::string& indent) const {
+        os << indent << this->type << " " << this->name;
+    }
+    void compile(std::ostream& os, const std::string& dest, MemoryContext& m) const {
+        std::string iden_name_in_symtable = m.add_symbol(this->name, true);
+        std::string iden_reg = m.asm_give_reg(os, iden_name_in_symtable, treg);
+        if (iden_reg == "") {
+            m.asm_spill_all(os, treg);
+            iden_reg = m.asm_give_reg(os, iden_name_in_symtable, treg);
+        }
+        m.asm_store_symbol(os, iden_name_in_symtable);
+        m.add_type(this->name, this->type, m.get_size(this->type));
+        os<<this->name+":"<<"\n";
+        os<<"\t.zero"<<" "<<m.get_size(this->type)<<std::endl;
+        os<<std::endl;
+    }
+};
+
+
+class GlobalInitDeclaration: public Node {
+public:
+    GlobalInitDeclaration(const std::string& type, const std::string& name,Node* expr) {
+        this->type = type;
+        this->name = name;
+        this->val = "";
+        this->exprs = { expr };
+        this->stats = {};
+    }
+    void print(std::ostream& os, const std::string& indent) const {
+        os << indent << this->type << " " << this->name << " = ";
+        this->exprs[0]->print(os, "");
+    }
+    void compile(std::ostream& os, const std::string& dest, MemoryContext& m) const {
+        // setting iden 0
+        std::string iden_name_in_symtable = m.add_symbol(this->name, true);
+        std::string iden_reg = m.asm_load_symbol(os, iden_name_in_symtable, treg);
+        if (iden_reg == "") {
+            m.asm_spill_all(os, treg);
+            iden_reg = m.asm_load_symbol(os, iden_name_in_symtable, treg);
+        }
+        // calculating express
+        this->exprs[0]->compile(os, iden_reg, m);
+        // store value back to memory
+        m.asm_store_symbol(os, iden_name_in_symtable);
+        m.add_type(this->name, this->type, m.get_size(this->type));
+        os<<this->name+":"<<"\n";
+        os<<"\t.word"<<" "<<this->val<<std::endl;
+        os<<std::endl;
+    }
+};
+
+
 
 #endif
