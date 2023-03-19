@@ -138,7 +138,7 @@ bool MemoryContext::delete_en_count() {
 int MemoryContext::get_symbol(const std::string& symbol_name) {
     auto it = this->symtable[curr_func].find(symbol_name);
     if (it != this->symtable[curr_func].end()) {
-        return it->second[1];
+        return it->second[0];
     } else {
         throw std::runtime_error("MemoryContextError: get_symbol() symbol name not initialized: "+symbol_name);
     }
