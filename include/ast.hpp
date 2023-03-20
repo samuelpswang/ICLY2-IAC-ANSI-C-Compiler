@@ -16,6 +16,7 @@
 
 #include "ast/control_flows/ast_for.hpp"
 #include "ast/control_flows/ast_if.hpp"
+#include "ast/control_flows/ast_switch.hpp"
 #include "ast/control_flows/ast_while.hpp"
 
 #include "ast/literals/ast_char.hpp"

@@ -120,6 +120,9 @@ public:
 
         // add end label
         os << end_label << ":\n";
+
+        // clean house
+        m.delete_cf_label();
     }
 };
 
