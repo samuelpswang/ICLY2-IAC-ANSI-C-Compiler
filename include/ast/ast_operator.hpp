@@ -43,7 +43,7 @@ public:
                 array_offset_reg = m.asm_give_reg(os, symbol, treg);
             }
             this->exprs[0]->get_expr(0)->compile(os, array_offset_reg, m);
-            os << "\tadd " << array_offset_reg << ", " <<  array_offset_reg << ", sp\n";
+            os << "\tadd " << array_offset_reg << ", " <<  array_offset_reg << ", s0\n";
             os << "\tsw " << value << ", " << offset << "(" << array_offset_reg << ")\n";
         } 
         // normal store
