@@ -31,7 +31,7 @@ void yyerror(const char*);
 %type <node> conditional_expression assignment_expression selection_statement iteration_statement jump_statement globals_list enumerator_list enum_specifier
 %type <node> declaration_list argument_expression_list FOR for_loop_declaration constant_expression_list argument array_declaration enum_item globals
 %type <string> INT_VALUE FLOAT_VALUE IDENTIFIER INT type_specifier direct_declarator INC_OP DEC_OP declarator VOID DOUBLE LEFT_OP RIGHT_OP
-%type <string> LE_OP GE_OP IF ELSE WHILE DO unary_operator RETURN FLOAT STRING_LITERAL CHAR ENUM CONTINUE BREAK 
+%type <string> LE_OP GE_OP IF ELSE WHILE DO unary_operator RETURN FLOAT STRING_LITERAL CHAR ENUM CONTINUE BREAK UNSIGNED
 %start root
 
 %%
@@ -60,6 +60,7 @@ type_specifier
     | DOUBLE { $$ = new std::string ("double"); }
 	/* | FLOAT { $$ = new std::string ("float"); } */
 	| CHAR { $$ = new std::string("char"); }
+	| UNSIGNED { $$ = new std::string("unsigned"); }
 
 
 enum_specifier
