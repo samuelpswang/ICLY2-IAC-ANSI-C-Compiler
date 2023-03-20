@@ -62,11 +62,6 @@ std::string MemoryContext::add_symbol(const std::string& symbol_name, bool varia
     }
 }
 
-
-bool MemoryContext::add_struct(const std::string& struct_name){
-    
-}
-
 // returns true when successfully marked symbol as needed to store to mem
 bool MemoryContext::use_symbol(const std::string& symbol_name) {
     auto it = this->symtable[curr_func].find(symbol_name);
@@ -147,6 +142,11 @@ bool MemoryContext::add_td_symbol(const std::string& typedef_rep, const std::str
             throw std::runtime_error("MemoryContext::add_td_symbol() duplicate typedef representation: "+typedef_rep);
     }
     this->typedeftable[typedef_rep] = typedef_actual;
+    return true;
+}
+
+bool MemoryContext::add_struct_member(const std::string& struct_name, const std::string& member_type, const std::string& member_name){
+    this->struct_table[struct_name][member_name] = member_type ;
     return true;
 }
 

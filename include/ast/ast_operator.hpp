@@ -77,9 +77,9 @@ public:
 
     void compile(std::ostream& os, const std::string& dest, MemoryContext& m) const {
         std::string reg_file = m.asm_give_reg(os,this->exprs[0]->get_name(),sreg);
-        if(this->val == "++"){
-            os<<"add "<<dest<<", "<<reg_file<<", zero"<<std::endl;
-            os<<"addi "<<reg_file<<", "<<reg_file<<", 0x01"<<std::endl;
+        if(this->name == "++"){
+            os<<"\tadd "<<dest<<", "<<reg_file<<", zero"<<std::endl;
+            os<<"\taddi "<<reg_file<<", "<<reg_file<<", 0x01"<<std::endl;
         }
         else{
             std::string symbol1 = m.add_symbol("val1",false);
@@ -88,9 +88,9 @@ public:
                 m.asm_spill_all(os, treg);
                 val1 = m.asm_give_reg(os, symbol1, treg);
             }
-            os<<"addi "<<val1<<", zero, 0x01"<<std::endl;
-            os<<"add "<<dest<<", "<<reg_file<<", zero"<<std::endl;
-            os<<"sub "<<reg_file<<", "<<reg_file<<", "<<val1<<std::endl;
+            os<<"\taddi "<<val1<<", zero, 0x01"<<std::endl;
+            os<<"\tadd "<<dest<<", "<<reg_file<<", zero"<<std::endl;
+            os<<"\tsub "<<reg_file<<", "<<reg_file<<", "<<val1<<std::endl;
         }
 
         m.asm_store_symbol(os,this->exprs[0]->get_name());
@@ -117,9 +117,9 @@ public:
 
     void compile(std::ostream& os, const std::string& dest, MemoryContext& m) const {
         std::string reg_file = m.asm_load_symbol(os,this->exprs[0]->get_val(),sreg);
-        if(this->val == "++"){
-            os<<"addi "<<reg_file<<", "<<reg_file<<", 0x01"<<std::endl;
-            os<<"add "<<dest<<", "<<reg_file<<", zero"<<std::endl;
+        if(this->name == "++"){
+            os<<"\taddi "<<reg_file<<", "<<reg_file<<", 0x01"<<std::endl;
+            os<<"\tadd "<<dest<<", "<<reg_file<<", zero"<<std::endl;
         }
         else{
             std::string symbol1 = m.add_symbol("val1",false);
@@ -128,9 +128,9 @@ public:
                 m.asm_spill_all(os, treg);
                 val1 = m.asm_give_reg(os, symbol1, treg);
             }
-            os<<"addi "<<val1<<", zero, 0x01"<<std::endl;
-            os<<"sub "<<reg_file<<", "<<reg_file<<", "<<val1<<std::endl;
-            os<<"add "<<dest<<", "<<reg_file<<", zero"<<std::endl;
+            os<<"\taddi "<<val1<<", zero, 0x01"<<std::endl;
+            os<<"\tsub "<<reg_file<<", "<<reg_file<<", "<<val1<<std::endl;
+            os<<"\tadd "<<dest<<", "<<reg_file<<", zero"<<std::endl;
         }
         m.asm_store_symbol(os,this->exprs[0]->get_val());
     }
