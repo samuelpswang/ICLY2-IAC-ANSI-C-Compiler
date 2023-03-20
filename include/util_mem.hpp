@@ -26,7 +26,7 @@ private:
     // current offset of a specific function stack 
     map<string, int> curr_offset;
     //holds struct name and members
-    map<string, map<string, string>> struct_table;
+    map<string, vector<pair<string,string>>> struct_table;
     // current function
     string curr_func;
     // current control flow start label
@@ -77,7 +77,9 @@ public:
     bool add_td_symbol(const string&, const string&);
     //adds struct into struct table
     bool add_struct_member(const std::string&, const std::string&, const std::string&);
-    // adds struct members into table 
+    // adds struct declarations to symbol table
+    bool add_struct_declaration (const std::string&, const std::string&);
+
 
 
     // Getters

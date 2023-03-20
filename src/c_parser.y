@@ -26,12 +26,12 @@ void yyerror(const char*);
 %token CASE DEFAULT IF ELSE SWITCH WHILE DO FOR GOTO CONTINUE BREAK RETURN
 
 %type <node> expression statement_list statement function declaration init_declarator constant_expression primary_expression pointer pointer_assignment
-%type <node> unary_expression postfix_expression multiplicative_expression additive_expression shift_expression relational_expression
-%type <node> equality_expression and_expression exclusive_or_expression inclusive_or_expression logical_and_expression logical_or_expression
+%type <node> unary_expression postfix_expression multiplicative_expression additive_expression shift_expression relational_expression struct_declaration_list struct_declaration
+%type <node> equality_expression and_expression exclusive_or_expression inclusive_or_expression logical_and_expression logical_or_expression struct struct_init_variable
 %type <node> conditional_expression assignment_expression selection_statement iteration_statement jump_statement globals_list enumerator_list enum_specifier
 %type <node> declaration_list argument_expression_list FOR for_loop_declaration constant_expression_list argument array_declaration enum_item globals
 %type <string> INT_VALUE FLOAT_VALUE IDENTIFIER INT type_specifier direct_declarator INC_OP DEC_OP declarator VOID DOUBLE LEFT_OP RIGHT_OP
-%type <string> LE_OP GE_OP IF ELSE WHILE DO unary_operator RETURN FLOAT STRING_LITERAL CHAR_LITERAL CHAR ENUM CONTINUE BREAK UNSIGNED
+%type <string> LE_OP GE_OP IF ELSE WHILE DO unary_operator RETURN FLOAT STRING_LITERAL CHAR_LITERAL CHAR ENUM CONTINUE BREAK UNSIGNED STRUCT
 %start root
 
 %%
@@ -52,6 +52,7 @@ globals
 	| type_specifier direct_declarator '=' constant_expression { $$ = new GlobalInitDeclaration(*$1,*$2,$4);}
 	| type_specifier direct_declarator '[' INT_VALUE ']' ';' { $$ = new GlobalArrayDeclarator(*$1,*$2, *$4); }
 	| enum_specifier { $$ = $1; }
+	| struct { $$ = $1; }
 
 
 type_specifier
@@ -84,6 +85,7 @@ primary_expression
 	| '(' expression ')' {$$ = $2;}
 	| CHAR_LITERAL { $$ = new Char(*$1); }
 	| STRING_LITERAL { $$ = new String(*$1); }
+	| IDENTIFIER '.' IDENTIFIER { $$ = new Identifier(*$1+"."+*$3); }
 	;
 
 constant_expression_list
@@ -269,19 +271,34 @@ statement
 	| array_declaration { $$ = new Statement("array",$1); }
 	| pointer_assignment { $$ = new Statement("pointer_assignment",$1); }
 	| '{' statement_list '}' { $$ = new Statement("scoped",$2); }
+	| struct_init_variable { $$ = new Statement("struct", $1); }
 	;
 
 
 declaration_list
 	: declaration { $$ = new DeclarationList($1); }
 	| declaration_list ',' declaration { $1->append_expr($3); }
+	
 
 
+struct
+	: STRUCT declarator '{' struct_declaration_list '}' ';' { $$ = new StructDefinition(*$2, $4); }
+	;
+
+struct_declaration_list
+	: struct_declaration {$$ = new StructDeclarationList($1); }
+	| struct_declaration_list struct_declaration {$1->append_expr($2); }
+
+struct_declaration
+	: type_specifier declarator ';'  {$$ = new StructMemberDeclaration(*$1,*$2); }
 
 
 declaration
     : type_specifier declarator  { $$ = new Declaration(*$1,*$2); }
     ;
+
+struct_init_variable
+	: STRUCT IDENTIFIER IDENTIFIER ';' { $$ = new StructInitVariable(*$2, *$3); std::cout<<"Defining Strcut"<<std::endl; }
 
 init_declarator
     : type_specifier declarator '=' constant_expression { $$ = new InitDeclaration(*$1,*$2,$4);}

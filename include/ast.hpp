@@ -39,6 +39,8 @@
 #include "ast/keywords/ast_break.hpp"
 #include "ast/keywords/ast_continue.hpp"
 
+#include "ast/struct/ast_struct.hpp"
+
 extern const Node* parse_ast();
 
 #endif

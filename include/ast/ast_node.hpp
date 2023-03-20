@@ -40,6 +40,8 @@ public:
     std::string get_type() const { return this->type; }
     std::string get_name() const { return this->name; }
     std::string get_val() const { return this->val; }
+    std::vector<Node*> get_expr_list() const { return this->exprs; }
+    std::vector<Node*> get_stat_list() const { return this->stats; }
     Node* get_expr(int i) const { return this->exprs[i]; }
     Node* get_stat(int i) const { return this->stats[i]; }
     int get_expr_size() const { return this->exprs.size(); }

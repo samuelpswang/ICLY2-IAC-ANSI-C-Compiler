@@ -146,8 +146,16 @@ bool MemoryContext::add_td_symbol(const std::string& typedef_rep, const std::str
 }
 
 bool MemoryContext::add_struct_member(const std::string& struct_name, const std::string& member_type, const std::string& member_name){
-    this->struct_table[struct_name][member_name] = member_type ;
+    this->struct_table[struct_name].push_back(std::make_pair(member_name,member_type)) ;
     return true;
+}
+
+bool MemoryContext::add_struct_declaration(const std::string& struct_name, const std::string& variable_name){
+    for(int i = 0; i< this->struct_table[struct_name].size(); i++){
+            std::string struct_member = variable_name+"."+this->struct_table[struct_name][i].second;
+            // std::cout<<"What is this "<<struct_member<<std::endl;
+            add_symbol(struct_member, true);
+        }
 }
 
 
@@ -496,6 +504,14 @@ std::ostream& operator<<(std::ostream& os, const MemoryContext& mc) {
     os << "Enum Table:\n";
     for (auto it = mc.enumtable.begin(); it != mc.enumtable.end(); it++) {
         os << it->first << "\t" << it->second<<"\n";
+    }
+    os<<"Struct Table:\n"<<std::endl;
+    for (auto it = mc.struct_table.begin(); it != mc.struct_table.end(); it++){
+        std::string struct_name = it->first;
+        os << struct_name<<":"<<std::endl;
+        for(auto it2 = it->second.begin(); it2 != it->second.end(); it2++){
+            os<<it2->first<<" "<<it2->second<<std::endl;
+        }
     }
     return os;
 }
