@@ -25,14 +25,13 @@ void yyerror(const char*);
 
 %token CASE DEFAULT IF ELSE SWITCH WHILE DO FOR GOTO CONTINUE BREAK RETURN
 
-%type <node> expression statement_list statement function declaration init_declarator constant_expression primary_expression
+%type <node> expression statement_list statement function declaration init_declarator constant_expression primary_expression pointer pointer_assignment
 %type <node> unary_expression postfix_expression multiplicative_expression additive_expression shift_expression relational_expression
 %type <node> equality_expression and_expression exclusive_or_expression inclusive_or_expression logical_and_expression logical_or_expression
 %type <node> conditional_expression assignment_expression selection_statement iteration_statement jump_statement globals_list enumerator_list enum_specifier
-%type <node> declaration_list argument_expression_list FOR for_loop_declaration primary_expression_list argument array_declaration enum_item globals
+%type <node> declaration_list argument_expression_list FOR for_loop_declaration constant_expression_list argument array_declaration enum_item globals
 %type <string> INT_VALUE FLOAT_VALUE IDENTIFIER INT type_specifier direct_declarator INC_OP DEC_OP declarator VOID DOUBLE LEFT_OP RIGHT_OP
-%type <string> LE_OP GE_OP IF ELSE WHILE DO unary_operator RETURN FLOAT STRING_LITERAL CHAR ENUM CONTINUE BREAK
-
+%type <string> LE_OP GE_OP IF ELSE WHILE DO unary_operator RETURN FLOAT STRING_LITERAL CHAR ENUM CONTINUE BREAK 
 %start root
 
 %%
@@ -85,9 +84,9 @@ primary_expression
 	| STRING_LITERAL { $$ = new Char(*$1);  }
 	;
 
-primary_expression_list
-	: primary_expression { $$ = new PrimaryExpressionList($1); }
-	| primary_expression_list ',' primary_expression { $1->append_expr($3); }
+constant_expression_list
+	: constant_expression { $$ = new PrimaryExpressionList($1); }
+	| constant_expression_list ',' constant_expression { $1->append_expr($3); }
 
 
 
@@ -97,7 +96,7 @@ postfix_expression
     | postfix_expression DEC_OP { $$ = new PostfixUnaryIncDecOp(*$2,$1); }
 	| postfix_expression '[' expression ']'  { $$ = new ArrayAccessor($1->get_name(),$3);}
     | postfix_expression '(' ')' { $$ = new FunctionCall($1);}
-	| postfix_expression '(' primary_expression_list ')'   { $$ = new FunctionCall($1, $3);}
+	| postfix_expression '(' constant_expression_list ')'   { $$ = new FunctionCall($1, $3);}
 	
 
 argument_expression_list
@@ -116,6 +115,13 @@ unary_expression
 	| unary_operator unary_expression { if(*$1 == "-"){
                                             $$ = new NegOp($2);
                                         } 
+										if(*$1 == "&"){
+											$$ = new AddressOfOperator($2);
+										}
+										if(*$1 == "*"){
+											$$ = new DereferenceOperator($2);
+										}
+										
 										}
 	| SIZEOF unary_expression { $$ = new SizeOf($2); }
 	| SIZEOF '(' type_specifier ')' { $$ = new SizeOf(*$3); }
@@ -234,6 +240,9 @@ direct_declarator
 	: IDENTIFIER { $$ = $1;}
 	;
 
+pointer_assignment
+	: type_specifier '*' primary_expression assignment_operator assignment_expression ';' { $$ = new PointerAssignOp(new DereferenceOperator($3),$5); } 
+
 function
     : type_specifier declarator '(' ')' '{' statement_list '}' { $$ = new Function(*$1, *$2,nullptr, $6); }
 	| type_specifier declarator '(' argument_expression_list ')'  '{' statement_list '}' { $$ = new Function(*$1, *$2, $4, $7);}
@@ -256,6 +265,8 @@ statement
     | jump_statement { $$ = new Statement("jump",$1); }
     | function  { $$ = new Statement("function",$1); }
 	| array_declaration { $$ = new Statement("array",$1); }
+	| pointer_assignment { $$ = new Statement("pointer_assignment",$1); }
+	| '{' statement_list '}' { $$ = new Statement("scoped",$2); }
 	;
 
 
@@ -271,7 +282,7 @@ declaration
     ;
 
 init_declarator
-    : type_specifier direct_declarator '=' constant_expression { $$ = new InitDeclaration(*$1,*$2,$4);}
+    : type_specifier declarator '=' constant_expression { $$ = new InitDeclaration(*$1,*$2,$4);}
 
 
 selection_statement

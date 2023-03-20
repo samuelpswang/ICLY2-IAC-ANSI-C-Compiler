@@ -47,6 +47,9 @@ public:
             os << "\tsw " << value << ", " << offset << "(" << array_offset_reg << ")\n";
         } 
         // normal store
+        else if(this->exprs[0]->get_name() == "dereference"){
+            
+        }
         else {
             std::string reg = m.asm_load_symbol(os, this->exprs[0]->get_name(), treg);
             os << "\tadd " << reg <<", zero, " << value << std::endl;
@@ -73,7 +76,24 @@ public:
     }
 
     void compile(std::ostream& os, const std::string& dest, MemoryContext& m) const {
-        os<<"addi "<<dest<<", "<<dest<<", 0x01"<<std::endl;
+        std::string reg_file = m.asm_give_reg(os,this->exprs[0]->get_name(),sreg);
+        if(this->val == "++"){
+            os<<"add "<<dest<<", "<<reg_file<<", zero"<<std::endl;
+            os<<"addi "<<reg_file<<", "<<reg_file<<", 0x01"<<std::endl;
+        }
+        else{
+            std::string symbol1 = m.add_symbol("val1",false);
+            std::string val1  = m.asm_give_reg(os,symbol1,treg);
+            if(val1 == ""){
+                m.asm_spill_all(os, treg);
+                val1 = m.asm_give_reg(os, symbol1, treg);
+            }
+            os<<"addi "<<val1<<", zero, 0x01"<<std::endl;
+            os<<"add "<<dest<<", "<<reg_file<<", zero"<<std::endl;
+            os<<"sub "<<reg_file<<", "<<reg_file<<", "<<val1<<std::endl;
+        }
+
+        m.asm_store_symbol(os,this->exprs[0]->get_name());
     }
 };
 
@@ -96,7 +116,23 @@ public:
     }
 
     void compile(std::ostream& os, const std::string& dest, MemoryContext& m) const {
-        os<<"addi "<<dest<<", "<<dest<<", 0x01"<<std::endl;
+        std::string reg_file = m.asm_load_symbol(os,this->exprs[0]->get_val(),sreg);
+        if(this->val == "++"){
+            os<<"addi "<<reg_file<<", "<<reg_file<<", 0x01"<<std::endl;
+            os<<"add "<<dest<<", "<<reg_file<<", zero"<<std::endl;
+        }
+        else{
+            std::string symbol1 = m.add_symbol("val1",false);
+            std::string val1  = m.asm_give_reg(os,symbol1,treg);
+            if(val1 == ""){
+                m.asm_spill_all(os, treg);
+                val1 = m.asm_give_reg(os, symbol1, treg);
+            }
+            os<<"addi "<<val1<<", zero, 0x01"<<std::endl;
+            os<<"sub "<<reg_file<<", "<<reg_file<<", "<<val1<<std::endl;
+            os<<"add "<<dest<<", "<<reg_file<<", zero"<<std::endl;
+        }
+        m.asm_store_symbol(os,this->exprs[0]->get_val());
     }
 };
 

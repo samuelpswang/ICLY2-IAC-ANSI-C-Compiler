@@ -18,7 +18,7 @@ public:
     void compile(std::ostream& os, const std::string& dest, MemoryContext& m) const {
         string symbol_name = this->exprs[0]->get_name();
         int stack_offset = m.get_symbol(symbol_name);
-        os << "\taddi " << dest << ", sp, " << to_string(stack_offset) << "\n";
+        os << "\taddi " << dest << ", s0, " << to_string(stack_offset) << "\n";
     };
 };
 

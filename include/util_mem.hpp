@@ -25,6 +25,8 @@ private:
     map<int, vector<int>> regfile;
     // current offset of a specific function stack 
     map<string, int> curr_offset;
+    //holds struct name and members
+    map<string, vector<string>> struct_table;
     // current function
     string curr_func;
     // current control flow start label
@@ -73,6 +75,8 @@ public:
     bool delete_en_count();
     // returns true after the typedef symbol is added
     bool add_td_symbol(const string&, const string&);
+    //adds struct and members into struct table
+    bool add_struct(const std::string&);
 
     // Getters
     // returns the address offset of a symbol
