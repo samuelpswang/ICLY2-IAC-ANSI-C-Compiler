@@ -13,7 +13,7 @@ void yyerror(const char*);
 	std::string* string;
 }
 
-%token IDENTIFIER INT_VALUE FLOAT_VALUE STRING_LITERAL SIZEOF
+%token IDENTIFIER INT_VALUE FLOAT_VALUE STRING_LITERAL CHAR_LITERAL SIZEOF
 %token PTR_OP INC_OP DEC_OP LEFT_OP RIGHT_OP LE_OP GE_OP EQ_OP NE_OP
 %token AND_OP OR_OP MUL_ASSIGN DIV_ASSIGN MOD_ASSIGN ADD_ASSIGN
 %token SUB_ASSIGN LEFT_ASSIGN RIGHT_ASSIGN AND_ASSIGN
@@ -31,7 +31,7 @@ void yyerror(const char*);
 %type <node> conditional_expression assignment_expression selection_statement iteration_statement jump_statement globals_list enumerator_list enum_specifier
 %type <node> declaration_list argument_expression_list FOR for_loop_declaration constant_expression_list argument array_declaration enum_item globals
 %type <string> INT_VALUE FLOAT_VALUE IDENTIFIER INT type_specifier direct_declarator INC_OP DEC_OP declarator VOID DOUBLE LEFT_OP RIGHT_OP
-%type <string> LE_OP GE_OP IF ELSE WHILE DO unary_operator RETURN FLOAT STRING_LITERAL CHAR ENUM CONTINUE BREAK UNSIGNED
+%type <string> LE_OP GE_OP IF ELSE WHILE DO unary_operator RETURN FLOAT STRING_LITERAL CHAR_LITERAL CHAR ENUM CONTINUE BREAK UNSIGNED
 %start root
 
 %%
@@ -82,7 +82,8 @@ primary_expression
 	| INT_VALUE {$$ = new Int(*$1); }
 	/* | FLOAT_VALUE { $$ = new Float(*$1); } */
 	| '(' expression ')' {$$ = $2;}
-	| STRING_LITERAL { $$ = new Char(*$1);  }
+	| CHAR_LITERAL { $$ = new Char(*$1); }
+	| STRING_LITERAL { $$ = new String(*$1); }
 	;
 
 constant_expression_list

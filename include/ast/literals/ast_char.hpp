@@ -12,11 +12,10 @@ public:
 
     // Members
     void print(ostream& os, const string& indent) const override {
-        os << indent << "'" << this->val << "'";
+        os << indent << this->val;
     }
-    void compile(ostream& os, const string& dest, MemoryContext& m) \
-        const override {
-        os << "\tli " << dest << ", " << int(this->val[0]) << "\n";
+    void compile(ostream& os, const string& dest, MemoryContext& m) const override {
+        os << "\tli " << dest << ", " << int(this->val[1]) << "\n";
     }
 };
 

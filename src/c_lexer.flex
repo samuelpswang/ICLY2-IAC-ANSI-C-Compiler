@@ -56,12 +56,12 @@ IS			(u|U|l|L)*
 "while"			    { yylval.string = new std::string(yytext); yyprint(yytext, "keyword"); return WHILE; }
 
 0[xX]{H}+{IS}?		{ yylval.string = new std::string(yytext); yyprint(yytext, "constant"); return HEX; }
-L?'(\\.|[^\\'])+'	{ yylval.string = new std::string(yytext); yyprint(yytext, "constant"); return STRING_LITERAL; }
+L?'(\\.|[^\\'])+'	{ yylval.string = new std::string(yytext); yyprint(yytext, "char literal"); return CHAR_LITERAL; }
 
 {D}+[{E}{FS}]?		{ yylval.string = new std::string(yytext); yyprint(yytext, "integer"); return INT_VALUE; }
 {D}*"."{D}+({E})?{FS}?	{ yylval.string = new std::string(yytext); yyprint(yytext, "constant"); return FLOAT_VALUE; }
 
-L?\"(\\.|[^\\"])*\"	{ yylval.string = new std::string(yytext); yyprint(yytext, "string literal"); return(STRING_LITERAL); }
+L?\"(\\.|[^\\"])*\"	{ yylval.string = new std::string(yytext); yyprint(yytext, "string literal"); return STRING_LITERAL; }
 
 "..."		    	{ yylval.string = new std::string(yytext); yyprint(yytext, "operator"); return ELLIPSIS; }
 ">>="		    	{ yylval.string = new std::string(yytext); yyprint(yytext, "operator"); return RIGHT_ASSIGN; }

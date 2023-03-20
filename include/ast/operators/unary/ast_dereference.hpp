@@ -31,7 +31,7 @@ public:
 class PointerAssignOp: public Node {
 public:
     PointerAssignOp(Node* expr, Node* statement) {
-        this->type = "";
+        this->type = "pointerassign";
         this->name = "";
         this->val = "";
         this->exprs = { expr };

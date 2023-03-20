@@ -39,10 +39,16 @@ public:
         os << "\tneg " << offset_reg << ", " << offset_reg << "\n"; // invert: 1 -> -1
         os << "\tadd " << offset_reg << ", " << offset_reg << ", " << offset_reg << "\n"; // add once: -1 -> -2
         os << "\tadd " << offset_reg << ", " << offset_reg << ", " << offset_reg << "\n"; // add again: -2 -> -4
-        os << "\tadd " << offset_reg << ", " << offset_reg << ", sp\n"; // add sp: -4 -> -4+sp
+        os << "\tadd " << offset_reg << ", " << offset_reg << ", s0\n"; // add sp: -4 -> -4+sp
 
         // load word from offset
-        os << "\tlw " << dest << ", " << m.get_symbol(this->name+"[0]") << "(" << offset_reg << ")\n";
+        try {
+            int offset = m.get_symbol(this->name+"[0]");
+            os << "\tlw " << dest << ", " << offset << "(" << offset_reg << ")\n";
+        } catch (runtime_error e) {
+            os << "\tlw " << dest << ", " << m.get_symbol(this->name) << "(" << offset_reg << ")\n";
+            os << "\tlw " << dest << ", 0(" << dest << ")\n";
+        }
     }
 };
 
