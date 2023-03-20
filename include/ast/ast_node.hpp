@@ -42,6 +42,8 @@ public:
     std::string get_val() const { return this->val; }
     Node* get_expr(int i) const { return this->exprs[i]; }
     Node* get_stat(int i) const { return this->stats[i]; }
+    int get_expr_size() const { return this->exprs.size(); }
+    int get_stat_size() const { return this->stats.size(); }
 
     // Accessors
     void append_expr(Node* expr) { exprs.push_back(expr); }
