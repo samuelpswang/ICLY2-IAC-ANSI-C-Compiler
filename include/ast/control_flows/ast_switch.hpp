@@ -51,7 +51,7 @@ public:
 class Switch: public Node {
 public: 
     // Constructor
-    Switch(Node* case_expression, Node* case_list): Node{"switch", "", "", case_expression, case_list} {}
+    Switch(Node* switch_expression, Node* case_list): Node{"switch", "", "", switch_expression, case_list} {}
 
     // Members
     void print(ostream& os, const string& indent) const override {
