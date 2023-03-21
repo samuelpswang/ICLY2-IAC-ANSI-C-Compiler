@@ -1,9 +1,8 @@
-#ifndef compiler_ast_value
-#define compiler_ast_value
+#ifndef compiler_ast_identifiers_identifier
+#define compiler_ast_identifiers_identifier
 
 #include "ast.hpp"
 using namespace std;
-
 
 class Identifier: public Node {
 public:

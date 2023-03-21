@@ -1,5 +1,4 @@
-#include <iostream>
-#include <string>
+#include "util_float.hpp"
 
 // name: first non zero digit
 // returns index of first non-zero digit of a fractional num

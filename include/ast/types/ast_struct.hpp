@@ -1,5 +1,5 @@
-#ifndef LANGPROC_COMPILER_AST_STRUCT
-#define LANGPROC_COMPILER_AST_STRUCT
+#ifndef compiler_ast_types_struct
+#define compiler_ast_types_struct
 
 #include "ast.hpp"
 

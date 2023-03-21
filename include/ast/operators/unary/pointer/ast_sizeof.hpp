@@ -1,5 +1,5 @@
-#ifndef compiler_ast_operators_unary_sizeof
-#define compiler_ast_operators_unary_sizeof
+#ifndef compiler_ast_operators_unary_pointer_sizeof
+#define compiler_ast_operators_unary_pointer_sizeof
 
 #include "ast.hpp"
 using namespace std;

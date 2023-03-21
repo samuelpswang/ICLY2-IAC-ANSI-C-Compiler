@@ -1,14 +1,8 @@
-#ifndef LANGPROC_COMPILER_AST_EXPRESSION
-#define LANGPROC_COMPILER_AST_EXPRESSION
+#ifndef compiler_ast_basics_expression
+#define compiler_ast_basics_expression
 
-#include <iostream>
-#include <string>
-#include <vector>
-#include <map>
-
-#include "ast_node.hpp"
-#include "util_mem.hpp"
-
+#include "ast.hpp"
+using namespace std;
 
 class Declaration: public Node {
 public:
@@ -231,7 +225,5 @@ public:
         os<<std::endl;
     }
 };
-
-
 
 #endif

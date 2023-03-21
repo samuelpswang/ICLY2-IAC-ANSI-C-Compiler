@@ -2,11 +2,15 @@
 #define compiler_util_mem
 
 #include <iostream>
-#include <vector>
 #include <string>
+#include <vector>
 #include <map>
 using namespace std;
 
+static int label_unique_num = 0;
+static std::string make_label(const std::string& base) {
+    return "." + base + std::to_string(label_unique_num++);
+}
 
 enum regtype { areg, sreg, treg, fareg, fsreg, ftreg };
 

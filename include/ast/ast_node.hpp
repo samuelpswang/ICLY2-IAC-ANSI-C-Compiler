@@ -1,17 +1,7 @@
-#ifndef LANGPROC_COMPILER_AST_NODE
-#define LANGPROC_COMPILER_AST_NODE
+#ifndef compiler_ast_node
+#define compiler_ast_node
 
-#include <iostream>
-#include <string>
-#include <vector>
-#include <map>
-#include <tuple>
-#include "util_mem.hpp"
-
-static int label_unique_num = 0;
-static std::string make_label(const std::string& base){
-    return "." + base + std::to_string(label_unique_num++);
-}
+#include "ast.hpp"
 
 class Node {
 public:

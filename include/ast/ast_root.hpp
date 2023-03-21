@@ -1,9 +1,10 @@
-#include "ast_node.hpp"
+#ifndef compiler_ast_root
+#define compiler_ast_root
 
+#include "ast.hpp"
 
-//Use this to point at function declarations & globals later on 
-class Root: public Node{
-
+// use this to point at function declarations & globals later on 
+class Root: public Node {
 public:
     Root(Node* expr_list){
         this->type="";
@@ -28,6 +29,6 @@ public:
             (this->exprs)[i]->compile(os,dest,m);
         }
     }
-
-
 };
+
+#endif

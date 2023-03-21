@@ -1,5 +1,5 @@
-#ifndef compiler_ast_operators_unary_address_of
-#define compiler_ast_operators_unary_address_of
+#ifndef compiler_ast_operators_unary_pointer_address_of
+#define compiler_ast_operators_unary_pointer_address_of
 
 #include "ast.hpp"
 using namespace std;

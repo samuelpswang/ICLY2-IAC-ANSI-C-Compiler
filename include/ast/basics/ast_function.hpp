@@ -1,12 +1,8 @@
-#ifndef LANGPROC_COMPILER_AST_FUNCTION
-#define LANGPROC_COMPILER_AST_FUNCTION
+#ifndef compiler_ast_basics_function
+#define compiler_ast_basics_function
 
-#include <iostream>
-#include <string>
-#include <vector>
-#include <map>
-
-#include "ast_node.hpp"
+#include "ast.hpp"
+using namespace std;
 
 class Function: public Node {
 public:
@@ -52,7 +48,6 @@ public:
 };
 
 
-
 class FunctionList: public Node {
 public:
     FunctionList(Node* expr) { 
@@ -72,6 +67,7 @@ public:
         }
     }
 };
+
 
 class FunctionCall: public Node {
 public:
@@ -107,7 +103,5 @@ public:
     }
 
 };
-
-
 
 #endif

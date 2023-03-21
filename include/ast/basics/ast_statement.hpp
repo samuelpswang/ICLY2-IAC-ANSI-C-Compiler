@@ -1,38 +1,8 @@
-#ifndef LANGPROC_COMPILER_AST_STATEMENT
-#define LANGPROC_COMPILER_AST_STATEMENT
+#ifndef compiler_ast_basics_statement
+#define compiler_ast_basics_statement
 
-#include <iostream>
-#include <string>
-#include <vector>
-#include <map>
-
-#include "ast_node.hpp"
-#include "util_mem.hpp"
-
-
-class Return: public Node {
-public:
-    Return(Node* expr) {
-        this->type = "return";
-        this->name = "";
-        this->val = "";
-        this->exprs = { expr };
-        this->stats = {};
-    }
-    void print(std::ostream& os, const std::string& indent) const {
-        os << indent << "return ";
-        this->exprs[0]->print(os, "");
-        os << ";";
-    }
-    void compile(std::ostream& os, const std::string& dest, MemoryContext& m) const {
-        this->exprs[0]->compile(os, dest, m);
-        os<<"\tlw ra, 128(sp)"<<std::endl;
-        os<<"\tlw s0, 124(sp)"<<std::endl;
-        os<<"\taddi sp, sp, 128"<<std::endl;
-        os << "\tret" << std::endl;
-    }
-};
-
+#include "ast.hpp"
+using namespace std;
 
 class Statement: public Node {
 public:
