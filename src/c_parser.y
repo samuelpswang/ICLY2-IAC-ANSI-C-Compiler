@@ -25,26 +25,37 @@ void yyerror(const char*);
 
 %token CASE DEFAULT IF ELSE SWITCH WHILE DO FOR GOTO CONTINUE BREAK RETURN
 
-%type <node> expression statement_list statement function declaration init_declarator constant_expression primary_expression pointer pointer_assignment
-%type <node> unary_expression postfix_expression multiplicative_expression additive_expression shift_expression relational_expression struct_declaration_list struct_declaration
-%type <node> equality_expression and_expression exclusive_or_expression inclusive_or_expression logical_and_expression logical_or_expression struct struct_init_variable
-%type <node> conditional_expression assignment_expression selection_statement iteration_statement jump_statement globals_list enumerator_list enum_specifier
-%type <node> declaration_list argument_expression_list FOR for_loop_declaration constant_expression_list argument array_declaration enum_item globals labeled_statement labeled_statement_list
-%type <string> INT_VALUE FLOAT_VALUE IDENTIFIER INT type_specifier direct_declarator INC_OP DEC_OP declarator VOID DOUBLE LEFT_OP RIGHT_OP
-%type <string> LE_OP GE_OP IF ELSE WHILE DO unary_operator RETURN FLOAT STRING_LITERAL CHAR_LITERAL CHAR ENUM CONTINUE BREAK UNSIGNED STRUCT SWITCH CASE DEFAULT
+%type <node> expression statement_list statement function declaration 
+%type <node> init_declarator constant_expression primary_expression pointer 
+%type <node> pointer_assignment unary_expression postfix_expression 
+%type <node> multiplicative_expression additive_expression shift_expression 
+%type <node> relational_expression struct_declaration_list struct_declaration
+%type <node> equality_expression and_expression exclusive_or_expression 
+%type <node> inclusive_or_expression logical_and_expression 
+%type <node> logical_or_expression struct struct_init_variable 
+%type <node> conditional_expression assignment_expression selection_statement 
+%type <node> iteration_statement jump_statement globals_list enumerator_list 
+%type <node> enum_specifier declaration_list argument_expression_list
+%type <node> for_loop_declaration constant_expression_list argument 
+%type <node> array_declaration enum_item globals labeled_statement 
+%type <node> labeled_statement_list
+%type <string> type_specifier direct_declarator declarator unary_operator
+%type <string> INT_VALUE FLOAT_VALUE IDENTIFIER INT INC_OP DEC_OP VOID DOUBLE 
+%type <string> LEFT_OP RIGHT_OP LE_OP GE_OP IF ELSE WHILE DO RETURN FLOAT 
+%type <string> STRING_LITERAL CHAR_LITERAL CHAR ENUM CONTINUE BREAK UNSIGNED 
+%type <string> STRUCT SWITCH CASE DEFAULT
+
 %start root
 
 %%
 
-root : globals_list { 
-        g_root = $1;
-    }
+root : globals_list { g_root = $1; }
     ;
 
 globals_list
 	: globals { $$ = new Root($1); }
 	| globals_list globals { $1->append_expr($2); }
-
+	;
 
 globals
 	: function { $$ = $1; }
@@ -53,16 +64,16 @@ globals
 	| type_specifier direct_declarator '[' INT_VALUE ']' ';' { $$ = new GlobalArrayDeclarator(*$1,*$2, *$4); }
 	| enum_specifier { $$ = $1; }
 	| struct { $$ = $1; }
-
+	;
 
 type_specifier
     : INT { $$ = new std::string("int"); }
     | VOID { $$ =  new std::string("void"); }
     | DOUBLE { $$ = new std::string ("double"); }
-	/* | FLOAT { $$ = new std::string ("float"); } */
 	| CHAR { $$ = new std::string("char"); }
 	| UNSIGNED { $$ = new std::string("unsigned"); }
-
+	/* | FLOAT { $$ = new std::string ("float"); } */
+	;
 
 enum_specifier
 	: ENUM '{' enumerator_list '}' ';' { $$ = new EnumDeclarator("", $3); }
@@ -76,7 +87,7 @@ enumerator_list
 enum_item
 	: IDENTIFIER { $$ = new EnumItem(*$1);}
 	| IDENTIFIER '=' INT_VALUE { $$ = new EnumItemWithValue(*$1, *$3); }
-
+	;
 
 primary_expression
 	: IDENTIFIER { $$ = new Identifier(*$1);}
@@ -91,8 +102,7 @@ primary_expression
 constant_expression_list
 	: constant_expression { $$ = new PrimaryExpressionList($1); }
 	| constant_expression_list ',' constant_expression { $1->append_expr($3); }
-
-
+	;
 
 postfix_expression
 	: primary_expression { $$ = $1; }
@@ -101,7 +111,7 @@ postfix_expression
 	| postfix_expression '[' expression ']'  { $$ = new ArrayAccessor($1->get_name(),$3);}
     | postfix_expression '(' ')' { $$ = new FunctionCall($1);}
 	| postfix_expression '(' constant_expression_list ')'   { $$ = new FunctionCall($1, $3);}
-	
+	;
 
 argument_expression_list
 	: argument { $$ = new ArgumentList(new Argument($1->get_type(),$1->get_name())); }
@@ -116,17 +126,9 @@ unary_expression
 	: postfix_expression { $$ = $1;}
 	| INC_OP unary_expression { $$ = new PrefixUnaryIncDecOp(*$1,$2); }
 	| DEC_OP unary_expression { $$ = new PrefixUnaryIncDecOp(*$1,$2); }
-	| unary_operator unary_expression { if(*$1 == "-"){
-                                            $$ = new NegOp($2);
-                                        } 
-										if(*$1 == "&"){
-											$$ = new AddressOfOperator($2);
-										}
-										if(*$1 == "*"){
-											$$ = new DereferenceOperator($2);
-										}
-										
-										}
+	| unary_operator unary_expression { if(*$1 == "-") $$ = new NegOp($2);
+										if(*$1 == "&") $$ = new AddressOfOperator($2);
+										if(*$1 == "*") $$ = new DereferenceOperator($2); }
 	| SIZEOF unary_expression { $$ = new SizeOf($2); }
 	| SIZEOF '(' type_specifier ')' { $$ = new SizeOf(*$3); }
 	;
@@ -139,8 +141,6 @@ unary_operator
 	| '~' { $$ = new std::string("~"); }
 	| '!' { $$ = new std::string("!"); }
 	;
-
-
 
 multiplicative_expression
 	: unary_expression { $$ = $1 ;}
@@ -274,12 +274,10 @@ statement
 	| struct_init_variable { $$ = new Statement("struct", $1); }
 	;
 
-
 declaration_list
 	: declaration { $$ = new DeclarationList($1); }
 	| declaration_list ',' declaration { $1->append_expr($3); }
-	
-
+	;
 
 struct
 	: STRUCT declarator '{' struct_declaration_list '}' ';' { $$ = new StructDefinition(*$2, $4); }
@@ -288,10 +286,11 @@ struct
 struct_declaration_list
 	: struct_declaration {$$ = new StructDeclarationList($1); }
 	| struct_declaration_list struct_declaration {$1->append_expr($2); }
+	;
 
 struct_declaration
 	: type_specifier declarator ';'  {$$ = new StructMemberDeclaration(*$1,*$2); }
-
+	;
 
 declaration
     : type_specifier declarator  { $$ = new Declaration(*$1,*$2); }
@@ -302,7 +301,7 @@ struct_init_variable
 
 init_declarator
     : type_specifier declarator '=' constant_expression { $$ = new InitDeclaration(*$1,*$2,$4);}
-
+	;
 
 selection_statement
 	: IF '(' conditional_expression ')' '{' statement_list '}' { $$ = new If($3,$6); }
@@ -340,13 +339,11 @@ iteration_statement
 	| FOR '(' conditional_expression ')' '{' '}' { $$ = new For(nullptr,$3,nullptr,nullptr); }
 	;
 
-
 jump_statement
 	: RETURN expression ';' { $$ = new Return($2); }
 	| CONTINUE ';' { $$ = new Continue(); } 
 	| BREAK ';' { $$ = new Break(); std::cout << "hey break statement!" << std::endl; }
 	;
-
 
 %%
 
