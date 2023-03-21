@@ -16,7 +16,6 @@ public:
         os << indent << this->name;
     }
     void compile(ostream& os, const string& dest, MemoryContext& m) const override {
-        std::cout<<m<<std::endl;
         if (m.get_en_symbol_check(this->name)) {
             os << "\taddi " << dest << ", zero, " << m.get_en_symbol(this->name) << "\n";
         } else {

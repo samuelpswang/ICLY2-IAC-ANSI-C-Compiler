@@ -37,7 +37,6 @@ public:
     }
     void compile(std::ostream& os, const std::string& dest, MemoryContext& m) const{
         if(this->stats[0]!=nullptr){
-            std::cout<<m<<std::endl;
             os<<this->name<<":"<<std::endl;
             m.use_func(m.add_func(this->name));
             os<<"\taddi sp, sp, -128"<<std::endl;
