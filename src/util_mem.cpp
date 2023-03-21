@@ -180,7 +180,7 @@ std::string MemoryContext::get_type(const std::string& symbol_name) {
     for (const auto& entry: this->typetable) {
         if (entry.first == symbol_name) return entry.second.first;
     }
-    throw std::runtime_error("MemeoryContextError: get_type() symbol not found: "+symbol_name);
+    return "";
 }
 
 // returns the size of a symbol
