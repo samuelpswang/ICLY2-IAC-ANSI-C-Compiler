@@ -43,6 +43,9 @@ public:
                 array_offset_reg = m.asm_give_reg(os, symbol, treg);
             }
             this->exprs[0]->get_expr(0)->compile(os, array_offset_reg, m);
+            os << "\tneg " << array_offset_reg << ", " << array_offset_reg << "\n";
+            os << "\tadd " << array_offset_reg << ", " <<  array_offset_reg << ", " << array_offset_reg << "\n";
+            os << "\tadd " << array_offset_reg << ", " <<  array_offset_reg << ", " << array_offset_reg << "\n";
             os << "\tadd " << array_offset_reg << ", " <<  array_offset_reg << ", s0\n";
             os << "\tsw " << value << ", " << offset << "(" << array_offset_reg << ")\n";
         } 
@@ -76,7 +79,7 @@ public:
     }
 
     void compile(std::ostream& os, const std::string& dest, MemoryContext& m) const {
-        std::string reg_file = m.asm_give_reg(os,this->exprs[0]->get_name(),sreg);
+        std::string reg_file = m.asm_load_symbol(os,this->exprs[0]->get_name(),sreg);
         if(this->name == "++"){
             os<<"\tadd "<<dest<<", "<<reg_file<<", zero"<<std::endl;
             os<<"\taddi "<<reg_file<<", "<<reg_file<<", 0x01"<<std::endl;
