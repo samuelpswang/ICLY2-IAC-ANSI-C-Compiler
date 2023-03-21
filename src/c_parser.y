@@ -31,7 +31,7 @@ void yyerror(const char*);
 %type <node> conditional_expression assignment_expression selection_statement iteration_statement jump_statement globals_list enumerator_list enum_specifier
 %type <node> declaration_list argument_expression_list FOR for_loop_declaration constant_expression_list argument array_declaration enum_item globals
 %type <string> INT_VALUE FLOAT_VALUE IDENTIFIER INT type_specifier direct_declarator INC_OP DEC_OP declarator VOID DOUBLE LEFT_OP RIGHT_OP
-%type <string> LE_OP GE_OP IF ELSE WHILE DO unary_operator RETURN FLOAT STRING_LITERAL CHAR_LITERAL CHAR ENUM CONTINUE BREAK UNSIGNED STRUCT
+%type <string> LE_OP GE_OP IF ELSE WHILE DO unary_operator RETURN FLOAT STRING_LITERAL CHAR_LITERAL CHAR ENUM CONTINUE BREAK UNSIGNED STRUCT SWITCH CASE DEFAULT
 %start root
 
 %%
@@ -309,6 +309,13 @@ selection_statement
 	| IF '(' conditional_expression ')' '{'statement_list '}' ELSE '{'statement'}' { $$ = new IfElse($3,$6,$10); }
 	| IF '(' conditional_expression ')' '{''}' { $$ = new If($3, nullptr); }
 	| IF '(' conditional_expression ')''{''}' ELSE '{''}' { $$ = new IfElse($3, nullptr,nullptr); }
+	| SWITCH '(' expression ')' statement
+	;
+
+labeled_statement
+	: IDENTIFIER ':' statement
+	| CASE constant_expression ':' statement
+	| DEFAULT ':' statement
 	;
 
 for_loop_declaration
