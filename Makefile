@@ -51,3 +51,18 @@ clean:
 	mkdir parsed/output
 	touch bin/output/_debug/.gitkeep
 	rm -rf src/*.dSYM
+
+.PHONY: clean_for_push
+clean_for_push:
+	rm -f src/*.yy.cpp
+	rm -f src/*.tab.hpp
+	rm -f src/*.tab.cpp
+	rm -f src/*.output
+	rm -f src/*.o
+	rm -rf bin
+	rm -rf parsed
+	mkdir bin
+	mkdir bin/output
+	mkdir bin/output/_debug
+	touch bin/output/_debug/.gitkeep
+	rm -rf src/*.dSYM
