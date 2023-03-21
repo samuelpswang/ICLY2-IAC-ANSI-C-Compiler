@@ -29,8 +29,7 @@ public:
         }
         this->stats[0]->compile(os, value, m);
 
-        // if is array...cannot normal store
-        if (this->exprs[0]->get_type() == "[]") {
+        if (this->exprs[0]->get_type() == "[]") { // if is array...cannot normal store
             int offset = m.get_symbol(this->exprs[0]->get_name()+"[0]");
             std::string array_offset_symbol = m.add_symbol("assign_array_offset",false);
             std::string array_offset_reg = m.asm_give_reg(os, array_offset_symbol, sreg);
@@ -44,12 +43,12 @@ public:
             os << "\tadd " << array_offset_reg << ", " <<  array_offset_reg << ", " << array_offset_reg << "\n";
             os << "\tadd " << array_offset_reg << ", " <<  array_offset_reg << ", s0\n";
             os << "\tsw " << value << ", " << offset << "(" << array_offset_reg << ")\n";
-        } 
-        // normal store
-        else if(this->exprs[0]->get_name() == "dereference"){
-            
-        }
-        else {
+        } else if(this->exprs[0]->get_name() == "dereference") {
+            // load pointer value (which is where address needs to be stored)
+            os << "\tlw " << dest << ", " << m.get_symbol(this->exprs[0]->get_name()) << "(s0)\n";
+            // store right value to left
+            os << "\tsw " << value << ", 0(" << dest << ")\n";
+        } else { // normal store
             std::string reg = m.asm_load_symbol(os, this->exprs[0]->get_name(), sreg);
             os << "\tadd " << reg <<", zero, " << value << std::endl;
             m.asm_store_symbol(os, this->exprs[0]->get_name());

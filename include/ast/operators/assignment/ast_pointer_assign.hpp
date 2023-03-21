@@ -20,6 +20,12 @@ public:
         this->stats[0]->print(os, "");
     }
     void compile(std::ostream& os, const std::string& dest, MemoryContext& m) const {
+        // get pointer name
+        string pname = this->exprs[0]->get_expr(0)->get_name();
+
+        // store in type table
+        m.add_type(pname, "*", 4);
+
         // compile values
         std::string symbol = m.add_symbol("assign_val",false);
         std::string value = m.asm_give_reg(os, symbol, treg);
@@ -29,11 +35,10 @@ public:
         }
         this->stats[0]->compile(os, value, m);
 
-        std::string pointer_var = m.add_symbol(this->exprs[0]->get_expr(0)->get_name(), true);
+        std::string pointer_var = m.add_symbol(pname, true);
         std::string reg = m.asm_give_reg(os, pointer_var, treg);
         os << "\tadd " << reg <<", zero, " << value << std::endl;
         m.asm_store_symbol(os, this->exprs[0]->get_expr(0)->get_name());
-        
     }
 };
 

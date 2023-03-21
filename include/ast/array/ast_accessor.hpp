@@ -45,7 +45,7 @@ public:
         try {
             int offset = m.get_symbol(this->name+"[0]");
             os << "\tlw " << dest << ", " << offset << "(" << offset_reg << ")\n";
-        } catch (runtime_error e) {
+        } catch (runtime_error e) { // works for both strings and pointers
             os << "\tlw " << dest << ", " << m.get_symbol(this->name) << "(" << offset_reg << ")\n";
             os << "\tlw " << dest << ", 0(" << dest << ")\n";
         }
