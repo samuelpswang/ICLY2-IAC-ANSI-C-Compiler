@@ -3,6 +3,11 @@
 // Basics
 // constructor, should initialize four members
 MemoryContext::MemoryContext() {
+    // initialize regfile
+    for (int i = 0; i < 32; i++) {
+        if ((i>=0 && i<5)||(i>=8 && i< 10)) this->regfile[i] = {1, -1};
+        else this->regfile[i] = {0, -1};
+    }
     // iitialize typetable
     this->typetable["char"] = {"", 1};
     this->typetable["int"] = {"", 4};
@@ -11,11 +16,12 @@ MemoryContext::MemoryContext() {
     this->typetable["float"] = {"", 4};
     this->typetable["*"] = {"", 4};
     this->typetable["double"] = {"", 8};
-    // initialize regfile
-    for (int i = 0; i < 32; i++) {
-        if ((i>=0 && i<5)||(i>=8 && i< 10)) this->regfile[i] = {1, -1};
-        else this->regfile[i] = {0, -1};
-    }
+    // initalize typedeftable
+    typedeftable["char"] = "char";
+    typedeftable["int"] = "int";
+    typedeftable["unsigned"] = "unsigned";
+    typedeftable["float"] = "float";
+    typedeftable["double"] = "double";
     // initialize other members
     this->curr_func = "";
     this->curr_en_num = -1;

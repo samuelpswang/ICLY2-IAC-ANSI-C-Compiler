@@ -38,7 +38,7 @@ void yyerror(const char*);
 %type <node> enum_specifier declaration_list argument_expression_list
 %type <node> for_loop_declaration constant_expression_list argument 
 %type <node> array_declaration enum_item globals labeled_statement 
-%type <node> labeled_statement_list
+%type <node> labeled_statement_list typedef_specifier
 %type <string> type_specifier direct_declarator declarator unary_operator
 %type <string> INT_VALUE FLOAT_VALUE IDENTIFIER INT INC_OP DEC_OP VOID DOUBLE 
 %type <string> LEFT_OP RIGHT_OP LE_OP GE_OP IF ELSE WHILE DO RETURN FLOAT 
@@ -63,6 +63,7 @@ globals
 	| type_specifier direct_declarator '=' constant_expression { $$ = new GlobalInitDeclaration(*$1,*$2,$4);}
 	| type_specifier direct_declarator '[' INT_VALUE ']' ';' { $$ = new GlobalArrayDeclarator(*$1,*$2, *$4); }
 	| enum_specifier { $$ = $1; }
+	| typedef_specifier { $$ = $1; }
 	| struct { $$ = $1; }
 	;
 
@@ -72,6 +73,7 @@ type_specifier
     | DOUBLE { $$ = new std::string ("double"); }
 	| CHAR { $$ = new std::string("char"); }
 	| UNSIGNED { $$ = new std::string("unsigned"); }
+	| IDENTIFIER { $$ = new std::string(*$1); }
 	/* | FLOAT { $$ = new std::string ("float"); } */
 	;
 
@@ -87,6 +89,13 @@ enumerator_list
 enum_item
 	: IDENTIFIER { $$ = new EnumItem(*$1);}
 	| IDENTIFIER '=' INT_VALUE { $$ = new EnumItemWithValue(*$1, *$3); }
+	;
+
+typedef_specifier
+	: TYPEDEF type_specifier IDENTIFIER ';' { $$ = new Typedef(*$2, *$3, false); }
+	| TYPEDEF IDENTIFIER IDENTIFIER ';' { $$ = new Typedef(*$2, *$3, false); }
+	| TYPEDEF type_specifier '*' IDENTIFIER ';' { $$ = new Typedef(*$2, *$4, true); }
+	| TYPEDEF IDENTIFIER '*' IDENTIFIER ';' { $$ = new Typedef(*$2, *$4, true); }
 	;
 
 primary_expression
@@ -343,22 +352,10 @@ iteration_statement
 jump_statement
 	: RETURN expression ';' { $$ = new Return($2); }
 	| CONTINUE ';' { $$ = new Continue(); } 
-	| BREAK ';' { $$ = new Break(); std::cout << "hey break statement!" << std::endl; }
+	| BREAK ';' { $$ = new Break(); }
 	;
 
 %%
-
-/* #include <stdio.h>
-
-extern char yytext[];
-extern int column; */
-
-/* yyerror(s)
-char *s;
-{
-	fflush(stdout);
-	printf("\n%*s\n%*s\n", column, "^", column, s);
-} */
 
 const Node* g_root;
 

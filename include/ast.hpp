@@ -30,6 +30,7 @@
 #include "ast/keywords/ast_break.hpp"
 #include "ast/keywords/ast_continue.hpp"
 #include "ast/keywords/ast_return.hpp"
+#include "ast/keywords/ast_typedef.hpp"
 
 #include "ast/literals/ast_char.hpp"
 #include "ast/literals/ast_float.hpp"
