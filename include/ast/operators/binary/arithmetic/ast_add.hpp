@@ -70,20 +70,49 @@ public:
             os << "\tadd " << dest << ", " << dest << ", " << leftr << "\n";
         } else {
             // ask for register
-            string right_symbol = m.add_symbol("addop_right_val", false);
-            string right_reg  = m.asm_give_reg(os, right_symbol, treg);
-            if(right_reg == "") {
-                m.asm_spill_all(os, treg);
-                right_reg = m.asm_give_reg(os, right_symbol, treg);
+            string left_reg;
+            string right_reg;
+            if(rtype == "double" || rtype == "float"){
+                string right_symbol = m.add_symbol("addop_right_val", false);
+                right_reg  = m.asm_give_reg(os, right_symbol, ftreg);
+                if(right_reg == "") {
+                    m.asm_spill_all(os, treg);
+                    right_reg = m.asm_give_reg(os, right_symbol, ftreg);
+                }
+            }
+            else{
+                string right_symbol = m.add_symbol("addop_right_val", false);
+                right_reg  = m.asm_give_reg(os, right_symbol, treg);
+                if(right_reg == "") {
+                    m.asm_spill_all(os, treg);
+                    right_reg = m.asm_give_reg(os, right_symbol, treg);
+                }
+            }
+
+            if(ltype == "double" || ltype == "float"){
+                string left_symbol = m.add_symbol("addop_left_val", false);
+                left_reg  = m.asm_give_reg(os, left_symbol, ftreg);
+                if(left_reg == "") {
+                    m.asm_spill_all(os, treg);
+                    left_reg = m.asm_give_reg(os, left_symbol, ftreg);
+                }
+            }
+            else{
+                string left_symbol = m.add_symbol("addop_left_val", false);
+                left_reg  = m.asm_give_reg(os, left_symbol, treg);
+                if(left_reg == "") {
+                    m.asm_spill_all(os, treg);
+                    left_reg = m.asm_give_reg(os, left_symbol, treg);
+                }
             }
 
             // compile left value
-            this->exprs[0]->compile(os, dest, m);
+            this->exprs[0]->compile(os, left_reg, m);
             // compile right value
             this->exprs[1]->compile(os, right_reg, m);
             
             // add values together
-            os << "\tadd " << dest << ", " << dest << ", " << right_reg <<endl;
+            os << "\tadd " << dest << ", " << left_reg << ", " << right_reg <<endl;
 
             // clean up
             // m.asm_store_symbol(os, right_reg);
