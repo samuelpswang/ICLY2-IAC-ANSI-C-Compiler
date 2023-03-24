@@ -44,6 +44,12 @@ public:
             if (this->stats.size() > 0 && this->stats[0] != nullptr)
                 this->stats[0]->compile(os, dest,m);
         }
+        if (this->type == "void") {
+            os<<"\tlw ra, 128(sp)"<<endl;
+            os<<"\tlw s0, 124(sp)"<<endl;
+            os<<"\taddi sp, sp, 128"<<endl;
+            os << "\tret" << endl;
+        }
     }
 };
 
