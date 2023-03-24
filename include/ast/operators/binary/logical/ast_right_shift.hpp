@@ -35,7 +35,7 @@ public:
         }
         this->exprs[0]->compile(os,val1,m);
         this->exprs[1]->compile(os,val2,m);
-        os<<"\tsrl "<<dest<<", "<<val1<<", "<<val2<<std::endl;
+        os<<"\tsra "<<dest<<", "<<val1<<", "<<val2<<std::endl;
         m.asm_store_symbol(os,symbol1);
         m.asm_store_symbol(os,symbol2);
     }
