@@ -52,8 +52,8 @@ clean:
 	touch bin/output/_debug/.gitkeep
 	rm -rf src/*.dSYM
 
-.PHONY: clean_for_push
-clean_for_push:
+.PHONY: deepclean
+deepclean:
 	rm -f src/*.yy.cpp
 	rm -f src/*.tab.hpp
 	rm -f src/*.tab.cpp
