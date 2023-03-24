@@ -12,7 +12,7 @@ jobs:
     steps:
       - name: Checkout repo
         uses: actions/checkout@v2
-      - name: Build bin/prettyprint
-        run: make clean && make bin/prettyprint
-      - name: Build bin/compiler
-        run: make clean && make bin/compiler
+      - name: Build bin/c_prettyprint
+        run: make clean && make bin/c_prettyprint
+      - name: Build bin/c_compiler
+        run: make clean && make bin/c_compiler
