@@ -39,15 +39,26 @@ public:
         os << "\tneg " << offset_reg << ", " << offset_reg << "\n"; // invert: 1 -> -1
         os << "\tadd " << offset_reg << ", " << offset_reg << ", " << offset_reg << "\n"; // add once: -1 -> -2
         os << "\tadd " << offset_reg << ", " << offset_reg << ", " << offset_reg << "\n"; // add again: -2 -> -4
-        os << "\tadd " << offset_reg << ", " << offset_reg << ", s0\n"; // add sp: -4 -> -4+sp
-
+        // os << "\tadd " << offset_reg << ", " << offset_reg << ", s0\n"; // add sp: -4 -> -4+sp
+        
         // load word from offset
         try {
             int offset = m.get_symbol(this->name+"[0]");
+            os << "\tadd " << offset_reg << ", " << offset_reg << ", s0\n";
             os << "\tlw " << dest << ", " << offset << "(" << offset_reg << ")\n";
-        } catch (runtime_error e) { // works for both strings and pointers
-            os << "\tlw " << dest << ", " << m.get_symbol(this->name) << "(" << offset_reg << ")\n";
-            os << "\tlw " << dest << ", 0(" << dest << ")\n";
+        } catch (runtime_error e) { // works for both strings and pointers, nope does not work for pointer
+            string vartype = m.get_type(this->name);
+            // bool is_pointer = (vartype[vartype.size()-1] == '*');
+            if (vartype == "*") { // string literals
+                os << "\tadd " << offset_reg << ", " << offset_reg << ", s0\n";
+                os << "\tlw " << dest << ", " << m.get_symbol(this->name) << "(" << offset_reg << ")\n";
+                os << "\tlw " << dest << ", 0(" << dest << ")\n";
+            } else {
+                os << "\tneg " << offset_reg << ", " << offset_reg << "\n";
+                os << "\tlw " << dest << ", " << m.get_symbol(this->name) << "(s0)\n";
+                os << "\tadd " << dest << ", " << dest << ", " << offset_reg << "\n";
+                os << "\tlw " << dest << ", 0(" << dest << ")\n";
+            }
         }
     }
 };

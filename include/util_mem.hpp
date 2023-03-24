@@ -19,18 +19,18 @@ private:
     // Members
     // symbols & their assigned offset & dirty bit
     map<string, map<string, vector<int>>> symtable;
+    // current state of registers and their address
+    map<int, vector<int>> regfile;
     // symbol & their types & sizes
     map<string, pair<string, int>> typetable;
     // enum symbol & their values
     map<string, int> enumtable;
     // typedef symbol & their values
     map<string, string> typedeftable;
-    // current state of registers and their address
-    map<int, vector<int>> regfile;
+    // holds struct name and members
+    map<string, vector<pair<string,string>>> struct_table;
     // current offset of a specific function stack 
     map<string, int> curr_offset;
-    //holds struct name and members
-    map<string, vector<pair<string,string>>> struct_table;
     // current function
     string curr_func;
     // current control flow start label

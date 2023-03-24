@@ -21,7 +21,7 @@ public:
     }
     void compile(std::ostream& os, const std::string& dest, MemoryContext& m) const {
         // get pointer name
-        string pname = this->exprs[0]->get_expr(0)->get_name();
+        string pname = this->exprs[0]->get_name();
 
         // store in type table
         m.add_type(pname, "*", 4);
@@ -38,7 +38,7 @@ public:
         std::string pointer_var = m.add_symbol(pname, true);
         std::string reg = m.asm_give_reg(os, pointer_var, treg);
         os << "\tadd " << reg <<", zero, " << value << std::endl;
-        m.asm_store_symbol(os, this->exprs[0]->get_expr(0)->get_name());
+        m.asm_store_symbol(os, this->exprs[0]->get_name());
     }
 };
 

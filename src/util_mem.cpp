@@ -71,7 +71,7 @@ bool MemoryContext::use_symbol(const std::string& symbol_name) {
 // returns true when symbol added to typetable
 bool MemoryContext::add_type(const std::string& symbol_name, const std::string& type, int size) {
     for (const auto& entry: this->typetable) {
-        if (entry.first == symbol_name) throw std::runtime_error("MemeoryContextError: add_type() duplicate symbol found: "+symbol_name);
+        if (entry.first == symbol_name) throw std::runtime_error("MemoryContextError: add_type() duplicate symbol found: "+symbol_name);
     }
     this->typetable[symbol_name] = {type, size};
     return true;
@@ -470,8 +470,8 @@ int MemoryContext::next(regtype t) {
 // Operator
 std::ostream& operator<<(std::ostream& os, const MemoryContext& mc) {
     os << "MemoryContext @ " << &mc << "\n";
-    os << "===========================\n";
-    os << "Symbol Table:\n";
+    os << "=============================\n";
+    os << "SYMBOL Table:\n";
     for (auto it = mc.symtable.begin(); it != mc.symtable.end(); it++) {
         os << it->first << ":\n";
         for (auto it2 = it->second.begin(); it2 != it->second.end(); it2++) {
@@ -482,7 +482,7 @@ std::ostream& operator<<(std::ostream& os, const MemoryContext& mc) {
             os << "\n";
         }
     }
-    os << "Register File:\n";
+    os << "REGISTER FILE Table:\n";
     for (auto it = mc.regfile.begin(); it != mc.regfile.end(); it++) {
         os << it->first;
         for (int num : it->second) {
@@ -490,23 +490,35 @@ std::ostream& operator<<(std::ostream& os, const MemoryContext& mc) {
         }
         os << "\n";
     }
+    os << "TYPE Table:\n";
+    for (auto it = mc.typetable.begin(); it != mc.typetable.end(); it++) {
+        os << it->first << "\tx" << it->second.first << "\tx" << it->second.second << "\n";
+    }
+    os << "ENUM Table:\n";
+    for (auto it = mc.enumtable.begin(); it != mc.enumtable.end(); it++) {
+        os << it->first << "\t" << it->second<<"\n";
+    }
+    os << "STRUCT Table:\n";
+    for (auto it = mc.struct_table.begin(); it != mc.struct_table.end(); it++) {
+        os << it->first << ":\n";
+        for (auto it2 = it->second.begin(); it2 != it->second.end(); it2++) {
+            os << it2->first << " " << it2->second << "\n";
+        }
+    }
+    os << "TYPEDEF Table:\n";
+    for (auto it = mc.typedeftable.begin(); it != mc.typedeftable.end(); it++) {
+        os << it->first << "\t" << it->second<<"\n";
+    }
+    os << "=============================\n";
     os << "Current Offset:\n";
     for (auto it = mc.curr_offset.begin(); it != mc.curr_offset.end(); it++) {
         os << it->first << "\t" << it->second << "\n";
     }
     os << "Current Function:\n" << mc.curr_func << "\n";
-    os << "Unique Number:\n" << mc.curr_unique_num << "\n";
-    os << "Enum Table:\n";
-    for (auto it = mc.enumtable.begin(); it != mc.enumtable.end(); it++) {
-        os << it->first << "\t" << it->second<<"\n";
-    }
-    os<<"Struct Table:\n"<<std::endl;
-    for (auto it = mc.struct_table.begin(); it != mc.struct_table.end(); it++){
-        std::string struct_name = it->first;
-        os << struct_name<<":"<<std::endl;
-        for(auto it2 = it->second.begin(); it2 != it->second.end(); it2++){
-            os<<it2->first<<" "<<it2->second<<std::endl;
-        }
-    }
+    // os << "Current Control Flow Label Start:\n" << mc.curr_cf_start << "\n";
+    // os << "Current Control Flow Label End:\n" << mc.curr_cf_end << "\n";
+    os << "Current Enum Number:\n" << mc.curr_en_num << "\n";
+    os << "Current Unique Number:\n" << mc.curr_unique_num << "\n";
+    os << "=============================\n";
     return os;
 }

@@ -120,6 +120,7 @@ argument_expression_list
 
 argument
     : type_specifier declarator  { $$ = new Argument(*$1,*$2); }
+	| type_specifier '*' declarator { $$ = new Argument(*$1+"*", *$3); }
     ;
 
 unary_expression
@@ -245,7 +246,7 @@ direct_declarator
 	;
 
 pointer_assignment
-	: type_specifier '*' primary_expression assignment_operator assignment_expression ';' { $$ = new PointerAssignOp(new DereferenceOperator($3),$5); } 
+	: type_specifier '*' primary_expression assignment_operator assignment_expression ';' { $$ = new PointerAssignOp($3, $5); } 
 
 function
     : type_specifier declarator '(' ')' '{' statement_list '}' { $$ = new Function(*$1, *$2,nullptr, $6); }

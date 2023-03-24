@@ -128,6 +128,8 @@ public:
             m.asm_spill_all(os, areg);
             iden_reg = m.asm_give_reg(os, iden_name_in_symtable, areg);
         }
+        bool is_pointer = (this->type[this->type.size()-1] == '*');
+        m.add_type(this->name, this->type, (is_pointer ? 4 : m.get_size(this->type)));
     }
 };
 

@@ -45,7 +45,7 @@ public:
             os << "\tsw " << value << ", " << offset << "(" << array_offset_reg << ")\n";
         } else if(this->exprs[0]->get_name() == "dereference") {
             // load pointer value (which is where address needs to be stored)
-            os << "\tlw " << dest << ", " << m.get_symbol(this->exprs[0]->get_name()) << "(s0)\n";
+            os << "\tlw " << dest << ", " << m.get_symbol(this->exprs[0]->get_expr(0)->get_name()) << "(s0)\n";
             // store right value to left
             os << "\tsw " << value << ", 0(" << dest << ")\n";
         } else { // normal store

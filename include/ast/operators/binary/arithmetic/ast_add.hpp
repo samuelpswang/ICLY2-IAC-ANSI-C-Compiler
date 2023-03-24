@@ -23,8 +23,10 @@ public:
     }
 
     void compile(ostream& os, const string& dest, MemoryContext& m) const {
-        bool leftp = (m.get_type(this->exprs[0]->get_name()) == "*");
-        bool rightp = (m.get_type(this->exprs[1]->get_name()) == "*");
+        string ltype = m.get_type(this->exprs[0]->get_name());
+        string rtype = m.get_type(this->exprs[1]->get_name());
+        bool leftp = (ltype[ltype.size()-1] == '*');
+        bool rightp = (rtype[rtype.size()-1] == '*');
 
         if (leftp && rightp) {
             throw runtime_error("AddOp: cannot add two pointers together");

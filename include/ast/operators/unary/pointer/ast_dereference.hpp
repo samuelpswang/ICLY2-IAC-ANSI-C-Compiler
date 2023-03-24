@@ -18,8 +18,10 @@ public:
     void compile(std::ostream& os, const std::string& dest, MemoryContext& m) const {
         string vname = this->exprs[0]->get_name();
         int voffset = m.get_symbol(vname);
+        os << "deref_b:\n";
         os << "\tlw " << dest << ", " << voffset << "(s0)\n";
         os << "\tlw " << dest << ", 0(" << dest << ")\n";
+        os << "deref_e:\n";
     };
 };
 
