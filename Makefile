@@ -37,32 +37,36 @@ parser: src/c_parser.tab.cpp src/c_parser.tab.hpp
 
 .PHONY: clean
 clean:
-	rm -f src/*.yy.cpp
-	rm -f src/*.tab.hpp
-	rm -f src/*.tab.cpp
-	rm -f src/*.output
-	rm -f src/*.o
-	rm -rf bin
-	rm -rf parsed
-	mkdir bin
-	mkdir bin/output
-	mkdir bin/output/_debug
-	mkdir parsed
-	mkdir parsed/output
-	touch bin/output/_debug/.gitkeep
-	rm -rf src/*.dSYM
+	@echo "[Makefile] Running clean"
+	@rm -f src/*.yy.cpp
+	@rm -f src/*.tab.hpp
+	@rm -f src/*.tab.cpp
+	@rm -f src/*.output
+	@rm -f src/*.o
+	@rm -rf src/*.dSYM
+	@rm -rf bin
+	@rm -rf parsed
+	@mkdir bin
+	@mkdir bin/output
+	@mkdir bin/output/_debug
+	@mkdir parsed
+	@mkdir parsed/output
+	@touch bin/output/_debug/.gitkeep
+	@echo "[Makefile] Done"
 
 .PHONY: deepclean
 deepclean:
-	rm -f src/*.yy.cpp
-	rm -f src/*.tab.hpp
-	rm -f src/*.tab.cpp
-	rm -f src/*.output
-	rm -f src/*.o
-	rm -rf bin
-	rm -rf parsed
-	mkdir bin
-	mkdir bin/output
-	mkdir bin/output/_debug
-	touch bin/output/_debug/.gitkeep
-	rm -rf src/*.dSYM
+	@echo "[Makefile] Running deepclean..."
+	@rm -f src/*.yy.cpp
+	@rm -f src/*.tab.hpp
+	@rm -f src/*.tab.cpp
+	@rm -f src/*.output
+	@rm -f src/*.o
+	@rm -rf src/*.dSYM
+	@rm -rf bin
+	@rm -rf parsed
+	@mkdir bin
+	@mkdir bin/output
+	@mkdir bin/output/_debug
+	@touch bin/output/_debug/.gitkeep
+	@echo "[Makefile] Done"
