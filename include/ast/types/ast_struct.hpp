@@ -2,69 +2,74 @@
 #define compiler_ast_types_struct
 
 #include "ast.hpp"
+using namespace std;
+
 
 class StructDefinition: public Node{
-
 public:
-    StructDefinition(const std::string& struct_name, Node* struct_member_list):
+    StructDefinition(const string& struct_name, Node* struct_member_list):
         Node{"struct","struct",struct_name,struct_member_list,nullptr} {}
-
-    void print(std::ostream& os, const std::string& indent)const override{
+    void print(ostream& os, const string& indent)const override{
         os<<"struct "<<this->val<<":\n";
         for(int i = 0; i< this->exprs.size(); i++){
             os<<"\t";
             this->exprs[i]->print(os,"");
-            os<<std::endl;
+            os<<endl;
         }
     }
-
-    void compile(std::ostream& os, const std::string& dest, MemoryContext& m)const override{
+    void compile(ostream& os, const string& dest, MemoryContext& m)const override{
+        // bharathaan
         for(int i = 0; i< this->exprs[0]->get_expr_list().size(); i++){
             m.add_struct_member(this->val,this->exprs[0]->get_expr(i)->get_name(),this->exprs[0]->get_expr(i)->get_type());
         }
+        // add into size table
+        string struct_name = this->val;
+        Node* struct_member_list_node = this->exprs[0];
+        vector<Node*> struct_member_list = struct_member_list_node->get_expr_list();
+        int struct_size = 0;
+        for (auto& sm: struct_member_list) {
+            struct_size += m.get_size(sm->get_type());
+        }
+        m.add_type(this->val, this->val, struct_size);
     }
 };
 
 
 class StructInitVariable: public Node{
-
 public:
-    StructInitVariable(const std::string& struct_name, const std::string& struct_variable):
+    StructInitVariable(const string& struct_name, const string& struct_variable):
         Node{"struct",struct_name,struct_variable,nullptr,nullptr} {}
 
-    void print(std::ostream& os, const std::string& indent)const override{
+    void print(ostream& os, const string& indent)const override{
         os<<"struct "<<this->val<<":\n";
         for(int i = 0; i< this->exprs.size(); i++){
             os<<"\t";
             this->exprs[i]->print(os,"");
-            os<<std::endl;
+            os<<endl;
         }
     }
-
-    void compile(std::ostream& os, const std::string& dest, MemoryContext& m)const override{
+    void compile(ostream& os, const string& dest, MemoryContext& m)const override{
+        // bharathaan
         m.add_struct_declaration(this->type, this->val);
+        // add into size table
+        m.add_type(this->val, this->type, m.get_size(this->type));
     }
 };
 
 
-// I know this is dumb don't judge me Samuel I'm lazy
-
-
 class StructMemberDeclaration: public Node {
 public:
-    StructMemberDeclaration(const std::string& type,const std::string& name) {
+    StructMemberDeclaration(const string& type,const string& name) {
         this->type = type;
         this->name = name;
         this->val = "";
         this->exprs = {};
         this->stats = {};
     }
-    void print(std::ostream& os, const std::string& indent) const {
+    void print(ostream& os, const string& indent) const {
         os << indent << this->type << " " << this->name;
     }
-    void compile(std::ostream& os, const std::string& dest, MemoryContext& m) const {
-
-    }
+    void compile(ostream& os, const string& dest, MemoryContext& m) const {}
 };
 
 
@@ -77,23 +82,17 @@ public:
         this->exprs = {declaration};
         this->stats = {};
     }
-    void print(std::ostream& os, const std::string& indent) const {
+    void print(ostream& os, const string& indent) const {
         for(int i = 0; i < this->exprs.size(); i++){
             this->exprs[i]->print(os,indent);
             os<<";";
             }
     }
-
-    void compile(std::ostream& os, const std::string& dest, MemoryContext& m) const {
+    void compile(ostream& os, const string& dest, MemoryContext& m) const {
         for(int i = 0; i < this->exprs.size(); i++){
             this->exprs[i]->compile(os,dest,m);
         }
     }
 };
-
-
-
-
-
 
 #endif
