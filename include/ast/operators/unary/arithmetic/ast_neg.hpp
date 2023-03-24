@@ -1,5 +1,5 @@
 #ifndef compiler_ast_operators_unary_arithmetic_neg
-#define compiler_ast_operators_unary_arithmetic_eg
+#define compiler_ast_operators_unary_arithmetic_neg
 
 #include "ast.hpp"
 using namespace std;
