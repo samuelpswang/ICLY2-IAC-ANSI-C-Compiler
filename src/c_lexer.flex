@@ -110,7 +110,7 @@ L?\"(\\.|[^\\"])*\"	{ yylval.string = new std::string(yytext); yyprint(yytext, "
 "|"	        		{ yyprint(yytext, "symbol"); return '|'; }
 "?"		        	{ yyprint(yytext, "symbol"); return '?'; }
 
-{L}+                { yylval.string = new std::string(yytext); yyprint(yytext, "identifier"); return IDENTIFIER; }
+{L}+{D}?            { yylval.string = new std::string(yytext); yyprint(yytext, "identifier"); return IDENTIFIER; }
 
 [ \t\v\n\f\r]		    {}
 .			        { yyprint(yytext, "invalid token"); exit(1);}

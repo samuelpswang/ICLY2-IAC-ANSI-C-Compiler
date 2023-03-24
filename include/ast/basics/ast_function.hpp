@@ -105,7 +105,10 @@ public:
             if(this->exprs.size() == 2){
 			    this->exprs[1]->compile(os,dest,m);
 		    }
+            m.asm_store_all(os);
 			os<<"\tcall "<<this->exprs[0]->get_name()<<std::endl;
+            m.asm_restore_all_except_a(os);
+            os << "\tadd " << dest << ", x10, zero\n";
     }
 
 };

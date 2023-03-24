@@ -392,6 +392,26 @@ std::string MemoryContext::get_td_symbol(const std::string& typedef_rep) {
     else throw std::runtime_error("MemoryContext::get_td_symbol() typedef representation not initialized: "+typedef_rep);
 }
 
+// store current register file into memory
+bool MemoryContext::asm_store_all(ostream& os) {
+    for (int i = 0; i < 32; i++) {
+        this->add_symbol(std::to_string(i), true);
+        os << "\tsw x" << i << ", " << this->get_symbol(std::to_string(i)) << "(s0)\n";
+    }
+    return true;
+}
+// restore current register file from memory
+bool MemoryContext::asm_restore_all_except_a(ostream& os) {
+    for (int i = 0; i < 32; i++) {
+        if (i == 10 || i == 11 ) {
+        }
+        else {
+            os << "\tlw x" << i << ", " << this->get_symbol(std::to_string(i)) << "(s0)\n";
+        }
+    }
+    return true;
+}
+
 
 // Utility Functions
 // returns if have register of specific type

@@ -117,6 +117,10 @@ public:
     bool asm_clean_up(ostream&);
     // return true after storing all registers to memory
     bool asm_spill_all(ostream&, regtype);
+    // store current register file into memory
+    bool asm_store_all(ostream&);
+    // restore current register file from memory
+    bool asm_restore_all_except_a(ostream&);
 };
 
 #endif
