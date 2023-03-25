@@ -1,4 +1,4 @@
-name: Auto-build Test
+name: Build Test
 
 on:
   push:
